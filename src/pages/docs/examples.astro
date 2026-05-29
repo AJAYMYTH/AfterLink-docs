@@ -1,0 +1,140 @@
+---
+// src/pages/docs/examples.astro
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const chatAppExample = `
+// ==================== server.js ====================
+import { createServer } from 'afterlink';
+const server = createServer({ port: 8080 });
+
+console.log('AfterLink Chat Daemon active on 8080');
+
+// ==================== client.js ====================
+import { createClient } from 'afterlink';
+const client = createClient({ port: 8080 });
+
+client.on('connect', () => {
+  // Subscribe to central messaging channel
+  client.subscribe('chat.lobby', (message) => {
+    console.log(\`[\${message.user}]: \${message.text}\`);
+  });
+
+  // Push user chat message frame
+  client.publish('chat.lobby', { user: 'Alice', text: 'Hi lobby!' });
+});
+`;
+
+const metricsDashboardExample = `
+import { createServer } from 'afterlink';
+const server = createServer({ port: 8080 });
+
+// Periodically stream CPU, Memory metrics to dashboard clients
+setInterval(() => {
+  const metrics = {
+    cpu: Math.random() * 100,
+    memory: process.memoryUsage().heapUsed,
+    timestamp: Date.now()
+  };
+  
+  server.broadcast('DATA', {
+    channel: 'metrics.live',
+    data: metrics
+  });
+}, 1000);
+`;
+
+const rpcExample = `
+import { createClient } from 'afterlink';
+const client = createClient({ port: 8080 });
+
+// Utility to handle RPC Request/Response over binary framing
+function request(method, params) {
+  return new Promise((resolve, reject) => {
+    const seq = Math.floor(Math.random() * 65535);
+    
+    // Register temporary ACK / reply event listener
+    const handler = (frame) => {
+      if (frame.type === 'ACK' && frame.payload.replyTo === seq) {
+        client.off('message', handler);
+        resolve(frame.payload.result);
+      }
+    };
+    client.on('message', handler);
+    
+    // Send standard action method frame
+    client.send('DATA', { method, params }, { seq });
+  });
+}
+`;
+
+const reconnectExample = `
+import { createClient } from 'afterlink';
+
+const client = createClient({
+  port: 8080,
+  autoReconnect: true,
+  maxRetries: 10
+});
+
+client.on('disconnect', () => {
+  console.warn('Pipeline broken. Retrying handshake connection...');
+});
+
+client.on('reconnect', (attempt) => {
+  console.log(\`Successfully reconnected on attempt #\${attempt}!\`);
+});
+`;
+---
+
+<DocsLayout 
+  title="Code Examples" 
+  description="Explore production-ready examples built on top of the AfterLink binary socket protocol."
+>
+  <div class="space-y-6">
+    <div class="border-b border-al-border/50 pb-4">
+      <h1 class="text-3xl font-bold tracking-tight text-al-white mb-2">Code Examples</h1>
+      <p class="text-sm text-al-muted leading-relaxed">
+        Production-grade code recipes showing how to construct real-time systems, dashboard metrics, RPC workflows, and robust clients.
+      </p>
+    </div>
+
+    <!-- Multi-client Chat App -->
+    <h2 id="chat-app" class="text-lg font-semibold tracking-tight text-al-white mt-8 mb-3 select-none">1. Multi-Client Chat App</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Demonstrates client subscription to a shared chat channel, broadcasting user frames, and handling messages:
+    </p>
+    <CodeBlock code={chatAppExample} lang="javascript" filename="chat-pattern.js" />
+
+    <!-- Live Metric Dashboard -->
+    <h2 id="metrics-dashboard" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">2. Live Metrics Dashboard Stream</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      A lightweight telemetry script broadcasting performance metrics from server memory counters to all subscriber dashboards every second:
+    </p>
+    <CodeBlock code={metricsDashboardExample} lang="javascript" filename="metrics-stream.js" />
+
+    <!-- RPC Pattern -->
+    <h2 id="rpc-pattern" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">3. Request/Response (RPC) over Sockets</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      How to build a stateless Promise-based RPC request/response architecture on top of AfterLink's raw sequence numbers and ACK codes:
+    </p>
+    <CodeBlock code={rpcExample} lang="javascript" filename="rpc-promise.js" />
+
+    <!-- Reconnect Logic -->
+    <h2 id="reconnect-logic" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">4. Automatic Client Reconnection</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      How to handle internet dropouts and socket pipe failures gracefully with AfterLink's native backoff reconnect parameters:
+    </p>
+    <CodeBlock code={reconnectExample} lang="javascript" filename="reconnect-handling.js" />
+
+    <!-- Navigation links -->
+    <div class="flex items-center justify-between border-t border-al-border/50 pt-8 mt-12 select-none">
+      <a href="/docs/pubsub" class="text-xs text-al-muted hover:text-al-cyan transition-colors font-mono">
+        &larr; Pub/Sub System
+      </a>
+      <a href="/changelog" class="text-xs text-al-cyan hover:text-al-white transition-colors font-mono">
+        Changelog &rarr;
+      </a>
+    </div>
+  </div>
+</DocsLayout>

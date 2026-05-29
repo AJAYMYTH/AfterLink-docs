@@ -1,0 +1,103 @@
+---
+// src/pages/docs/skills.astro
+import DocsLayout from '../../layouts/DocsLayout.astro';
+---
+
+<DocsLayout 
+  title="AI Agent Skills" 
+  description="Teach your AI coding agents how to write validated AfterLink server routes, connection handshakes and schemas."
+>
+  <div class="space-y-6">
+    <div class="border-b border-al-border/50 pb-4">
+      <h1 class="text-3xl font-bold tracking-tight text-al-white mb-2">AI Agent Skills</h1>
+      <p class="text-sm text-al-muted leading-relaxed">
+        AfterLink ships a fully structured <code class="text-al-cyan">skills.sh</code>-compatible skill configuration package. This teaches AI coding assistants (Claude, Cursor, Copilot) how to scaffold AfterLink engines natively, omitting typical API hallucinations.
+      </p>
+    </div>
+
+    <!-- What is a skill -->
+    <div class="bg-al-card border border-al-border rounded-xl p-6 my-6 select-all shadow-sm">
+      <h2 class="font-mono text-xs font-bold text-al-cyan uppercase tracking-wider mb-2">What is a Skill?</h2>
+      <p class="text-xs text-al-text leading-relaxed">
+        A skill is a machine-readable technical instruction playbook. By injecting AfterLink's schema, API signatures, and architectural requirements directly into the AI's system prompt context, coding tools can create, audit, and debug AfterLink protocol layers with zero-defect accuracy.
+      </p>
+    </div>
+
+    <!-- Installation -->
+    <h2 id="installation" class="text-lg font-semibold tracking-tight text-al-white mt-10 mb-3 select-none font-mono">Installation</h2>
+    
+    <div class="space-y-4">
+      <div>
+        <p class="text-[10px] text-al-muted font-mono uppercase tracking-widest mb-2 font-semibold">
+          Installation Command
+        </p>
+        <div class="flex items-center gap-3 bg-al-card border border-al-border rounded-lg px-4 py-3.5 font-mono text-sm shadow-sm select-all">
+          <span class="text-al-muted select-none">$</span>
+          <span class="text-al-text flex-1" id="skill-pkg-cmd">npx skills add AJAYMYTH/afterlink-skill</span>
+          <button 
+            onclick="copyCodeText('npx skills add AJAYMYTH/afterlink-skill', this)"
+            class="text-xs text-al-cyan hover:text-al-white transition-colors cursor-pointer select-none font-semibold"
+            aria-label="Copy skills install command"
+          >
+            copy
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skill Coverage list -->
+    <h2 id="coverage" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">What the Skill Book Covers</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      The skill blueprint instructs AI agents across the complete range of AfterLink's modular capabilities:
+    </p>
+
+    <div class="overflow-x-auto my-6 border border-al-border rounded-lg bg-al-dark/20 select-all">
+      <table class="w-full text-left font-mono text-xs divide-y divide-al-border select-all">
+        <thead class="bg-al-black/40 text-al-muted select-none">
+          <tr>
+            <th class="p-3">Skill Chapter</th>
+            <th class="p-3">Protocol Domain & Coverage details</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-al-border select-all">
+          <tr><td class="p-3 font-semibold text-al-cyan">Decision Guide</td><td class="p-3">When to deploy AfterLink vs standard WebSockets, HTTP/2 or gRPC configurations.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">Server Scaffolds</td><td class="p-3">How to boot server nodes, assign routes, and declare Zod payload validation models.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">Client Handshakes</td><td class="p-3">Establishing client pipes, auto-reconnecting loops, and request/reply RPC actions.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">Pub/Sub Broadcasting</td><td class="p-3">Channel subscriptions, raw publishes, and multi-peer broadcast loops.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">Secure TLS & JWT</td><td class="p-3">Creating credentials via <code>generateDevCerts()</code> and securing URIs.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">Browser Bridge</td><td class="p-3">Interfacing with standard web frontend elements using WebSocket fallback wrappers.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">Diagnostics & CLI</td><td class="p-3">API testing structures, CLI debuggers, and common issue resolutions.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Usage guidelines -->
+    <h2 id="usage" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">Using with Claude / Cursor / Copilot</h2>
+    <div class="bg-al-card border border-al-border rounded-xl p-6 shadow-sm select-all">
+      <p class="text-xs text-al-muted leading-relaxed mb-4 select-all">
+        Once the skill package is installed inside your local repository configurations, you can prompt your editor agent with high-level goals:
+      </p>
+      <div class="bg-al-bg border border-al-border rounded-lg px-4 py-3.5 font-mono text-xs text-al-cyan italic select-all shadow-inner">
+        "According to the local AfterLink skill, scaffold a TCP socket server on port 3000 that registers a Zod schema validation model for creating posts, and hooks up a pub/sub stream for client notifications."
+      </div>
+      <p class="text-[10px] text-al-muted mt-3 font-mono tracking-tight select-none">
+        The agent will automatically locate the skill guidelines, fetch correct API signatures, and write validated node code.
+      </p>
+    </div>
+
+  </div>
+</DocsLayout>
+
+<script is:inline>
+  function copyCodeText(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      const originalText = btn.textContent;
+      btn.textContent = 'copied!';
+      btn.classList.add('text-al-green');
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.classList.remove('text-al-green');
+      }, 2000);
+    });
+  }
+</script>

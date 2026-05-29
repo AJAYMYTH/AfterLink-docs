@@ -1,0 +1,120 @@
+---
+// src/pages/docs/validation.astro
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const validationExample = `
+import { createServer } from 'afterlink';
+import { z } from 'zod';
+
+// Define expected payload validation schema
+const MessageSchema = z.object({
+  username: z.string().min(3).max(20),
+  message: z.string().min(1).max(500),
+  timestamp: z.number().int()
+});
+
+const server = createServer({ port: 8080 });
+
+// Register server schema validation for DATA type messages (0x01)
+server.registerSchema('DATA', MessageSchema);
+
+server.on('message', (socket, frame) => {
+  // If frame reaches here, it has passed structural Zod validation!
+  const { username, message } = frame.payload;
+  console.log(\`[\${username}]: \${message}\`);
+});
+
+// Automatic global validation error handler
+server.on('validationError', (socket, error) => {
+  console.error('Socket sent a bad payload:', error.issues);
+  
+  // AfterLink automatically replies with a MSG_ERROR (0x05) frame to the client
+});
+`;
+---
+
+<DocsLayout 
+  title="Automatic Validation" 
+  description="Learn how to define, register, and leverage automatic schema validation for AfterLink network frames."
+>
+  <div class="space-y-6">
+    <div class="border-b border-al-border/50 pb-4">
+      <h1 class="text-3xl font-bold tracking-tight text-al-white mb-2">Automatic Schema Validation</h1>
+      <p class="text-sm text-al-muted leading-relaxed">
+        AfterLink integrates schema validation directly into the protocol frame processing layer. By leveraging <strong>Zod</strong> schemas, you can prevent corrupt, malformed, or hostile payloads from exhausting application layer computing cycles.
+      </p>
+    </div>
+
+    <!-- Security aspect -->
+    <div class="bg-al-cyan/5 border border-al-cyan/20 rounded-lg p-6 my-6 select-all">
+      <h2 class="font-mono text-xs font-bold text-al-cyan uppercase tracking-wider mb-2">Protocol-Level Shield</h2>
+      <p class="text-2xs text-al-text leading-relaxed">
+        Typical websocket servers receive buffers, parse JSON string representations, and only then run validation in the handler. If a packet is malformed, your processor has already allocated CPU cycles and memory. AfterLink parses the 10-byte header length, parses the buffer, validates it at the decoder boundary, and rejects bad sockets immediately.
+      </p>
+    </div>
+
+    <!-- How Validation works step-by-step -->
+    <h2 id="validation-flow" class="text-lg font-semibold tracking-tight text-al-white mt-10 mb-3 select-none">Schema Registration</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      You register validation models for each of the specific message types on the server. Whenever a frame matching that type is received, the validation chain runs:
+    </p>
+    
+    <div class="p-6 rounded-lg border border-al-border bg-al-card/25 font-mono text-3xs text-al-muted select-all">
+      <div class="flex flex-col gap-2">
+        <div class="flex justify-between items-center bg-al-black/40 p-2.5 rounded border border-al-border select-all">
+          <span class="text-al-white">1. Frame Buffer Arrives</span>
+          <span class="text-al-muted">Hex array stream parsed from socket</span>
+        </div>
+        <div class="text-center font-bold text-al-cyan select-none">&darr;</div>
+        <div class="flex justify-between items-center bg-al-black/40 p-2.5 rounded border border-al-border select-all">
+          <span class="text-al-white">2. Decode Header (10B)</span>
+          <span class="text-al-muted">Check Magic (0xAF1C) and get Payload Length</span>
+        </div>
+        <div class="text-center font-bold text-al-cyan select-none">&darr;</div>
+        <div class="flex justify-between items-center bg-al-cyan/5 p-2.5 rounded border border-al-cyan/20 select-all">
+          <span class="text-al-cyan">3. Schema Check (Zod)</span>
+          <span class="text-al-text">Runs pre-registered type validator against raw payload</span>
+        </div>
+        <div class="text-center font-bold text-al-cyan select-none">&darr;</div>
+        <div class="flex justify-between items-center bg-al-black/40 p-2.5 rounded border border-al-border select-all">
+          <span class="text-al-white">4. Handler Dispatch</span>
+          <span class="text-al-muted">Emit 'message' with fully-typed Javascript object</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Code Validation Example -->
+    <h2 id="validation-code" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">Validation Code Example</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Below is an implementation of how schemas are registered and handled inside AfterLink server instances:
+    </p>
+    <CodeBlock code={validationExample} lang="javascript" filename="validation.js" />
+
+    <!-- Error framing description -->
+    <h2 id="error-framing" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">Error Frame (MSG_ERROR) Response</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      When a schema check fails, the socket connection is not closed immediately. Instead, AfterLink encodes a structured <code>MSG_ERROR</code> (<code>0x05</code>) frame back to the client. The payload of this error frame contains a JSON-serialized details block:
+    </p>
+    <CodeBlock code={`{
+  "code": "BAD_PAYLOAD",
+  "message": "Schema validation failed",
+  "issues": [
+    {
+      "path": ["username"],
+      "message": "String must contain at least 3 character(s)"
+    }
+  ]
+}`} lang="json" filename="error-response.json" />
+
+    <!-- Navigation links -->
+    <div class="flex items-center justify-between border-t border-al-border/50 pt-8 mt-12 select-none">
+      <a href="/docs/protocol" class="text-xs text-al-muted hover:text-al-cyan transition-colors font-mono">
+        &larr; Protocol Layout
+      </a>
+      <a href="/docs/api" class="text-xs text-al-cyan hover:text-al-white transition-colors font-mono">
+        Server & Client API &rarr;
+      </a>
+    </div>
+  </div>
+</DocsLayout>

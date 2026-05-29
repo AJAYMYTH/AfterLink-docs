@@ -1,0 +1,103 @@
+---
+// src/pages/docs/pubsub.astro
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const pubClient = `
+import { createClient } from 'afterlink';
+
+const client = createClient({ port: 8080 });
+
+client.on('connect', () => {
+  console.log('Connected to AfterLink pipeline');
+
+  // 1. Subscribe to exact channel
+  client.subscribe('chat.global', (payload) => {
+    console.log(\`[Global Chat]: \${payload.text}\`);
+  });
+
+  // 2. Publish to channel
+  client.publish('chat.global', { text: 'Hello developers!' });
+});
+`;
+
+const subClientPattern = `
+// Subscribe using wildcard routing
+client.subscribe('sensors.*', (payload, channel) => {
+  console.log(\`Received broadcast on \${channel}: \`, payload);
+});
+`;
+---
+
+<DocsLayout 
+  title="Pub/Sub System" 
+  description="Detailed guide to AfterLink's native, low-latency Pub/Sub messaging system and wildcard routing."
+>
+  <div class="space-y-6">
+    <div class="border-b border-al-border/50 pb-4">
+      <h1 class="text-3xl font-bold tracking-tight text-al-white mb-2">Pub/Sub Messaging System</h1>
+      <p class="text-sm text-al-muted leading-relaxed">
+        AfterLink features a high-performance publish/subscribe messaging engine baked directly into the socket protocol layer. Deliver real-time broad-scope channels with minimal wire steps.
+      </p>
+    </div>
+
+    <!-- Architectural Overview -->
+    <h2 id="overview" class="text-lg font-semibold tracking-tight text-al-white mt-8 mb-3 select-none">How it Works</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Unlike HTTP polling or traditional WebSockets where pub/sub routing must be written on top of JSON buffers in the application space, AfterLink utilizes dedicated message type bytes (<code>MSG_SUBSCRIBE</code> - <code>0x02</code> and <code>MSG_PUBLISH</code> - <code>0x03</code>) to instruct the server on channel routing:
+    </p>
+
+    <!-- Visual schema -->
+    <div class="p-6 rounded-lg border border-al-border bg-al-card/25 font-mono text-3xs text-al-muted select-all my-6">
+      <div class="flex flex-col gap-1">
+        <div class="flex justify-between items-center bg-al-black/40 p-2.5 rounded border border-al-border select-all">
+          <span class="text-al-white">1. Client registers channel</span>
+          <span class="text-al-cyan">0x02 (MSG_SUBSCRIBE) + "chat.global"</span>
+        </div>
+        <div class="text-center font-bold text-al-cyan select-none">&darr;</div>
+        <div class="flex justify-between items-center bg-al-black/40 p-2.5 rounded border border-al-border select-all">
+          <span class="text-al-white">2. Server stores registry map</span>
+          <span class="text-al-muted">Sets Socket connection in channel memory array</span>
+        </div>
+        <div class="text-center font-bold text-al-cyan select-none">&darr;</div>
+        <div class="flex justify-between items-center bg-al-cyan/5 p-2.5 rounded border border-al-cyan/20 select-all">
+          <span class="text-al-cyan">3. Message published</span>
+          <span class="text-al-text">0x03 (MSG_PUBLISH) to "chat.global" -> server loops & relays header frames</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Client Pub/Sub Code Example -->
+    <h2 id="pubsub-code" class="text-lg font-semibold tracking-tight text-al-white mt-10 mb-3 select-none">Client Pub/Sub Code Example</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Below is an implementation showing how simple it is to register subscribers and push events onto channels:
+    </p>
+    <CodeBlock code={pubClient} lang="javascript" filename="pubsub-client.js" />
+
+    <!-- Channel routing patterns -->
+    <h2 id="patterns" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">Channel Routing Patterns</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      AfterLink supports two levels of channel routing matching structures:
+    </p>
+    <ul class="list-disc pl-5 space-y-3 text-xs text-al-muted select-all">
+      <li>
+        <strong>Exact Matching:</strong> Routes messages only to subscribers bound to the exact string channel, such as <code>chat.room1</code>.
+      </li>
+      <li>
+        <strong>Wildcard Routing (Single level):</strong> Using the asterisks character (<code>*</code>), clients can subscribe to entire subgroups. For instance, subscribing to <code>sensors.*</code> catches broadcasts pushed to <code>sensors.temperature</code>, <code>sensors.pressure</code>, etc:
+      </li>
+    </ul>
+    
+    <CodeBlock code={subClientPattern} lang="javascript" filename="wildcard-sub.js" />
+
+    <!-- Navigation links -->
+    <div class="flex items-center justify-between border-t border-al-border/50 pt-8 mt-12 select-none">
+      <a href="/docs/api" class="text-xs text-al-muted hover:text-al-cyan transition-colors font-mono">
+        &larr; Server & Client API
+      </a>
+      <a href="/docs/examples" class="text-xs text-al-cyan hover:text-al-white transition-colors font-mono">
+        Code Examples &rarr;
+      </a>
+    </div>
+  </div>
+</DocsLayout>

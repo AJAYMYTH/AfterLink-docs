@@ -1,0 +1,110 @@
+---
+// src/layouts/DocsLayout.astro
+import BaseLayout from './BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import Sidebar from '../components/Sidebar.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <!-- Top Navigation -->
+  <Navbar />
+  
+  <!-- Content Wrapper -->
+  <div class="mx-auto flex w-full max-w-7xl flex-1 flex-col lg:flex-row items-stretch px-4 sm:px-6 lg:px-8 mt-6 pt-2">
+    
+    <!-- Collapsible Sidebar (fixed on mobile/tablet, relative on desktop) -->
+    <aside 
+      id="docs-sidebar"
+      class="fixed inset-y-0 left-0 z-40 w-64 bg-al-bg border-r border-al-border transform -translate-x-full lg:relative lg:translate-x-0 lg:flex lg:flex-col transition-transform duration-300 ease-in-out lg:sticky lg:top-24 lg:h-[calc(100vh-6rem)] lg:overflow-y-auto pr-4 shrink-0"
+    >
+      <!-- Close trigger inside sidebar (mobile only) -->
+      <div class="flex items-center justify-between p-4 border-b border-al-border/50 lg:hidden">
+        <span class="font-mono text-xs text-al-cyan">Navigation</span>
+        <button 
+          id="docs-sidebar-close" 
+          class="text-al-muted hover:text-al-white text-xl cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan"
+          aria-label="Close sidebar navigation"
+        >
+          ✕
+        </button>
+      </div>
+      
+      <Sidebar />
+    </aside>
+
+    <!-- Backdrop layer (mobile only) -->
+    <div 
+      id="docs-sidebar-backdrop" 
+      class="fixed inset-0 bg-black/60 z-30 hidden transition-opacity duration-300"
+      aria-hidden="true"
+    ></div>
+
+    <!-- Main Content Container -->
+    <main 
+      id="main-content" 
+      class="flex-1 w-full min-w-0 py-8 lg:py-12 lg:pl-10 flex flex-col"
+    >
+      <div class="prose prose-invert max-w-none flex-1">
+        <slot />
+      </div>
+    </main>
+  </div>
+
+  <!-- Mobile Sidebar Floating Toggle Button -->
+  <button 
+    id="sidebar-toggle"
+    class="lg:hidden fixed bottom-6 right-6 z-50 w-12 h-12 bg-al-cyan text-al-bg rounded-full shadow-lg flex items-center justify-center font-mono font-bold hover:scale-105 active:scale-95 transition-transform cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-al-cyan"
+    aria-label="Toggle documentation navigation"
+    aria-expanded="false"
+    aria-controls="docs-sidebar"
+  >
+    ☰
+  </button>
+
+  <!-- Bottom Footer -->
+  <Footer />
+</BaseLayout>
+
+<script>
+  const sidebar = document.getElementById('docs-sidebar');
+  const toggle = document.getElementById('sidebar-toggle');
+  const closeBtn = document.getElementById('docs-sidebar-close');
+  const backdrop = document.getElementById('docs-sidebar-backdrop');
+
+  if (sidebar && toggle && closeBtn && backdrop) {
+    const showSidebar = () => {
+      sidebar.classList.remove('-translate-x-full');
+      sidebar.classList.add('translate-x-0');
+      backdrop.classList.remove('hidden');
+      toggle.setAttribute('aria-expanded', 'true');
+      closeBtn.focus();
+    };
+
+    const hideSidebar = () => {
+      sidebar.classList.add('-translate-x-full');
+      sidebar.classList.remove('translate-x-0');
+      backdrop.classList.add('hidden');
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.focus();
+    };
+
+    toggle.addEventListener('click', showSidebar);
+    closeBtn.addEventListener('click', hideSidebar);
+    backdrop.addEventListener('click', hideSidebar);
+
+    // Escape listener
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && sidebar.classList.contains('translate-x-0')) {
+        hideSidebar();
+      }
+    });
+  }
+</script>

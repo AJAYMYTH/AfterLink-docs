@@ -1,0 +1,646 @@
+---
+// src/pages/index.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import FeatureCard from '../components/FeatureCard.astro';
+import FrameVisualizer from '../components/FrameVisualizer.astro';
+---
+
+<BaseLayout title="AfterLink — High Performance Binary Protocol">
+  <Navbar />
+
+  <!-- Hero Section -->
+  <section class="relative w-full overflow-hidden border-b border-al-border py-20 md:py-28 transition-colors">
+    <!-- Grid overlay background -->
+    <div class="absolute inset-0 hero-bg opacity-30 select-none pointer-events-none"></div>
+    <!-- Mesh blur highlights (looping background auroras) -->
+    <div class="absolute top-1/4 left-1/3 w-[450px] h-[300px] bg-al-cyan/10 blur-[120px] rounded-full select-none pointer-events-none animate-aurora-1"></div>
+    <div class="absolute top-1/3 left-1/2 w-[500px] h-[250px] bg-al-blue/10 blur-[130px] rounded-full select-none pointer-events-none animate-aurora-2"></div>
+
+    <div class="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center select-none">
+      
+      <!-- Premium Version Tag -->
+      <div class="mb-4 inline-flex items-center gap-1.5 rounded-full border border-al-cyan/30 bg-al-cyan/5 px-3 py-1 font-mono text-[10px] text-al-cyan tracking-wider uppercase animate-hero-tag">
+        <span class="h-1.5 w-1.5 rounded-full bg-al-cyan animate-pulse"></span>
+        v1.2.0 Active
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-al-white text-pretty max-w-3xl leading-[1.1] mb-6 animate-hero-title">
+        A Binary Protocol <br class="hidden sm:inline" />
+        Built for <span class="bg-gradient-to-r from-al-cyan via-al-blue to-al-green bg-clip-text text-transparent">Extreme Speed</span>
+      </h1>
+
+      <!-- Subheadline -->
+      <p class="text-sm sm:text-base text-al-muted max-w-2xl leading-relaxed text-balance mb-10 animate-hero-desc">
+        AfterLink provides persistent socket connections, native pub/sub routing, and automatic schema validation—all compressed into a 10-byte binary header. Built with zero dependencies.
+      </p>
+
+      <!-- CTA Action Buttons -->
+      <div class="flex flex-wrap justify-center gap-4 mb-12 w-full max-w-xs sm:max-w-none animate-hero-ctas">
+        <a 
+          href="/docs" 
+          class="btn-primary w-full sm:w-auto inline-flex items-center justify-center rounded px-6 py-2.5 font-mono text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-al-cyan/50"
+        >
+          Get Started &rarr;
+        </a>
+        <a 
+          href="/playground" 
+          class="w-full sm:w-auto inline-flex items-center justify-center rounded border border-al-border bg-al-card px-6 py-2.5 font-mono text-sm text-al-white hover:border-al-cyan/30 hover:bg-al-bg transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan"
+        >
+          Live Playground
+        </a>
+      </div>
+
+      <!-- Hero Install Commands & Badges -->
+      <div class="w-full max-w-lg space-y-5 text-left mb-16 select-text animate-hero-install">
+        
+        <!-- npm install command -->
+        <div class="install-block w-full">
+          <p class="text-[9px] text-al-muted font-mono uppercase tracking-widest mb-1.5 font-bold select-none">
+            npm package
+          </p>
+          <div class="flex items-center gap-3 bg-al-card border border-al-border rounded-lg px-4 py-3 font-mono shadow-sm select-all">
+            <span class="text-al-muted select-none text-xs sm:text-sm">$</span>
+            <span class="text-al-text flex-1 text-xs sm:text-sm overflow-x-auto whitespace-nowrap" id="npm-cmd">npm install afterlink</span>
+            <button 
+              id="npm-btn-hero"
+              class="text-xs text-al-cyan hover:text-al-white transition-colors shrink-0 font-semibold cursor-pointer select-none"
+              aria-label="Copy npm install command"
+            >
+              copy
+            </button>
+          </div>
+          <!-- npm badge link -->
+          <a 
+            href="https://www.npmjs.com/package/afterlink"
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1.5 mt-2 text-[10px] text-al-muted hover:text-al-cyan transition-colors font-mono select-none"
+          >
+            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M0 0h24v24H0V0zm7.07 4.5H3v15h9v-3H7.07V4.5zm2.93 0v12h3V7.5h3v9h3V4.5H10z"/>
+            </svg>
+            npmjs.com/package/afterlink ↗
+          </a>
+        </div>
+
+        <!-- Individual packages -->
+        <div class="install-block w-full">
+          <p class="text-[9px] text-al-muted font-mono uppercase tracking-widest mb-1.5 font-bold select-none">
+            or install modules individually
+          </p>
+          <div class="bg-al-card border border-al-border rounded-lg px-4 py-3 font-mono text-xs text-al-muted space-y-1 select-all shadow-sm">
+            <div>npm install <span class="text-al-cyan">@afterlink/server</span></div>
+            <div>npm install <span class="text-al-cyan">@afterlink/client</span></div>
+            <div>npm install <span class="text-al-cyan">@afterlink/browser</span></div>
+            <div>npm install <span class="text-al-cyan">@afterlink/cli</span></div>
+          </div>
+        </div>
+
+        <!-- skills.sh install command -->
+        <div class="install-block w-full">
+          <p class="text-[9px] text-al-muted font-mono uppercase tracking-widest mb-1.5 font-bold select-none">
+            AI agent skill (skills.sh)
+          </p>
+          <div class="flex items-center gap-3 bg-al-card border border-al-border rounded-lg px-4 py-3 font-mono shadow-sm select-all">
+            <span class="text-al-muted select-none text-xs sm:text-sm">$</span>
+            <span class="text-al-text flex-1 text-xs sm:text-sm overflow-x-auto whitespace-nowrap" id="skill-cmd">npx skills add AJAYMYTH/afterlink-skill</span>
+            <button 
+              id="skill-btn-hero"
+              class="text-xs text-al-cyan hover:text-al-white transition-colors shrink-0 font-semibold cursor-pointer select-none"
+              aria-label="Copy agent skill command"
+            >
+              copy
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Interactive visualizer centerpiece -->
+      <div class="w-full animate-hero-viz">
+        <FrameVisualizer />
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== FEATURES (6 Cards) ===== -->
+  <section id="features" class="py-24 px-4 sm:px-6 max-w-6xl mx-auto transition-colors">
+    <div class="text-center mb-16 select-none">
+      <p class="text-al-cyan font-mono text-xs font-bold uppercase tracking-widest mb-2">Features Matrix</p>
+      <h2 class="text-2xl sm:text-3xl font-bold text-al-white font-mono">
+        Built for real-time. Ready for production.
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Card 1 -->
+      <div class="feature-card p-6 rounded-xl bg-al-card select-text">
+        <div class="mb-4 select-none">
+          <svg class="w-6 h-6 text-al-cyan" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <h3 class="text-al-white font-mono font-semibold text-base mb-2">
+          Persistent Connections
+        </h3>
+        <p class="text-al-muted text-xs leading-relaxed select-all">
+          TCP connections stay open — no handshake overhead per request.
+          AfterLink maintains a single long-lived socket with automatic
+          keepalive pings every 30 seconds.
+        </p>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="feature-card p-6 rounded-xl bg-al-card select-text">
+        <div class="mb-4 select-none">
+          <svg class="w-6 h-6 text-al-cyan" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12a5 5 0 018 0M5 9a9 9 0 0114 0" />
+          </svg>
+        </div>
+        <h3 class="text-al-white font-mono font-semibold text-base mb-2">
+          Built-in Pub/Sub
+        </h3>
+        <p class="text-al-muted text-xs leading-relaxed select-all">
+          Native channel-based publish/subscribe baked into the protocol layer.
+          No Redis, no extra broker. Subscribe, publish, and broadcast with
+          one line of code.
+        </p>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="feature-card p-6 rounded-xl bg-al-card select-text">
+        <div class="mb-4 select-none">
+          <svg class="w-6 h-6 text-al-cyan" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <h3 class="text-al-white font-mono font-semibold text-base mb-2">
+          Auto Validation
+        </h3>
+        <p class="text-al-muted text-xs leading-relaxed select-all">
+          Zod schema validation built into every route handler.
+          Invalid payloads are rejected at the protocol level before
+          your business logic runs — zero boilerplate.
+        </p>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="feature-card p-6 rounded-xl bg-al-card select-text">
+        <div class="mb-4 select-none">
+          <svg class="w-6 h-6 text-al-cyan" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+          </svg>
+        </div>
+        <h3 class="text-al-white font-mono font-semibold text-base mb-2">
+          10-Byte Binary Frame
+        </h3>
+        <p class="text-al-muted text-xs leading-relaxed select-all">
+          Every message starts with a fixed 10-byte header containing magic bytes,
+          version, message type, sequence number, and payload length.
+          MessagePack serialization for the payload — compact and fast.
+        </p>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="feature-card p-6 rounded-xl bg-al-card select-text">
+        <div class="mb-4 select-none">
+          <svg class="w-6 h-6 text-al-cyan" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        </div>
+        <h3 class="text-al-white font-mono font-semibold text-base mb-2">
+          TLS + JWT Auth
+        </h3>
+        <p class="text-al-muted text-xs leading-relaxed select-all">
+          First-class TLS support with <code class="text-al-cyan">afterlinks://</code> URIs.
+          JWT middleware included out of the box. Dev certs generated
+          automatically with <code class="text-al-cyan">generateDevCerts()</code>.
+        </p>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="feature-card p-6 rounded-xl bg-al-card select-text">
+        <div class="mb-4 select-none">
+          <svg class="w-6 h-6 text-al-cyan" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+          </svg>
+        </div>
+        <h3 class="text-al-white font-mono font-semibold text-base mb-2">
+          Browser Bridge
+        </h3>
+        <p class="text-al-muted text-xs leading-relaxed select-all">
+          Use AfterLink from any browser via the built-in WebSocket bridge.
+          The <code class="text-al-cyan">@afterlink/browser</code> package
+          gives you the same API — no TCP required on the client side.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section id="how-it-works" class="py-24 px-4 sm:px-6 max-w-5xl mx-auto transition-colors border-t border-al-border">
+    <div class="text-center mb-16 select-none">
+      <p class="text-al-cyan font-mono text-xs font-bold uppercase tracking-widest mb-2">How It Works</p>
+      <h2 class="text-2xl sm:text-3xl font-bold text-al-white font-mono">
+        From connection to message in microseconds
+      </h2>
+    </div>
+
+    <div class="hidden md:grid grid-cols-1 md:grid-cols-3 gap-8 relative items-start select-text">
+      <!-- Connector line (desktop only) -->
+      <div class="hidden md:block absolute top-12 left-[18%] right-[18%] h-px border-t border-dashed border-al-border select-none pointer-events-none"></div>
+
+      <!-- Step 1 -->
+      <div class="text-center flex flex-col items-center w-full max-w-sm px-4 mx-auto">
+        <div class="w-16 h-16 rounded-xl bg-al-card border border-al-cyan mx-auto mb-6 flex items-center justify-center text-al-cyan font-mono font-bold text-lg shadow-[0_0_20px_rgba(0,216,255,0.08)] select-none">
+          01
+        </div>
+        <h3 class="text-al-white font-mono font-semibold mb-2">TCP Connect</h3>
+        <p class="text-al-muted text-xs leading-relaxed max-w-[260px] sm:max-w-xs select-all">
+          Client opens a persistent TCP connection using
+          <code class="text-al-cyan">afterlink://host:port</code>.
+          One-time handshake — stays open for all future messages.
+        </p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="text-center flex flex-col items-center w-full max-w-sm px-4 mx-auto">
+        <div class="w-16 h-16 rounded-xl bg-al-card border border-al-cyan mx-auto mb-6 flex items-center justify-center text-al-cyan font-mono font-bold text-lg shadow-[0_0_20px_rgba(0,216,255,0.08)] select-none">
+          02
+        </div>
+        <h3 class="text-al-white font-mono font-semibold mb-2">Binary Frame</h3>
+        <p class="text-al-muted text-xs leading-relaxed max-w-[260px] sm:max-w-xs select-all">
+          Every message is packed into a 10-byte binary header + MessagePack
+          payload. Type byte routes the frame to the correct handler
+          on the server — zero string parsing.
+        </p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="text-center flex flex-col items-center w-full max-w-sm px-4 mx-auto">
+        <div class="w-16 h-16 rounded-xl bg-al-card border border-al-cyan mx-auto mb-6 flex items-center justify-center text-al-cyan font-mono font-bold text-lg shadow-[0_0_20px_rgba(0,216,255,0.08)] select-none">
+          03
+        </div>
+        <h3 class="text-al-white font-mono font-semibold mb-2">Route & Respond</h3>
+        <p class="text-al-muted text-xs leading-relaxed max-w-[260px] sm:max-w-xs select-all">
+          Server validates schema, runs middleware, calls your handler,
+          and sends back a response frame. Pub/Sub events fan out
+          to all subscribers on the channel automatically.
+        </p>
+      </div>
+    </div>
+
+    <!-- Mobile Bullet Points (Visible only on mobile screens) -->
+    <div class="block md:hidden bg-al-card border border-al-border rounded-xl p-6 shadow-sm select-text my-8">
+      <ul class="space-y-6 text-left font-mono text-xs text-al-text">
+        <li class="flex items-start gap-3">
+          <span class="flex-shrink-0 h-5 w-5 rounded bg-al-cyan/10 border border-al-cyan/35 text-al-cyan flex items-center justify-center font-bold">1</span>
+          <div class="flex-1">
+            <strong class="text-al-white block mb-0.5">TCP Connect</strong>
+            <span class="text-al-muted leading-relaxed">Establish a persistent, reusable socket handshake via <code class="text-al-cyan">afterlink://</code> that stays open forever.</span>
+          </div>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="flex-shrink-0 h-5 w-5 rounded bg-al-cyan/10 border border-al-cyan/35 text-al-cyan flex items-center justify-center font-bold">2</span>
+          <div class="flex-1">
+            <strong class="text-al-white block mb-0.5">Binary Header Packing</strong>
+            <span class="text-al-muted leading-relaxed">Wrap every message in a lightweight 10-byte binary header with native MessagePack serialization.</span>
+          </div>
+        </li>
+        <li class="flex items-start gap-3">
+          <span class="flex-shrink-0 h-5 w-5 rounded bg-al-cyan/10 border border-al-cyan/35 text-al-cyan flex items-center justify-center font-bold">3</span>
+          <div class="flex-1">
+            <strong class="text-al-white block mb-0.5">Route & Fan-out</strong>
+            <span class="text-al-muted leading-relaxed">Trigger custom schema validations and broadcast immediate low-latency fan-out events to all subscribers.</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Diagram schematic (Desktop Only) -->
+    <div class="hidden md:block bg-al-card border border-al-border rounded-xl p-6 font-mono text-xs overflow-x-auto shadow-sm select-all">
+      <div class="flex items-center justify-between gap-4 min-w-[640px] text-center">
+        <div class="flex-1">
+          <div class="bg-al-bg border border-al-border rounded-lg p-3 text-al-white shadow-inner select-all">
+            Client
+          </div>
+          <p class="text-[10px] text-al-muted mt-2 select-none">@afterlink/client</p>
+        </div>
+        <div class="text-al-cyan flex-1 text-center select-none">
+          <div class="text-[10px] mb-1">connect()</div>
+          <div>──────────────&gt;</div>
+          <div class="text-[10px] mt-2 text-al-muted">10-byte frame</div>
+        </div>
+        <div class="flex-1">
+          <div class="bg-al-bg border border-al-cyan rounded-lg p-3 text-al-cyan shadow-inner select-all">
+            AfterLink Server
+          </div>
+          <p class="text-[10px] text-al-muted mt-2 select-none">@afterlink/server</p>
+        </div>
+        <div class="text-al-green flex-1 text-center select-none">
+          <div class="text-[10px] mb-1">publish(channel)</div>
+          <div>──────────────&gt;</div>
+          <div class="text-[10px] mt-2 text-al-muted">fan-out</div>
+        </div>
+        <div class="flex-1">
+          <div class="bg-al-bg border border-al-border rounded-lg p-3 text-al-white shadow-inner select-all">
+            Subscribers
+          </div>
+          <p class="text-[10px] text-al-muted mt-2 select-none font-semibold">pub/sub clients</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BENCHMARKS ===== -->
+  <section id="benchmarks" class="py-24 px-4 sm:px-6 max-w-5xl mx-auto transition-colors border-t border-al-border">
+    <div class="text-center mb-16 select-none">
+      <p class="text-al-cyan font-mono text-xs font-bold uppercase tracking-widest mb-2">Performance</p>
+      <h2 class="text-2xl sm:text-3xl font-bold text-al-white font-mono">
+        Numbers that matter
+      </h2>
+      <p class="text-al-muted mt-3 text-xs leading-relaxed max-w-sm mx-auto">
+        Benchmarked on Node.js 20, Apple M2, localhost — single connection.
+      </p>
+    </div>
+
+    <!-- Big stats grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-16 select-none">
+      <div class="text-center p-6 bg-al-card border border-al-border rounded-xl shadow-xs">
+        <p class="text-3xl font-mono font-bold text-al-cyan tabular-nums">30,167</p>
+        <p class="text-al-muted text-xs mt-1.5">messages / sec</p>
+      </div>
+      <div class="text-center p-6 bg-al-card border border-al-border rounded-xl shadow-xs">
+        <p class="text-3xl font-mono font-bold text-al-cyan tabular-nums">0.033ms</p>
+        <p class="text-al-muted text-xs mt-1.5">avg latency</p>
+      </div>
+      <div class="text-center p-6 bg-al-card border border-al-border rounded-xl shadow-xs">
+        <p class="text-3xl font-mono font-bold text-al-cyan tabular-nums">76%</p>
+        <p class="text-al-muted text-xs mt-1.5">faster than WebSocket</p>
+      </div>
+      <div class="text-center p-6 bg-al-card border border-al-border rounded-xl shadow-xs">
+        <p class="text-3xl font-mono font-bold text-al-cyan tabular-nums">10B</p>
+        <p class="text-al-muted text-xs mt-1.5">fixed header size</p>
+      </div>
+    </div>
+
+    <!-- Throughput comparison chart -->
+    <div class="bg-al-card border border-al-border rounded-xl p-6 sm:p-8 select-all shadow-sm">
+      <h3 class="text-al-white font-mono font-semibold mb-6 text-sm border-b border-al-border pb-3 select-none">
+        Throughput Comparison (msg/sec)
+      </h3>
+      <div class="space-y-5 font-mono text-xs">
+
+        <!-- AfterLink -->
+        <div class="flex items-center gap-4">
+          <span class="w-20 text-al-cyan shrink-0 font-bold select-none">AfterLink</span>
+          <div class="flex-1 bg-al-bg border border-al-border rounded-full h-6 overflow-hidden shadow-inner">
+            <div class="h-full bg-al-cyan rounded-full flex items-center pl-3 text-[10px] text-black font-bold select-all" style="width: 100%">
+              30,167
+            </div>
+          </div>
+        </div>
+
+        <!-- WebSocket -->
+        <div class="flex items-center gap-4">
+          <span class="w-20 text-al-muted shrink-0 select-none">WebSocket</span>
+          <div class="flex-1 bg-al-bg border border-al-border rounded-full h-6 overflow-hidden shadow-inner">
+            <div class="h-full bg-al-muted rounded-full flex items-center pl-3 text-[10px] text-al-bg font-bold select-all" style="width: 57%">
+              ~17,200
+            </div>
+          </div>
+        </div>
+
+        <!-- Socket.io -->
+        <div class="flex items-center gap-4">
+          <span class="w-20 text-al-muted shrink-0 select-none font-semibold">Socket.io</span>
+          <div class="flex-1 bg-al-bg border border-al-border rounded-full h-6 overflow-hidden shadow-inner">
+            <div class="h-full bg-al-muted rounded-full flex items-center pl-3 text-[10px] text-al-bg font-bold select-all" style="width: 40%">
+              ~12,000
+            </div>
+          </div>
+        </div>
+
+        <!-- HTTP/2 -->
+        <div class="flex items-center gap-4">
+          <span class="w-20 text-al-muted shrink-0 select-none">HTTP/2</span>
+          <div class="flex-1 bg-al-bg border border-al-border rounded-full h-6 overflow-hidden shadow-inner">
+            <div class="h-full bg-al-muted rounded-full flex items-center pl-3 text-[10px] text-al-bg font-bold select-all" style="width: 31%">
+              ~9,400
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <p class="text-[10px] text-al-muted mt-6 select-none italic font-mono leading-relaxed">
+        * Benchmarks measured on local network pipes. Actual throughput speeds scale based on system hardware.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== COMPARISON TABLE (Desktop Only) ===== -->
+  <section id="comparison" class="hidden md:block py-24 px-4 sm:px-6 max-w-5xl mx-auto transition-colors border-t border-al-border">
+    <div class="text-center mb-16 select-none">
+      <p class="text-al-cyan font-mono text-xs font-bold uppercase tracking-widest mb-2">Protocol Comparison</p>
+      <h2 class="text-2xl sm:text-3xl font-bold text-al-white font-mono">
+        AfterLink vs other protocols
+      </h2>
+    </div>
+
+    <!-- Swipe indicator for mobile -->
+    <div class="block md:hidden text-center text-[10px] text-al-cyan font-mono mb-3 animate-pulse select-none">
+      Swipe horizontally to view comparison table details ↔
+    </div>
+
+    <div class="overflow-x-auto border border-al-border rounded-xl bg-al-dark/20 shadow-sm select-all">
+      <table class="w-full text-xs font-mono divide-y divide-al-border min-w-[640px] select-all">
+        <thead class="bg-al-card select-none">
+          <tr>
+            <th class="text-left p-4 text-al-muted font-bold">Protocol Dimension</th>
+            <th class="text-center p-4 text-al-cyan font-bold">AfterLink</th>
+            <th class="text-center p-4 text-al-muted">WebSocket</th>
+            <th class="text-center p-4 text-al-muted">Socket.io</th>
+            <th class="text-center p-4 text-al-muted">HTTP/2</th>
+            <th class="text-center p-4 text-al-muted">gRPC</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-al-border text-al-text select-all">
+          {[
+            ['Binary protocol structure',      '✅','✅','❌','✅','✅'],
+            ['Persistent connection',          '✅','✅','✅','✅','✅'],
+            ['Built-in pub/sub engine',        '✅','❌','✅','❌','❌'],
+            ['Automatic schema validation',    '✅','❌','❌','❌','✅'],
+            ['Node.js native backend',         '✅','✅','✅','✅','❌'],
+            ['Universal browser support',      '✅','✅','✅','✅','⚠️'],
+            ['Zero-dependency core code',      '✅','✅','❌','❌','❌'],
+            ['Streaming capability',           '✅','✅','✅','✅','✅'],
+            ['Built-in TLS support',           '✅','✅','✅','✅','✅'],
+            ['Peak Wire Throughput',           '30,167/s','17,200/s','12,000/s','9,400/s','~20,000/s'],
+            ['Average RTT Latency',            '0.033ms','~0.10ms','~0.20ms','~0.50ms','~0.10ms'],
+          ].map(([feature, ...vals]) => (
+            <tr class="hover:bg-al-card/50 transition-colors">
+              <td class="p-4 text-al-muted font-medium select-all">{feature}</td>
+              <td class="p-4 text-center text-al-cyan font-bold select-all">
+                <div class="flex justify-center">
+                  {vals[0] === '✅' ? (
+                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-al-cyan/10 text-al-cyan border border-al-cyan/20 shadow-sm" aria-label="Yes">
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </span>
+                  ) : vals[0]}
+                </div>
+              </td>
+              {vals.slice(1).map(v => (
+                <td class="p-4 text-center text-al-muted select-all">
+                  <div class="flex justify-center">
+                    {v === '✅' ? (
+                      <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shadow-sm" aria-label="Yes">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" aria-hidden="true">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                    ) : v === '❌' ? (
+                      <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-red-500/10 text-red-500 border border-red-500/20 shadow-sm" aria-label="No">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" aria-hidden="true">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </span>
+                    ) : v === '⚠️' ? (
+                      <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 shadow-sm" aria-label="Warning/Partial">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" aria-hidden="true">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                      </span>
+                    ) : v}
+                  </div>
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  /* Scoped Premium Entrance Animations for Hero Section */
+  @keyframes heroFadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+      filter: blur(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+  }
+
+  .animate-hero-tag {
+    animation: heroFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .animate-hero-title {
+    animation: heroFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 120ms;
+  }
+
+  .animate-hero-desc {
+    animation: heroFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 240ms;
+  }
+
+  .animate-hero-ctas {
+    animation: heroFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 360ms;
+  }
+
+  .animate-hero-install {
+    animation: heroFadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 480ms;
+  }
+
+  .animate-hero-viz {
+    animation: heroFadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 600ms;
+  }
+
+  /* Looping Aurora Glow Background Animations */
+  @keyframes aurora-1 {
+    0% {
+      transform: translate(0px, 0px) scale(1);
+    }
+    33% {
+      transform: translate(30px, -50px) scale(1.1);
+    }
+    66% {
+      transform: translate(-20px, 20px) scale(0.95);
+    }
+    100% {
+      transform: translate(0px, 0px) scale(1);
+    }
+  }
+
+  @keyframes aurora-2 {
+    0% {
+      transform: translate(0px, 0px) scale(1.05);
+    }
+    50% {
+      transform: translate(-40px, 40px) scale(0.9);
+    }
+    100% {
+      transform: translate(0px, 0px) scale(1.05);
+    }
+  }
+
+  .animate-aurora-1 {
+    animation: aurora-1 16s ease-in-out infinite;
+  }
+
+  .animate-aurora-2 {
+    animation: aurora-2 20s ease-in-out infinite;
+  }
+</style>
+
+<script>
+  // Copy helper scripting
+  const setupHeroCopy = (btnId: string, textId: string) => {
+    const btn = document.getElementById(btnId);
+    const textEl = document.getElementById(textId);
+    
+    if (btn && textEl) {
+      btn.addEventListener('click', async () => {
+        const text = textEl.textContent || '';
+        try {
+          await navigator.clipboard.writeText(text);
+          btn.textContent = 'copied!';
+          btn.classList.add('text-al-green');
+          btn.classList.remove('text-al-cyan');
+          
+          setTimeout(() => {
+            btn.textContent = 'copy';
+            btn.classList.remove('text-al-green');
+            btn.classList.add('text-al-cyan');
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy command: ', err);
+        }
+      });
+    }
+  };
+
+  setupHeroCopy('npm-btn-hero', 'npm-cmd');
+  setupHeroCopy('skill-btn-hero', 'skill-cmd');
+</script>

@@ -1,0 +1,189 @@
+---
+// src/components/Navbar.astro
+---
+
+<header class="sticky top-4 z-40 mx-4 xl:mx-auto max-w-7xl rounded-xl border border-al-border bg-al-bg/80 backdrop-blur-md transition-colors shadow-md relative">
+  <div class="flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+    
+    <!-- Left Logo & Links -->
+    <div class="flex items-center gap-10">
+      <a href="/" class="flex items-center gap-1.5 font-mono text-lg font-bold tracking-tight text-al-white hover:text-al-cyan transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-al-cyan focus-visible:rounded px-1.5 py-0.5">
+        AfterLink<span class="text-al-cyan">●</span>
+      </a>
+      
+      <!-- Desktop Links -->
+      <nav class="hidden md:flex items-center gap-6.5 text-sm font-medium">
+        <a href="/docs" class="text-al-muted hover:text-al-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan focus-visible:rounded px-2.5 py-1">
+          Docs
+        </a>
+        <a href="/playground" class="text-al-muted hover:text-al-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan focus-visible:rounded px-2.5 py-1">
+          Playground
+        </a>
+        <a href="/changelog" class="text-al-muted hover:text-al-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan focus-visible:rounded px-2.5 py-1">
+          Changelog
+        </a>
+        <a href="/contact" class="text-al-muted hover:text-al-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan focus-visible:rounded px-2.5 py-1">
+          Contact
+        </a>
+      </nav>
+    </div>
+
+    <!-- Right Controls -->
+    <div class="flex items-center gap-5">
+      
+      <!-- GitHub Link (Desktop) -->
+      <a 
+        href="https://github.com/AJAYMYTH/AfterLink" 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        class="hidden sm:flex items-center gap-1.5 text-sm font-medium text-al-muted hover:text-al-white transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan focus-visible:rounded px-2 py-1"
+        aria-label="View on GitHub"
+      >
+        <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.137 20.162 22 16.418 22 12c0-5.523-4.477-10-10-10z"></path>
+        </svg>
+        <span>GitHub</span>
+      </a>
+
+      <!-- Dark Mode Toggle Button -->
+      <button
+        id="theme-toggle"
+        aria-label="Toggle dark mode"
+        class="w-9 h-9 flex items-center justify-center rounded-lg border border-al-border hover:border-al-cyan transition-colors text-al-muted hover:text-al-cyan cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan"
+      >
+        <!-- Sun icon (shown in dark mode) -->
+        <svg id="icon-sun" class="w-4 h-4 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="5"></circle>
+          <path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"></path>
+        </svg>
+        <!-- Moon icon (shown in light mode) -->
+        <svg id="icon-moon" class="w-4 h-4 block dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+
+      <!-- Hamburger Button (Mobile Only) -->
+      <button 
+        id="mobile-menu-btn"
+        class="md:hidden w-9 h-9 flex items-center justify-center rounded-lg border border-al-border text-al-muted hover:text-al-white transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+      
+    </div>
+  </div>
+
+  <!-- Mobile Collapsible Dropdown (Floats exactly under the floating header card) -->
+  <div 
+    id="mobile-menu"
+    class="absolute top-[calc(100%+0.5rem)] left-0 right-0 bg-al-bg border border-al-border rounded-xl shadow-lg p-5 z-50 flex-col gap-4 font-mono text-sm hidden md:hidden transition-all duration-200"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Mobile Navigation Menu"
+  >
+    <nav class="flex flex-col gap-3 select-none">
+      <a href="/" class="text-al-white hover:text-al-cyan transition-colors py-2 px-3 rounded hover:bg-al-card/65 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan">
+        Home
+      </a>
+      <a href="/docs" class="text-al-white hover:text-al-cyan transition-colors py-2 px-3 rounded hover:bg-al-card/65 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan">
+        Docs
+      </a>
+      <a href="/playground" class="text-al-white hover:text-al-cyan transition-colors py-2 px-3 rounded hover:bg-al-card/65 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan">
+        Playground
+      </a>
+      <a href="/changelog" class="text-al-white hover:text-al-cyan transition-colors py-2 px-3 rounded hover:bg-al-card/65 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan">
+        Changelog
+      </a>
+      <a href="/contact" class="text-al-white hover:text-al-cyan transition-colors py-2 px-3 rounded hover:bg-al-card/65 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan">
+        Contact
+      </a>
+      <div class="h-px bg-al-border my-1 select-none pointer-events-none"></div>
+      <a 
+        href="https://github.com/AJAYMYTH/AfterLink" 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        class="text-al-cyan hover:opacity-85 transition-opacity py-2 px-3 flex items-center gap-2 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan rounded hover:bg-al-card/65"
+      >
+        <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.137 20.162 22 16.418 22 12c0-5.523-4.477-10-10-10z"></path>
+        </svg>
+        <span>GitHub</span>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  #mobile-menu {
+    display: flex;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-8px) scale(0.96);
+    transition: opacity 0.15s cubic-bezier(0.16, 1, 0.3, 1), transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.15s;
+  }
+  #mobile-menu.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+  }
+  @media (min-width: 768px) {
+    #mobile-menu, #mobile-menu.open {
+      display: none !important;
+    }
+  }
+</style>
+
+<script>
+  // Theme toggle script
+  const themeToggle = document.getElementById('theme-toggle');
+  themeToggle?.addEventListener('click', () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('al-theme', isDark ? 'dark' : 'light');
+  });
+
+  // Mobile menu expand script
+  const menuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  if (menuBtn && mobileMenu) {
+    const toggleMenu = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const isOpen = mobileMenu.classList.toggle('open');
+      menuBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    };
+
+    const closeMenu = () => {
+      mobileMenu.classList.remove('open');
+      menuBtn.setAttribute('aria-expanded', 'false');
+    };
+
+    menuBtn.addEventListener('click', toggleMenu);
+
+    // Escape key press handler
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && mobileMenu.classList.contains('open')) {
+        closeMenu();
+        menuBtn.focus();
+      }
+    });
+
+    // Document click listener to close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (
+        mobileMenu.classList.contains('open') &&
+        !mobileMenu.contains(target) &&
+        !menuBtn.contains(target)
+      ) {
+        closeMenu();
+      }
+    });
+  }
+</script>

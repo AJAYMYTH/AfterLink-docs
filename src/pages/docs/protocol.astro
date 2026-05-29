@@ -1,0 +1,243 @@
+---
+// src/pages/docs/protocol.astro
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const codecExample = `
+import { encodeFrame, decodeFrame } from '@afterlink/core';
+
+// Create a custom publisher frame
+const binaryFrame = encodeFrame({
+  type: 0x03,           // MSG_PUBLISH
+  seq: 7,               // Sequence No
+  payload: Buffer.from('Hello World!')
+});
+
+console.log(binaryFrame); 
+// Output: <Buffer af 1c 01 03 00 07 00 00 00 0c 48 65 6c 6c 6f 20 57 6f 72 6c 64 21>
+
+// Decoding on socket receipt
+const decoded = decodeFrame(binaryFrame);
+console.log(decoded.payload.toString()); // Hello World!
+`;
+---
+
+<DocsLayout 
+  title="Binary Protocol Layout" 
+  description="Deep-dive technical specification of AfterLink's 10-byte fixed header binary protocol."
+>
+  <div class="space-y-6">
+    <div class="border-b border-al-border/50 pb-4">
+      <h1 class="text-3xl font-bold tracking-tight text-al-white mb-2">Binary Frame Specification</h1>
+      <p class="text-sm text-al-muted leading-relaxed">
+        AfterLink v1.2.0 operates at the binary transport boundary. Every packet consists of a rigid, color-coded <strong>10-byte fixed header</strong>, followed immediately by an optional variable-length MessagePack-encoded payload.
+      </p>
+    </div>
+
+    <!-- Frame layout visualization grid -->
+    <h2 id="byte-layout" class="text-lg font-semibold tracking-tight text-al-white mt-8 mb-3 select-none">Header Byte Layout Mapping</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all mb-4">
+      Below is the logical arrangement of AfterLink's 10-byte header on the TCP network wire:
+    </p>
+
+    <!-- Visual header grid -->
+    <div class="bg-al-card border border-al-border rounded-xl p-6 mb-10 overflow-x-auto select-all shadow-sm">
+      <p class="text-[10px] text-al-muted font-mono uppercase tracking-widest mb-4 select-none">
+        Frame Header Structure
+      </p>
+      <div class="font-mono text-xs min-w-[600px] select-all">
+        <div class="flex mb-1">
+          <!-- Magic Segment -->
+          <div class="w-24 text-center text-al-cyan border border-al-cyan/30 rounded px-2 py-3.5 mx-0.5 bg-al-cyan/5">
+            Magic Identifier<br/>
+            <span class="text-[10px] text-al-muted font-bold font-sans">2 Bytes (0xAF 0x1C)</span>
+          </div>
+          <!-- Version Segment -->
+          <div class="w-16 text-center text-al-green border border-al-green/30 rounded px-2 py-3.5 mx-0.5 bg-al-green/5">
+            Version<br/>
+            <span class="text-[10px] text-al-muted font-bold font-sans">1 Byte (0x01)</span>
+          </div>
+          <!-- Type Segment -->
+          <div class="w-16 text-center text-yellow-500 border border-yellow-500/30 rounded px-2 py-3.5 mx-0.5 bg-yellow-500/5">
+            Type<br/>
+            <span class="text-[10px] text-al-muted font-bold font-sans">1 Byte</span>
+          </div>
+          <!-- Sequence Number Segment -->
+          <div class="w-24 text-center text-purple-400 border border-purple-400/30 rounded px-2 py-3.5 mx-0.5 bg-purple-400/5">
+            Sequence No.<br/>
+            <span class="text-[10px] text-al-muted font-bold font-sans">2 Bytes (0-65535)</span>
+          </div>
+          <!-- Payload Length Segment -->
+          <div class="w-28 text-center text-orange-400 border border-orange-400/30 rounded px-2 py-3.5 mx-0.5 bg-orange-400/5">
+            Payload Length<br/>
+            <span class="text-[10px] text-al-muted font-bold font-sans">4 Bytes (uint32)</span>
+          </div>
+          <!-- Variable Payload Segment -->
+          <div class="flex-1 text-center text-al-muted border border-dashed border-al-border rounded px-2 py-3.5 mx-0.5 bg-al-bg/30">
+            Payload Body Data<br/>
+            <span class="text-[10px] font-sans">Variable size (MessagePack bytes)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Field Definitions Table -->
+    <h2 id="field-reference" class="text-lg font-semibold tracking-tight text-al-white mt-10 mb-3 select-none">Field Definitions</h2>
+    
+    <div class="overflow-x-auto my-6 border border-al-border rounded-lg bg-al-dark/20 select-all">
+      <table class="w-full text-left font-mono text-xs divide-y divide-al-border select-all">
+        <thead class="bg-al-card text-al-cyan select-none">
+          <tr>
+            <th class="p-3">Field</th>
+            <th class="p-3">Size</th>
+            <th class="p-3">Wire Type</th>
+            <th class="p-3">Offset (Bytes)</th>
+            <th class="p-3">Description</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-al-border tabular-nums text-al-text select-all">
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">magic</td>
+            <td class="p-3">2 bytes</td>
+            <td class="p-3">UInt8[2]</td>
+            <td class="p-3">0 – 1</td>
+            <td class="p-3 select-all">Protocol identifier: fixed <code>0xAF 0x1C</code>. Restricts incoming socket streams.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold text-al-green">version</td>
+            <td class="p-3">1 byte</td>
+            <td class="p-3">UInt8</td>
+            <td class="p-3">2</td>
+            <td class="p-3 select-all">Protocol version encoder flag. Currently fixed to <code>0x01</code>.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold text-yellow-500">type</td>
+            <td class="p-3">1 byte</td>
+            <td class="p-3">UInt8</td>
+            <td class="p-3">3</td>
+            <td class="p-3 select-all">Message type byte determining how the frame is routed.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold text-purple-400">seq</td>
+            <td class="p-3">2 bytes</td>
+            <td class="p-3">UInt16BE</td>
+            <td class="p-3">4 – 5</td>
+            <td class="p-3 select-all">Sequence index for reliable RPC matching. Wraps at <code>65535</code>.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold text-orange-400">length</td>
+            <td class="p-3">4 bytes</td>
+            <td class="p-3">UInt32BE</td>
+            <td class="p-3">6 – 9</td>
+            <td class="p-3 select-all">Big-endian size count of payload data in bytes (max ~4.29 GB).</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold text-al-muted">payload</td>
+            <td class="p-3">variable</td>
+            <td class="p-3">Buffer</td>
+            <td class="p-3">10+</td>
+            <td class="p-3 select-all">MessagePack-encoded message body containing payload values.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Message Types Table -->
+    <h2 id="message-types" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">Message Types</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      The Message Type flag byte defines the routing channel behavior of the server:
+    </p>
+
+    <div class="overflow-x-auto my-6 border border-al-border rounded-lg bg-al-dark/20 select-all">
+      <table class="w-full text-left font-mono text-xs divide-y divide-al-border select-all">
+        <thead class="bg-al-card text-al-cyan select-none">
+          <tr>
+            <th class="p-3">Hex Value</th>
+            <th class="p-3">Constant</th>
+            <th class="p-3">Direction</th>
+            <th class="p-3">Purpose & Description</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-al-border tabular-nums text-al-text select-all">
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold">0x01</td>
+            <td class="p-3 text-al-cyan">MSG_REQUEST</td>
+            <td class="p-3 text-al-green">Client &rarr; Server</td>
+            <td class="p-3 select-all">RPC request — expects a responsive matching reply frame.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold">0x02</td>
+            <td class="p-3 text-al-cyan">MSG_RESPONSE</td>
+            <td class="p-3 text-yellow-500">Server &rarr; Client</td>
+            <td class="p-3 select-all">RPC response payload frame matched by sequence number.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold">0x03</td>
+            <td class="p-3 text-al-cyan">MSG_PUBLISH</td>
+            <td class="p-3 text-al-green">Client &rarr; Server</td>
+            <td class="p-3 select-all">Broadcast a message frame to a Pub/Sub channel.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold">0x04</td>
+            <td class="p-3 text-al-cyan">MSG_SUBSCRIBE</td>
+            <td class="p-3 text-al-green">Client &rarr; Server</td>
+            <td class="p-3 select-all">Subscribe to Pub/Sub channel notifications.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold">0x05</td>
+            <td class="p-3 text-al-cyan">MSG_BROADCAST</td>
+            <td class="p-3 text-yellow-500">Server &rarr; Client</td>
+            <td class="p-3 select-all">Fan-out pub/sub message forwarded to active subscribers.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold">0x06</td>
+            <td class="p-3 text-al-cyan">MSG_STREAM</td>
+            <td class="p-3 text-yellow-500">Server &rarr; Client</td>
+            <td class="p-3 select-all">Streaming data chunks (multi-frame chunk payloads).</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold">0x07</td>
+            <td class="p-3 text-al-cyan">MSG_STREAM_END</td>
+            <td class="p-3 text-yellow-500">Server &rarr; Client</td>
+            <td class="p-3 select-all">End of stream signal payload packet.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold">0x08</td>
+            <td class="p-3 text-al-cyan">MSG_ERROR</td>
+            <td class="p-3 text-al-muted">Both</td>
+            <td class="p-3 select-all">Error flag indicating payload parsing or connection errors.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold">0xFE</td>
+            <td class="p-3 text-al-cyan">MSG_ACK</td>
+            <td class="p-3 text-al-muted">Both</td>
+            <td class="p-3 select-all">Acknowledge code payload packet matched by sequence number.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold">0xFF</td>
+            <td class="p-3 text-al-cyan">MSG_PING</td>
+            <td class="p-3 text-al-muted">Both</td>
+            <td class="p-3 select-all">Keepalive heartbeat ping to check connection availability.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Low-Level Codec Code Example -->
+    <h2 id="codec-example" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">Low-Level Codec Code Example</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Using the <code>@afterlink/core</code> library, developers can encode and decode raw frames directly on top of raw socket streams:
+    </p>
+    <CodeBlock code={codecExample} lang="javascript" filename="codec.js" />
+
+    <!-- Navigation links -->
+    <div class="flex items-center justify-between border-t border-al-border/50 pt-8 mt-12 select-none">
+      <a href="/docs/installation" class="text-xs text-al-muted hover:text-al-cyan transition-colors font-mono">
+        &larr; Package Installation
+      </a>
+      <a href="/docs/validation" class="text-xs text-al-cyan hover:text-al-white transition-colors font-mono">
+        Automatic Validation &rarr;
+      </a>
+    </div>
+  </div>
+</DocsLayout>

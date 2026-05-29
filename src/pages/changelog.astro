@@ -1,0 +1,116 @@
+---
+// src/pages/changelog.astro
+import DocsLayout from '../layouts/DocsLayout.astro';
+
+const releases = [
+  {
+    version: 'v1.2.0',
+    date: '2026-05-30',
+    tag: 'latest',
+    changes: [
+      { type: 'new',  text: 'TLS/SSL support with afterlinks:// URI scheme' },
+      { type: 'new',  text: 'JWT authentication middleware built-in' },
+      { type: 'new',  text: 'Browser WebSocket bridge (@afterlink/browser)' },
+      { type: 'new',  text: 'Rate limiting: maxRequests + windowMs config' },
+      { type: 'new',  text: 'Payload compression (zlib) for frames > 1KB' },
+      { type: 'new',  text: 'Health endpoints: /__health, /__health/live, /__health/ready' },
+      { type: 'new',  text: 'Streaming support: res.stream() + client.stream()' },
+      { type: 'new',  text: 'CLI tool: afterlink ping, call, inspect, monitor' },
+      { type: 'fix',  text: 'Sequence number wrap-around edge case (65535 → 0)' },
+      { type: 'fix',  text: 'Memory leak on long-idle connections fixed' },
+      { type: 'fix',  text: 'Pub/Sub unsubscribe now correctly cleans up handlers' },
+      { type: 'perf', text: 'MessagePack serialization 18% faster (msgpackr upgrade)' },
+    ]
+  },
+  {
+    version: 'v1.1.0',
+    date: '2026-02-14',
+    tag: null,
+    changes: [
+      { type: 'new',  text: 'Pub/Sub routing engine — subscribe, publish, broadcast' },
+      { type: 'new',  text: 'Auto sequence numbering for all frames' },
+      { type: 'new',  text: 'Zod schema validation on route handlers' },
+      { type: 'new',  text: 'Middleware chain — server.use()' },
+      { type: 'fix',  text: 'Connection timeout handling improved' },
+    ]
+  },
+  {
+    version: 'v1.0.0',
+    date: '2025-11-01',
+    tag: null,
+    changes: [
+      { type: 'new', text: '10-byte binary frame protocol specification' },
+      { type: 'new', text: 'TCP persistent connections (Node.js net module)' },
+      { type: 'new', text: '@afterlink/server — route handler system' },
+      { type: 'new', text: '@afterlink/client — connect, request, disconnect' },
+      { type: 'new', text: 'MessagePack payload serialization' },
+      { type: 'new', text: 'Initial npm release' },
+    ]
+  }
+];
+---
+
+<DocsLayout 
+  title="Changelog" 
+  description="Chronological release logs, bug fixes, and feature roadmaps for AfterLink."
+>
+  <div class="space-y-8 max-w-3xl">
+    <div class="border-b border-al-border/50 pb-4 select-none">
+      <h1 class="text-3xl font-bold tracking-tight text-al-white mb-2">Changelog</h1>
+      <p class="text-sm text-al-muted leading-relaxed">
+        Chronological record of official AfterLink specification releases, package updates, and upcoming features.
+      </p>
+    </div>
+
+    <!-- Timeline Wrapper -->
+    <div class="relative pl-6 sm:pl-8 border-l border-al-border space-y-12 select-all">
+      {releases.map((release) => (
+        <div class="relative select-all">
+          
+          <!-- Chronological Marker Dot -->
+          <span class={`absolute -left-[31px] sm:-left-[39px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-al-bg border select-none ${
+            release.tag === 'latest' 
+              ? 'border-al-cyan shadow-[0_0_8px_rgba(0,216,255,0.3)]' 
+              : 'border-al-border'
+          }`}>
+            <span class={`h-1.5 w-1.5 rounded-full ${
+              release.tag === 'latest' ? 'bg-al-cyan animate-pulse' : 'bg-al-muted/50'
+            }`}></span>
+          </span>
+          
+          <!-- Version Info -->
+          <div class="flex flex-wrap items-baseline gap-2.5 mb-4 select-none">
+            <h2 class="text-lg font-mono font-bold text-al-white">{release.version}</h2>
+            {release.tag && (
+              <span class="rounded bg-al-cyan/10 border border-al-cyan/30 px-1.5 py-0.5 font-mono text-[9px] font-semibold text-al-cyan uppercase tracking-wider select-none">
+                {release.tag}
+              </span>
+            )}
+            <span class="font-mono text-3xs text-al-muted tracking-tight select-none">
+              Released: {release.date}
+            </span>
+          </div>
+          
+          <!-- Changes List -->
+          <ul class="space-y-3 font-mono text-xs select-all">
+            {release.changes.map((change) => {
+              let badgeColor = '';
+              if (change.type === 'new') badgeColor = 'bg-al-green/10 border-al-green/30 text-al-green';
+              else if (change.type === 'fix') badgeColor = 'bg-yellow-400/10 border-yellow-400/30 text-yellow-400';
+              else if (change.type === 'perf') badgeColor = 'bg-al-blue/10 border-al-blue/30 text-al-cyan';
+              
+              return (
+                <li class="flex items-start gap-3 select-all">
+                  <span class={`rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider border select-none shrink-0 w-11 text-center ${badgeColor}`}>
+                    {change.type}
+                  </span>
+                  <span class="text-al-text select-all leading-relaxed pt-0.5">{change.text}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</DocsLayout>

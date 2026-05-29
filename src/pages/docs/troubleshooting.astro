@@ -1,0 +1,114 @@
+---
+// src/pages/docs/troubleshooting.astro
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const issues = [
+  {
+    problem: 'ECONNREFUSED',
+    cause: 'Server is not running or client bound to the wrong TCP port.',
+    fix: 'Verify server.listen() was executed successfully. Confirm port parameters are identical in both server and client configurations.',
+    code: null
+  },
+  {
+    problem: 'Frame parse error (code 100)',
+    cause: 'Magic segment byte mismatch — indicates connection of a non-AfterLink raw TCP/HTTP client.',
+    fix: 'Ensure all peer endpoints utilize the @afterlink/client or @afterlink/browser SDKs. Reject unencrypted raw socket scanners.',
+    code: null
+  },
+  {
+    problem: 'Validation error (code 422)',
+    cause: 'Frame payload buffer structure does not conform to the registered Zod verification schema.',
+    fix: 'Inspect client transmission models. Use z.any() to skip schema validation for optional payload fields during development stages.',
+    code: 'z.object({ name: z.string(), email: z.string().email() })'
+  },
+  {
+    problem: 'JWT auth fails (code 401)',
+    cause: 'Handshake token signature secret mismatch or expiration claim threshold exceeded.',
+    fix: 'Verify that both client and server nodes share the exact base64 secret key. Check expiration (exp) attributes.',
+    code: null
+  },
+  {
+    problem: 'ECONNRESET on Windows systems',
+    cause: 'Windows Firewall configuration blocks inbound node socket execution paths.',
+    fix: 'Add an explicit Windows Inbound Firewall Allowance Rule for node.exe executable on the configured AfterLink port.',
+    code: null
+  },
+  {
+    problem: 'High memory accumulation',
+    cause: 'Zombie socket connections accumulating on server due to client network dropouts.',
+    fix: 'Configure explicit connection limitations and idle heartbeats inside your Server constructor parameters.',
+    code: 'new Server({ port: 4000, maxConnections: 500, idleTimeout: 60000 })'
+  },
+  {
+    problem: 'Pub/Sub messages out of order',
+    cause: 'Transmission sequences are only guaranteed within single matching channel groups.',
+    fix: 'Structure multi-topic message delivery pipelines using sequence numbers or timestamps if order across topics is critical.',
+    code: null
+  },
+  {
+    problem: 'Browser client not connecting',
+    cause: 'WebSocket bridge gateway is disabled or missing CORS configuration on backend.',
+    fix: 'Activate WebSocket support in server options and bind client via ws:// URIs instead of native TCP afterlink:// schemes.',
+    code: 'new Server({ port: 4000, browser: { enabled: true, corsOrigins: ["*"] } })'
+  },
+  {
+    problem: 'Route not found (code 404)',
+    cause: 'server.on() string identifier does not match incoming client.request() method.',
+    fix: 'Route strings are exact, case-sensitive match keys. Check casing, spacing, and route spelling on both endpoints.',
+    code: null
+  },
+  {
+    problem: 'afterlink CLI not found',
+    cause: 'The global development inspector package is not loaded into the system environment paths.',
+    fix: 'Install the AfterLink command-line tools distribution globally through npm.',
+    code: 'npm install -g @afterlink/cli'
+  },
+];
+---
+
+<DocsLayout 
+  title="Troubleshooting Guide" 
+  description="Common issues, error codes, and step-by-step diagnostic solutions for AfterLink server and client setups."
+>
+  <div class="space-y-6">
+    <div class="border-b border-al-border/50 pb-4">
+      <h1 class="text-3xl font-bold tracking-tight text-al-white mb-2">Common Issues</h1>
+      <p class="text-sm text-al-muted leading-relaxed">
+        Quick diagnostic checklists and code-level solutions for common protocol compilation and network routing anomalies.
+      </p>
+    </div>
+
+    <!-- Issues Loop -->
+    <div class="space-y-6">
+      {issues.map((issue) => (
+        <div class="bg-al-card border border-al-border rounded-xl overflow-hidden shadow-sm hover:border-red-500/20 transition-colors">
+          <!-- Card Header -->
+          <div class="px-6 py-3.5 border-b border-al-border bg-red-500/[0.03] flex items-center justify-between select-none">
+            <span class="text-red-400 font-mono font-bold text-xs">{issue.problem}</span>
+            <span class="text-[9px] font-mono text-al-muted uppercase tracking-wider font-medium border border-al-border rounded px-1.5 py-0.5">issue</span>
+          </div>
+          
+          <!-- Card Body -->
+          <div class="px-6 py-5 space-y-4">
+            <div>
+              <p class="text-[9px] text-al-muted font-mono uppercase tracking-widest mb-1.5 font-bold select-none">Underlying Cause</p>
+              <p class="text-xs text-al-text leading-relaxed select-all">{issue.cause}</p>
+            </div>
+            
+            <div>
+              <p class="text-[9px] text-al-muted font-mono uppercase tracking-widest mb-1.5 font-bold select-none">Recommended Fix</p>
+              <p class="text-xs text-al-text leading-relaxed select-all">{issue.fix}</p>
+            </div>
+
+            {issue.code && (
+              <div class="pt-2">
+                <p class="text-[9px] text-al-muted font-mono uppercase tracking-widest mb-1.5 font-bold select-none">Reference Code</p>
+                <pre class="bg-al-bg border border-al-border rounded-lg px-4 py-3 font-mono text-2xs text-al-cyan overflow-x-auto shadow-inner select-all">{issue.code}</pre>
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</DocsLayout>

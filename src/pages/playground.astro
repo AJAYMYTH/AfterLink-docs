@@ -1,0 +1,263 @@
+---
+// src/pages/playground.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout title="Interactive Playground — AfterLink">
+  <Navbar />
+  
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-16 flex-1 flex flex-col justify-center">
+
+    <div class="mb-10 text-center select-none">
+      <div class="mb-3 inline-flex items-center gap-1.5 rounded-full border border-al-cyan/30 bg-al-cyan/5 px-3 py-1 font-mono text-[10px] text-al-cyan tracking-wider uppercase">
+        <span class="h-1.5 w-1.5 rounded-full bg-al-cyan animate-pulse"></span>
+        Interactive Tool
+      </div>
+      <h1 class="text-3xl font-mono font-bold text-al-white">
+        AfterLink Frame Builder
+      </h1>
+      <p class="text-al-muted mt-3 text-sm max-w-xl mx-auto leading-relaxed">
+        Assemble and inspect AfterLink binary frames directly in your browser.
+        This simulator displays exactly what bytes flow across socket pipes.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+
+      <!-- Left Panel: Builder Options -->
+      <div class="bg-al-card border border-al-border rounded-xl p-6 select-none shadow-sm">
+        <h2 class="text-al-white font-mono font-semibold mb-6 border-b border-al-border pb-3">Frame Configuration</h2>
+
+        <div class="space-y-5">
+          <div>
+            <label for="pg-type" class="text-[10px] text-al-muted font-mono uppercase tracking-widest block mb-2 font-semibold">
+              Message Type (Byte 3)
+            </label>
+            <select 
+              id="pg-type"
+              class="w-full bg-al-bg border border-al-border rounded-lg px-3 py-2 text-al-text font-mono text-sm focus:border-al-cyan focus:ring-1 focus:ring-al-cyan outline-none transition-colors cursor-pointer"
+            >
+              <option value="01">0x01 — MSG_REQUEST (C &rarr; S)</option>
+              <option value="02">0x02 — MSG_RESPONSE (S &rarr; C)</option>
+              <option value="03" selected>0x03 — MSG_PUBLISH (C &rarr; S)</option>
+              <option value="04">0x04 — MSG_SUBSCRIBE (C &rarr; S)</option>
+              <option value="05">0x05 — MSG_BROADCAST (S &rarr; C)</option>
+              <option value="08">0x08 — MSG_ERROR (Both)</option>
+              <option value="FE">0xFE — MSG_ACK (Both)</option>
+              <option value="FF">0xFF — MSG_PING (Heartbeat)</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="pg-seq" class="text-[10px] text-al-muted font-mono uppercase tracking-widest block mb-2 font-semibold">
+              Sequence Number (Bytes 4 - 5)
+            </label>
+            <input 
+              id="pg-seq" 
+              type="number" 
+              min="0" 
+              max="65535" 
+              value="7"
+              class="w-full bg-al-bg border border-al-border rounded-lg px-3 py-2 text-al-text font-mono text-sm focus:border-al-cyan focus:ring-1 focus:ring-al-cyan outline-none transition-colors" 
+            />
+          </div>
+
+          <div>
+            <label for="pg-payload" class="text-[10px] text-al-muted font-mono uppercase tracking-widest block mb-2 font-semibold">
+              Payload Payload (JSON)
+            </label>
+            <textarea 
+              id="pg-payload" 
+              rows="5"
+              class="w-full bg-al-bg border border-al-border rounded-lg px-3 py-2 text-al-text font-mono text-xs focus:border-al-cyan focus:ring-1 focus:ring-al-cyan outline-none transition-colors resize-none font-mono"
+            >{`{"route":"chat.lobby","text":"Hello AfterLink!"}`}</textarea>
+          </div>
+
+          <button 
+            id="pg-build"
+            class="w-full bg-al-cyan text-al-bg font-mono font-bold py-3 rounded-lg hover:opacity-90 active:scale-[0.99] transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-al-cyan"
+          >
+            Serialize Frame
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Panel: Visual Hex Output & Legend -->
+      <div class="space-y-6 flex flex-col">
+
+        <!-- Byte visualization -->
+        <div class="bg-al-card border border-al-border rounded-xl p-6 shadow-sm">
+          <h2 class="text-al-white font-mono font-semibold mb-4 border-b border-al-border pb-3 select-none">Frame Bytes (Hexadecimal)</h2>
+          <div id="pg-bytes" class="flex flex-wrap gap-1.5 font-mono text-xs min-h-[60px] select-all py-2 justify-center">
+            <span class="text-al-muted italic select-none">Configure and click "Serialize Frame" to generate wire bytes.</span>
+          </div>
+          
+          <!-- Colored Legend -->
+          <div id="pg-legend" class="mt-6 border-t border-al-border/50 pt-4 flex flex-wrap gap-x-4 gap-y-2 text-2xs font-mono select-none hidden">
+            <span class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded bg-al-cyan inline-block"></span> Magic
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded bg-green-500 inline-block"></span> Version
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded bg-yellow-400 inline-block"></span> Type
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded bg-purple-400 inline-block"></span> Sequence
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded bg-orange-400 inline-block"></span> Length
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded bg-al-muted inline-block"></span> Payload
+            </span>
+          </div>
+        </div>
+
+        <!-- Size Stats Cards -->
+        <div id="pg-stats" class="grid grid-cols-3 gap-4 hidden select-none">
+          <div class="bg-al-card border border-al-border rounded-lg p-3 text-center">
+            <p class="text-al-cyan font-mono font-bold text-lg tabular-nums" id="stat-total">0</p>
+            <p class="text-al-muted text-3xs uppercase mt-1 tracking-wide">total bytes</p>
+          </div>
+          <div class="bg-al-card border border-al-border rounded-lg p-3 text-center">
+            <p class="text-al-cyan font-mono font-bold text-lg tabular-nums">10</p>
+            <p class="text-al-muted text-3xs uppercase mt-1 tracking-wide">header bytes</p>
+          </div>
+          <div class="bg-al-card border border-al-border rounded-lg p-3 text-center">
+            <p class="text-al-cyan font-mono font-bold text-lg tabular-nums" id="stat-payload">0</p>
+            <p class="text-al-muted text-3xs uppercase mt-1 tracking-wide">payload bytes</p>
+          </div>
+        </div>
+
+        <!-- Decoded inspect view -->
+        <div class="bg-al-card border border-al-border rounded-xl p-6 shadow-sm flex-1 flex flex-col min-h-[180px]">
+          <h2 class="text-al-white font-mono font-semibold mb-4 border-b border-al-border pb-3 select-none">Decoded Frame Struct</h2>
+          <pre id="pg-decoded" class="text-al-muted text-xs font-mono leading-relaxed whitespace-pre-wrap select-all flex-1">Waiting for serialization action…</pre>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <Footer />
+</BaseLayout>
+
+<script>
+  const buildBtn = document.getElementById('pg-build');
+
+  if (buildBtn) {
+    buildBtn.addEventListener('click', () => {
+      const typeHex = (document.getElementById('pg-type') as HTMLSelectElement).value;
+      const seqNum = parseInt((document.getElementById('pg-seq') as HTMLInputElement).value) || 0;
+      const payloadStr = (document.getElementById('pg-payload') as HTMLTextAreaElement).value.trim();
+
+      let payloadBytes = [];
+      let payloadDecoded = {};
+      
+      try {
+        payloadDecoded = JSON.parse(payloadStr);
+        // UTF8 bytes representation for visual simplicity
+        const enc = new TextEncoder();
+        payloadBytes = Array.from(enc.encode(JSON.stringify(payloadDecoded)));
+      } catch (e) {
+        payloadBytes = Array.from(new TextEncoder().encode(payloadStr));
+        payloadDecoded = { rawText: payloadStr };
+      }
+
+      const len = payloadBytes.length;
+
+      // Construct 10-byte header
+      const header = [
+        0xAF, 0x1C,                          // magic (2B)
+        0x01,                                 // version (1B)
+        parseInt(typeHex, 16),                // type (1B)
+        (seqNum >> 8) & 0xFF, seqNum & 0xFF,   // sequence (2B)
+        (len >> 24) & 0xFF, (len >> 16) & 0xFF,
+        (len >> 8) & 0xFF, len & 0xFF         // length (4B)
+      ];
+
+      const toHex = (n: number) => n.toString(16).padStart(2, '0').toUpperCase();
+
+      const colors = [
+        'bg-al-cyan text-black',    // magic 1
+        'bg-al-cyan text-black',    // magic 2
+        'bg-green-500 text-black',  // version
+        'bg-yellow-400 text-black', // type
+        'bg-purple-400 text-black', // seq 1
+        'bg-purple-400 text-black', // seq 2
+        'bg-orange-400 text-black', // len 1
+        'bg-orange-400 text-black', // len 2
+        'bg-orange-400 text-black', // len 3
+        'bg-orange-400 text-black', // len 4
+      ];
+
+      const bytesEl = document.getElementById('pg-bytes');
+      if (bytesEl) {
+        bytesEl.innerHTML = '';
+
+        // Add header segment elements
+        header.forEach((byte, i) => {
+          const span = document.createElement('span');
+          span.className = `${colors[i]} rounded px-2.5 py-1 font-mono text-xs font-bold shadow-sm`;
+          span.textContent = toHex(byte);
+          bytesEl.appendChild(span);
+        });
+
+        // Add payload segment elements (show first 24 bytes, then expand)
+        const showBytes = payloadBytes.slice(0, 24);
+        showBytes.forEach(byte => {
+          const span = document.createElement('span');
+          span.className = 'bg-al-border text-al-text rounded px-2.5 py-1 font-mono text-xs border border-al-border/50';
+          span.textContent = toHex(byte);
+          bytesEl.appendChild(span);
+        });
+
+        if (payloadBytes.length > 24) {
+          const ell = document.createElement('span');
+          ell.className = 'text-al-muted font-mono text-xs self-center ml-2 italic';
+          ell.textContent = `+${payloadBytes.length - 24} more bytes`;
+          bytesEl.appendChild(ell);
+        }
+      }
+
+      // Display Legend
+      document.getElementById('pg-legend')?.classList.remove('hidden');
+
+      // Decode inspect JSON
+      const typeNames = {
+        '01': 'MSG_REQUEST',
+        '02': 'MSG_RESPONSE',
+        '03': 'MSG_PUBLISH',
+        '04': 'MSG_SUBSCRIBE',
+        '05': 'MSG_BROADCAST',
+        '08': 'MSG_ERROR',
+        'FE': 'MSG_ACK',
+        'FF': 'MSG_PING'
+      };
+
+      const decodedEl = document.getElementById('pg-decoded');
+      if (decodedEl) {
+        decodedEl.textContent = JSON.stringify({
+          magic: '0xAF 0x1C (Valid)',
+          version: '0x01 (v1)',
+          type: `0x${typeHex} (${typeNames[typeHex] || 'UNKNOWN_FRAME'})`,
+          sequence: seqNum,
+          length: `${len} Bytes`,
+          payload: payloadDecoded
+        }, null, 2);
+      }
+
+      // Display and write size statistics counters
+      document.getElementById('pg-stats')?.classList.remove('hidden');
+      
+      const totalEl = document.getElementById('stat-total');
+      const payloadEl = document.getElementById('stat-payload');
+      if (totalEl) totalEl.textContent = String(10 + len);
+      if (payloadEl) payloadEl.textContent = String(len);
+    });
+  }
+</script>

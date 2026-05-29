@@ -1,0 +1,70 @@
+---
+// src/components/Sidebar.astro
+const { class: className = '' } = Astro.props;
+
+const currentPathname = Astro.url.pathname;
+
+const navItems = [
+  { section: 'Introduction', links: [
+    { label: 'Getting Started', href: '/docs' },
+    { label: 'Installation',    href: '/docs/installation' },
+  ]},
+  { section: 'Protocol Spec', links: [
+    { label: 'Binary Layout',   href: '/docs/protocol' },
+    { label: 'Automatic Validation', href: '/docs/validation' },
+  ]},
+  { section: 'API Reference', links: [
+    { label: 'Server & Client',  href: '/docs/api' },
+    { label: 'Pub/Sub System',   href: '/docs/pubsub' },
+  ]},
+  { section: 'More', links: [
+    { label: 'AI Agent Skills',   href: '/docs/skills' },
+    { label: 'Troubleshooting',   href: '/docs/troubleshooting' },
+    { label: 'Playground',        href: '/playground' },
+    { label: 'Changelog',         href: '/changelog' },
+    { label: 'Contact',           href: '/contact' },
+    { label: 'npm Package ↗',     href: 'https://www.npmjs.com/package/afterlink' },
+  ]},
+];
+
+const isActive = (href: string) => {
+  const cleanPath = currentPathname.replace(/\/$/, "");
+  const cleanHref = href.replace(/\/$/, "");
+  return cleanPath === cleanHref;
+};
+---
+
+<nav class={`w-full py-8 px-4 bg-transparent ${className}`} aria-label="Documentation navigation">
+  <div class="space-y-6">
+    {navItems.map(({ section, links }) => (
+      <div>
+        <h3 class="font-mono text-2xs font-bold uppercase tracking-widest text-al-muted select-none mb-3 px-3">
+          {section}
+        </h3>
+        <ul class="space-y-1.5 border-l border-al-border ml-3.5">
+          {links.map(({ label, href }) => {
+            const active = isActive(href);
+            const isExternal = href.startsWith('http');
+            return (
+              <li>
+                <a 
+                  href={href}
+                  target={isExternal ? '_blank' : undefined}
+                  rel={isExternal ? 'noopener noreferrer' : undefined}
+                  class={`block py-1.5 pl-4 -ml-px text-sm transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan focus-visible:rounded-r-md ${
+                    active 
+                      ? 'text-al-cyan border-l-2 border-al-cyan font-medium bg-al-cyan/5' 
+                      : 'text-al-muted hover:text-al-white hover:border-l hover:border-al-muted/50 border-l border-transparent'
+                  }`}
+                  aria-current={active ? 'page' : undefined}
+                >
+                  {label}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    ))}
+  </div>
+</nav>

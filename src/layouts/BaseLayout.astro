@@ -1,0 +1,57 @@
+---
+// src/layouts/BaseLayout.astro
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { 
+  title, 
+  description = "AfterLink — A high-performance, binary-precise persistent application-layer protocol with native pub/sub and built-in schema validation." 
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en" class="h-full scroll-smooth">
+  <head>
+    <script is:inline>
+      const stored = localStorage.getItem('al-theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (stored === 'dark' || (!stored && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="AfterLink" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <title>{title} | AfterLink Docs</title>
+    <meta name="description" content={description} />
+    
+    <!-- Open Graph Metadata -->
+    <meta property="og:title" content={`${title} | AfterLink Docs`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://afterlink.dev" />
+    <meta name="twitter:card" content="summary_large_image" />
+    
+    <!-- Meta Theme Color for Browsers -->
+    <meta name="theme-color" content="#000000" />
+  </head>
+  <body class="h-full bg-al-black text-al-text font-body selection:bg-al-cyan selection:text-al-black">
+    <!-- Accessibility Skip Link -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:bg-al-cyan focus:text-al-black focus:px-4 focus:py-2 focus:rounded focus:z-50 focus:outline-none focus:ring-2 focus:ring-al-cyan font-mono text-sm">
+      Skip to content
+    </a>
+    
+    <div class="flex flex-col min-h-full">
+      <slot />
+    </div>
+  </body>
+</html>

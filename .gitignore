@@ -1,0 +1,38 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/dist
+
+# astro db
+.astro
+
+# serverless
+.serverless
+
+# server
+.netlify
+
+# misc
+.DS_Store
+Thumbs.db
+.env
+.env.local
+.env.production
+.env.development
+.env.staging
+.env.test
+
+# IDEs and editors
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

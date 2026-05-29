@@ -1,0 +1,182 @@
+---
+// src/pages/contact.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout title="Contact Support — AfterLink">
+  <Navbar />
+  
+  <div class="max-w-xl mx-auto px-4 sm:px-6 py-20 flex-1 flex flex-col justify-center">
+
+    <div class="text-center mb-10 select-none">
+      <p class="text-al-cyan font-mono text-sm uppercase tracking-widest mb-3">Support Channel</p>
+      <h1 class="text-3xl font-mono font-bold text-al-white">Get in Touch</h1>
+      <p class="text-al-muted mt-3 text-sm leading-relaxed max-w-md mx-auto">
+        Have questions, integration inquiries, bug reports, or partnership proposals? Drop a line below.
+      </p>
+      <a 
+        href="mailto:contact.javaliajayakumar@gmail.com"
+        class="text-al-cyan font-mono text-sm hover:underline mt-3 inline-block focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan focus-visible:rounded px-1.5 py-0.5"
+      >
+        contact.javaliajayakumar@gmail.com
+      </a>
+    </div>
+
+    <!-- Contact Form -->
+    <form 
+      id="contact-form"
+      class="space-y-6 bg-al-card border border-al-border p-6 sm:p-8 rounded-xl shadow-sm"
+    >
+      <div>
+        <label for="contact-name" class="text-[10px] text-al-muted font-mono uppercase tracking-widest block mb-2 font-semibold select-none">
+          Name
+        </label>
+        <input 
+          id="contact-name"
+          type="text" 
+          name="name" 
+          required 
+          placeholder="Javali Ajayakumar"
+          class="w-full bg-al-bg border border-al-border rounded-lg px-4 py-3 text-al-text font-mono text-sm placeholder:text-al-muted focus:border-al-cyan focus:ring-1 focus:ring-al-cyan outline-none transition-colors" 
+        />
+      </div>
+
+      <div>
+        <label for="contact-email" class="text-[10px] text-al-muted font-mono uppercase tracking-widest block mb-2 font-semibold select-none">
+          Email Address
+        </label>
+        <input 
+          id="contact-email"
+          type="email" 
+          name="email" 
+          required 
+          placeholder="you@example.com"
+          class="w-full bg-al-bg border border-al-border rounded-lg px-4 py-3 text-al-text font-mono text-sm placeholder:text-al-muted focus:border-al-cyan focus:ring-1 focus:ring-al-cyan outline-none transition-colors" 
+        />
+      </div>
+
+      <div>
+        <label for="contact-subject" class="text-[10px] text-al-muted font-mono uppercase tracking-widest block mb-2 font-semibold select-none">
+          Subject
+        </label>
+        <select 
+          id="contact-subject"
+          name="subject"
+          class="w-full bg-al-bg border border-al-border rounded-lg px-4 py-3 text-al-text font-mono text-sm focus:border-al-cyan focus:ring-1 focus:ring-al-cyan outline-none transition-colors cursor-pointer"
+        >
+          <option>Bug report</option>
+          <option>Feature request</option>
+          <option>Partnership</option>
+          <option>General question</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="contact-message" class="text-[10px] text-al-muted font-mono uppercase tracking-widest block mb-2 font-semibold select-none">
+          Message
+        </label>
+        <textarea 
+          id="contact-message"
+          name="message" 
+          rows="5" 
+          required 
+          placeholder="Describe your question or issue details…"
+          class="w-full bg-al-bg border border-al-border rounded-lg px-4 py-3 text-al-text font-mono text-xs placeholder:text-al-muted focus:border-al-cyan focus:ring-1 focus:ring-al-cyan outline-none transition-colors resize-none font-mono"
+        ></textarea>
+      </div>
+
+      <button 
+        type="submit"
+        class="w-full bg-al-cyan text-al-bg font-mono font-bold py-3 rounded-lg hover:opacity-90 active:scale-[0.99] transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-al-cyan"
+      >
+        Send Message
+      </button>
+
+      <!-- Submission Status Panel -->
+      <p id="form-status" class="text-center text-xs font-mono py-2 rounded border hidden" aria-live="polite"></p>
+
+    </form>
+
+    <!-- Alternative issue trackers -->
+    <div class="mt-12 text-center select-none">
+      <p class="text-xs text-al-muted leading-relaxed">Prefer public trackers?</p>
+      <a 
+        href="https://github.com/AJAYMYTH/AfterLink/issues"
+        target="_blank" 
+        rel="noopener noreferrer"
+        class="text-al-cyan font-mono text-xs hover:underline mt-1 inline-block focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan focus-visible:rounded px-1"
+      >
+        Open a GitHub Issue ↗
+      </a>
+    </div>
+
+  </div>
+
+  <Footer />
+</BaseLayout>
+
+<script>
+  const form = document.getElementById('contact-form') as HTMLFormElement;
+  const statusEl = document.getElementById('form-status');
+
+  if (form && statusEl) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const submitBtn = form.querySelector('button[type=submit]') as HTMLButtonElement;
+      const originalBtnText = submitBtn.textContent;
+      
+      submitBtn.textContent = 'Sending…';
+      submitBtn.disabled = true;
+
+      statusEl.classList.add('hidden');
+      statusEl.className = 'text-center text-xs font-mono py-2 rounded border hidden';
+
+      const name = (form.querySelector('#contact-name') as HTMLInputElement).value;
+      const email = (form.querySelector('#contact-email') as HTMLInputElement).value;
+      const subject = (form.querySelector('#contact-subject') as HTMLSelectElement).value;
+      const message = (form.querySelector('#contact-message') as HTMLTextAreaElement).value;
+
+      try {
+        const res = await fetch('https://formsubmit.co/ajax/contact.javaliajayakumar@gmail.com', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            _subject: `AfterLink Support Request: ${subject}`,
+            _replyto: email,
+            message
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success === 'true' || res.status === 200) {
+            statusEl.textContent = 'Message sent successfully. I will reply within 24 hours.';
+            statusEl.classList.remove('hidden');
+            statusEl.classList.add('text-al-green', 'border-al-green/20', 'bg-al-green/5');
+            form.reset();
+          } else {
+            throw new Error(data.message || 'Submission rejected');
+          }
+        } else {
+          throw new Error('Server connection error');
+        }
+      } catch (err) {
+        statusEl.textContent = 'Something went wrong. Email directly at contact.javaliajayakumar@gmail.com';
+        statusEl.classList.remove('hidden');
+        statusEl.classList.add('text-red-400', 'border-red-400/20', 'bg-red-400/5');
+      } finally {
+        submitBtn.textContent = originalBtnText;
+        submitBtn.disabled = false;
+      }
+    });
+  }
+</script>

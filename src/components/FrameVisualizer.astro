@@ -1,0 +1,262 @@
+---
+// src/components/FrameVisualizer.astro
+---
+
+<div class="frame-viz-card rounded-xl border border-al-border bg-al-dark/60 p-6 sm:p-8 font-mono select-none my-8 max-w-2xl mx-auto">
+  <div class="flex items-center justify-between mb-6 border-b border-al-border/50 pb-4">
+    <div class="flex items-center gap-2">
+      <span class="h-2 w-2 rounded-full bg-al-cyan animate-pulse"></span>
+      <span class="text-xs font-semibold text-al-white uppercase tracking-wider">AfterLink 10-Byte Frame Layout</span>
+    </div>
+    <div class="text-[10px] text-al-muted tracking-tight tabular-nums">
+      Total: 10B Header + Variable Payload
+    </div>
+  </div>
+
+  <!-- Byte grid visualizer -->
+  <div class="flex flex-wrap gap-2 justify-center py-4" role="group" aria-label="Interactive Binary Frame Structure">
+    
+    <!-- Magic Segment -->
+    <button 
+      type="button"
+      class="byte-segment group focus:outline-none focus-visible:ring-2 focus-visible:ring-al-cyan rounded cursor-pointer" 
+      data-segment="magic"
+      aria-label="Magic segment (2 Bytes), current value 0xAF 0x1C"
+      aria-describedby="segment-details-box"
+    >
+      <div class="text-[10px] text-al-muted text-center mb-1 group-hover:text-al-cyan transition-colors">Magic (2B)</div>
+      <div class="flex gap-1">
+        <span class="byte-cell font-bold" data-index="0">AF</span>
+        <span class="byte-cell font-bold" data-index="1">1C</span>
+      </div>
+    </button>
+
+    <!-- Version Segment -->
+    <button 
+      type="button"
+      class="byte-segment group focus:outline-none focus-visible:ring-2 focus-visible:ring-al-cyan rounded cursor-pointer" 
+      data-segment="version"
+      aria-label="Version segment (1 Byte), current value 0x01"
+      aria-describedby="segment-details-box"
+    >
+      <div class="text-[10px] text-al-muted text-center mb-1 group-hover:text-al-cyan transition-colors">Ver (1B)</div>
+      <div class="flex">
+        <span class="byte-cell" data-index="2">01</span>
+      </div>
+    </button>
+
+    <!-- Type Segment -->
+    <button 
+      type="button"
+      class="byte-segment group focus:outline-none focus-visible:ring-2 focus-visible:ring-al-cyan rounded cursor-pointer" 
+      data-segment="type"
+      aria-label="Type segment (1 Byte), current value 0x03"
+      aria-describedby="segment-details-box"
+    >
+      <div class="text-[10px] text-al-muted text-center mb-1 group-hover:text-al-cyan transition-colors">Type (1B)</div>
+      <div class="flex">
+        <span class="byte-cell highlight" data-index="3">03</span>
+      </div>
+    </button>
+
+    <!-- Sequence Number Segment -->
+    <button 
+      type="button"
+      class="byte-segment group focus:outline-none focus-visible:ring-2 focus-visible:ring-al-cyan rounded cursor-pointer" 
+      data-segment="seq"
+      aria-label="Sequence Number segment (2 Bytes), current value 0x00 0x07"
+      aria-describedby="segment-details-box"
+    >
+      <div class="text-[10px] text-al-muted text-center mb-1 group-hover:text-al-cyan transition-colors">Seq (2B)</div>
+      <div class="flex gap-1">
+        <span class="byte-cell" data-index="4">00</span>
+        <span class="byte-cell" data-index="5">07</span>
+      </div>
+    </button>
+
+    <!-- Payload Length Segment -->
+    <button 
+      type="button"
+      class="byte-segment group focus:outline-none focus-visible:ring-2 focus-visible:ring-al-cyan rounded cursor-pointer" 
+      data-segment="length"
+      aria-label="Payload Length segment (4 Bytes), current value 12 bytes"
+      aria-describedby="segment-details-box"
+    >
+      <div class="text-[10px] text-al-muted text-center mb-1 group-hover:text-al-cyan transition-colors">Length (4B)</div>
+      <div class="flex gap-1">
+        <span class="byte-cell" data-index="6">00</span>
+        <span class="byte-cell" data-index="7">00</span>
+        <span class="byte-cell" data-index="8">00</span>
+        <span class="byte-cell" data-index="9">0C</span>
+      </div>
+    </button>
+
+  </div>
+
+  <!-- Payload Hex block -->
+  <div class="border-t border-al-border/30 pt-4 mt-2 flex flex-col items-center select-all">
+    <div class="text-[10px] text-al-muted mb-2 tracking-wide uppercase">Payload (12 Bytes - UTF8: "Hello World!")</div>
+    <div class="flex flex-wrap gap-1.5 justify-center max-w-md">
+      <span class="text-xs px-2 py-1 rounded bg-al-black/40 border border-al-border/50 text-al-muted hover:text-al-white transition-colors cursor-help" title="H">48</span>
+      <span class="text-xs px-2 py-1 rounded bg-al-black/40 border border-al-border/50 text-al-muted hover:text-al-white transition-colors cursor-help" title="e">65</span>
+      <span class="text-xs px-2 py-1 rounded bg-al-black/40 border border-al-border/50 text-al-muted hover:text-al-white transition-colors cursor-help" title="l">6C</span>
+      <span class="text-xs px-2 py-1 rounded bg-al-black/40 border border-al-border/50 text-al-muted hover:text-al-white transition-colors cursor-help" title="l">6C</span>
+      <span class="text-xs px-2 py-1 rounded bg-al-black/40 border border-al-border/50 text-al-muted hover:text-al-white transition-colors cursor-help" title="o">6F</span>
+      <span class="text-xs px-2 py-1 rounded bg-al-black/40 border border-al-border/50 text-al-muted hover:text-al-white transition-colors cursor-help" title="space">20</span>
+      <span class="text-xs px-2 py-1 rounded bg-al-black/40 border border-al-border/50 text-al-muted hover:text-al-white transition-colors cursor-help" title="W">57</span>
+      <span class="text-xs px-2 py-1 rounded bg-al-black/40 border border-al-border/50 text-al-muted hover:text-al-white transition-colors cursor-help" title="o">6F</span>
+      <span class="text-xs px-2 py-1 rounded bg-al-black/40 border border-al-border/50 text-al-muted hover:text-al-white transition-colors cursor-help" title="r">72</span>
+      <span class="text-xs px-2 py-1 rounded bg-al-black/40 border border-al-border/50 text-al-muted hover:text-al-white transition-colors cursor-help" title="l">6C</span>
+      <span class="text-xs px-2 py-1 rounded bg-al-black/40 border border-al-border/50 text-al-muted hover:text-al-white transition-colors cursor-help" title="d">64</span>
+      <span class="text-xs px-2 py-1 rounded bg-al-black/40 border border-al-border/50 text-al-muted hover:text-al-white transition-colors cursor-help" title="!">21</span>
+    </div>
+  </div>
+
+  <!-- Interactive Explanation Details Panel -->
+  <div 
+    id="segment-details-box"
+    class="mt-6 rounded-lg bg-al-black/50 border border-al-border p-4 h-32 flex flex-col justify-center transition-all duration-300 relative overflow-hidden"
+    aria-live="polite"
+  >
+    <!-- Background grid indicator -->
+    <div class="absolute inset-0 hero-bg opacity-[0.02] pointer-events-none"></div>
+
+    <div class="relative z-10">
+      <h4 id="segment-title" class="text-xs font-bold text-al-cyan uppercase tracking-wider mb-1">
+        Interactive Spec Explorer
+      </h4>
+      <p id="segment-description" class="text-xs text-al-text leading-relaxed select-all">
+        Hover over or select any byte group in the frame above to inspect the specific role it plays within the 10-byte binary header protocol.
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .byte-cell {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    width: 36px;
+    background-color: var(--color-al-card);
+    border: 1px solid var(--color-al-border);
+    border-radius: 4px;
+    color: var(--color-al-text);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .byte-segment:hover .byte-cell,
+  .byte-segment:focus-visible .byte-cell {
+    border-color: var(--color-al-cyan);
+    color: var(--color-al-cyan);
+    background-color: rgba(0, 216, 255, 0.05);
+    box-shadow: 0 0 12px rgba(0, 216, 255, 0.2);
+  }
+
+  /* Pre-activated highlight on load for visual contrast */
+  .byte-cell.highlight {
+    border-color: var(--color-al-blue);
+    color: var(--color-al-blue);
+    background-color: rgba(0, 112, 243, 0.05);
+  }
+
+  .byte-segment:hover .byte-cell.highlight,
+  .byte-segment:focus-visible .byte-cell.highlight {
+    border-color: var(--color-al-cyan);
+    color: var(--color-al-cyan);
+    background-color: rgba(0, 216, 255, 0.05);
+    box-shadow: 0 0 12px rgba(0, 216, 255, 0.2);
+  }
+
+  /* Sequentially animate bytes on load */
+  @keyframes bytePulse {
+    0% {
+      border-color: var(--color-al-border);
+      transform: scale(1);
+    }
+    50% {
+      border-color: var(--color-al-cyan);
+      color: var(--color-al-cyan);
+      background-color: rgba(0, 216, 255, 0.1);
+      box-shadow: 0 0 15px rgba(0, 216, 255, 0.4);
+      transform: scale(1.05);
+    }
+    100% {
+      border-color: var(--color-al-border);
+      transform: scale(1);
+    }
+  }
+
+  .byte-pulse-animate {
+    animation: bytePulse 0.5s ease-out;
+  }
+</style>
+
+<script>
+  // Segment details database
+  const segments = {
+    magic: {
+      title: "Protocol Magic Identifier (Bytes 0 - 1)",
+      description: "Fixed hex signature 0xAF 0x1C. Restricts incoming socket streams so the protocol layer only accepts valid AfterLink framing, instantly dropping alien payloads."
+    },
+    version: {
+      title: "Protocol Version (Byte 2)",
+      description: "Single byte encoding the AfterLink protocol version. Currently fixed to 0x01. Future-proofs the binary engine to support legacy framing automatically."
+    },
+    type: {
+      title: "Message Type (Byte 3)",
+      description: "Encodes message intent: 0x01 for raw data, 0x02 for pub/sub subscriptions, 0x03 for publishing data, 0x04 for acknowledgements, and 0xFF for pings/keepalives."
+    },
+    seq: {
+      title: "Sequence Index (Bytes 4 - 5)",
+      description: "2-Byte unsigned sequence number. Guarantees in-order packet reconstruction and enables reliability tracking like acknowledgements (ACKs) over lossy pipes."
+    },
+    length: {
+      title: "Payload Byte Length (Bytes 6 - 9)",
+      description: "4-Byte unsigned big-endian length specifying the precise payload sizing (in bytes) following the header. Supports up to 4.29 GB payloads safely."
+    }
+  };
+
+  const initFrameVisualizer = () => {
+    const segmentsList = document.querySelectorAll('.byte-segment');
+    const titleEl = document.getElementById('segment-title');
+    const descEl = document.getElementById('segment-description');
+    const bytes = document.querySelectorAll('.byte-cell');
+
+    // Run sequental load animation if prefers-reduced-motion is off
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (!mediaQuery.matches) {
+      bytes.forEach((cell, idx) => {
+        setTimeout(() => {
+          cell.classList.add('byte-pulse-animate');
+          setTimeout(() => {
+            cell.classList.remove('byte-pulse-animate');
+          }, 500);
+        }, idx * 80);
+      });
+    }
+
+    const updatePanel = (id: string) => {
+      if (segments[id] && titleEl && descEl) {
+        titleEl.textContent = segments[id].title;
+        descEl.textContent = segments[id].description;
+      }
+    };
+
+    segmentsList.forEach(seg => {
+      const segId = seg.getAttribute('data-segment') || '';
+      
+      // Hover event
+      seg.addEventListener('mouseenter', () => updatePanel(segId));
+      
+      // Focus event
+      seg.addEventListener('focus', () => updatePanel(segId));
+    });
+  };
+
+  // Run initializer
+  initFrameVisualizer();
+</script>

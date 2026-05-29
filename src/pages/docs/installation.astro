@@ -1,0 +1,216 @@
+---
+// src/pages/docs/installation.astro
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const fullInstall = `
+# Installation of the monolithic wrapper bundle
+npm install afterlink
+`;
+
+const modularInstall = `
+# Core binary codec only (no network server)
+npm install @afterlink/core
+
+# Server and connection modules for Node
+npm install @afterlink/server @afterlink/client
+
+# Client SDK for web browsers
+npm install @afterlink/browser
+`;
+
+const quickServer = `
+import { createServer } from 'afterlink';
+
+// Fire up binary server
+const server = createServer({ port: 8080 });
+
+// Handle frame connections
+server.on('message', (socket, frame) => {
+  console.log(\`Received frame type #\${frame.type} with \${frame.length} bytes payload\`);
+  
+  // Acknowledge back
+  server.send(socket, 'ACK', { status: 'OK' });
+});
+`;
+
+const quickClient = `
+import { createClient } from 'afterlink';
+
+// Connect to AfterLink TCP daemon
+const client = createClient({ port: 8080 });
+
+client.on('connect', () => {
+  console.log('Socket channel ready');
+  
+  // Publish payload to 'sensor-stream' pubsub channel
+  client.send('PUBLISH', {
+    channel: 'sensor-stream',
+    payload: { temperature: 21.4 }
+  });
+});
+`;
+
+const cliInstall = `
+# Install AfterLink development inspector globally
+npm install -g @afterlink/cli
+`;
+
+const cdnScript = `
+<!-- Load client SDK directly in html files via CDN fallback -->
+<script src="https://unpkg.com/@afterlink/browser@1.2.0/dist/index.global.js"></script>
+<script>
+  const client = AfterLinkBrowser.createClient({ host: '127.0.0.1', port: 4000 });
+</script>
+`;
+
+const tsConfigCode = `
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "paths": {
+      "@afterlink/*": ["./node_modules/@afterlink/*"]
+    }
+  }
+}
+`;
+---
+
+<DocsLayout 
+  title="Installation Guide" 
+  description="Detailed instructions on how to install AfterLink modules, CLI debuggers, and browser CDN scripts."
+>
+  <div class="space-y-6">
+    <div class="border-b border-al-border/50 pb-4">
+      <h1 class="text-3xl font-bold tracking-tight text-al-white mb-2">Package Installation</h1>
+      <p class="text-sm text-al-muted leading-relaxed">
+        AfterLink is designed with strict modularity in mind. You can install the monolith package, pull individual libraries, or load browser wrappers to fit your production stack footprint.
+      </p>
+    </div>
+
+    <!-- Requirements -->
+    <h2 id="requirements" class="text-lg font-semibold tracking-tight text-al-white mt-8 mb-3 select-none font-mono">System Requirements</h2>
+    <ul class="list-disc pl-5 space-y-1.5 text-xs text-al-muted select-all">
+      <li><strong>Node.js:</strong> version <code>v20.0.0</code> or higher (LTS recommended)</li>
+      <li><strong>npm:</strong> version <code>v9.0.0</code> or higher</li>
+      <li><strong>Operating System:</strong> Linux, macOS, or Windows (WSL recommended)</li>
+    </ul>
+
+    <!-- Main install wrapper -->
+    <h2 id="core-package" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">1. Standard Installation</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      For most backend servers and client applications, installing the all-in-one <code>afterlink</code> library is recommended. This includes the server, client, validation, and codec utilities automatically:
+    </p>
+    <CodeBlock code={fullInstall} lang="bash" filename="Terminal" />
+
+    <!-- Modular distributions -->
+    <h2 id="modular-packages" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">2. Modular Distribution Packages</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all mb-4">
+      If you are building lightweight microservices or embedded nodes and want to optimize package bundle size, you can import only the specific packages you need:
+    </p>
+    
+    <div class="overflow-x-auto my-6 border border-al-border rounded-lg bg-al-dark/20 select-all">
+      <table class="w-full text-left font-mono text-xs divide-y divide-al-border select-all">
+        <thead class="bg-al-black/40 text-al-muted select-none">
+          <tr>
+            <th class="p-3">Package Name</th>
+            <th class="p-3">Purpose</th>
+            <th class="p-3">Context</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-al-border select-all">
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">@afterlink/core</td>
+            <td class="p-3">Binary frame codec (encoder, decoder, segment layouts)</td>
+            <td class="p-3">Any / Universal</td>
+          </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">@afterlink/server</td>
+            <td class="p-3">High-throughput TCP server runtime module</td>
+            <td class="p-3">Node.js Server</td>
+          </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">@afterlink/client</td>
+            <td class="p-3">Persistent TCP client wrapper with auto-reconnect</td>
+            <td class="p-3">Node.js Client</td>
+          </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">@afterlink/browser</td>
+            <td class="p-3">WebSocket fallback SDK with binary streaming support</td>
+            <td class="p-3">Web Browser</td>
+          </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">@afterlink/cli</td>
+            <td class="p-3">Command-line debuggers, packet tracers, and validators</td>
+            <td class="p-3">Global / CLI</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Install selected modular distributions as follows:
+    </p>
+    <CodeBlock code={modularInstall} lang="bash" filename="Terminal" />
+
+    <!-- Quick Start Server -->
+    <h2 id="quickstart-server" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">3. Quick Start — Server</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Create a server script in your project root to handle binary framing:
+    </p>
+    <CodeBlock code={quickServer} lang="javascript" filename="server.js" />
+
+    <!-- Quick Start Client -->
+    <h2 id="quickstart-client" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">4. Quick Start — Client</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Establish a persistent connection from your client and publish your first frame:
+    </p>
+    <CodeBlock code={quickClient} lang="javascript" filename="client.js" />
+
+    <!-- Command line devtools -->
+    <h2 id="cli-devtools" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">5. Command-Line Developer Tools</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      AfterLink includes a command-line interface (CLI) to trace active frame streams, inspect live connection channels, and generate mock frame sequences during development:
+    </p>
+    <CodeBlock code={cliInstall} lang="bash" filename="Terminal" />
+
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Verify the command line tool installation by checking its version:
+    </p>
+    <CodeBlock code="afterlink --version" lang="bash" filename="Terminal" />
+
+    <p class="text-xs text-al-muted leading-relaxed select-all mt-4">
+      The AfterLink CLI ships with these powerful built-in utility commands:
+    </p>
+    <ul class="list-disc pl-5 space-y-2 text-xs text-al-muted select-all">
+      <li><code>afterlink ping &lt;host:port&gt;</code>: Sends persistent ping packets to calculate heartbeat latencies.</li>
+      <li><code>afterlink call &lt;host:port&gt; &lt;route&gt; [payload]</code>: Invokes direct RPC endpoints and reports matching reply values.</li>
+      <li><code>afterlink inspect &lt;hex-string&gt;</code>: Decodes raw wire hex buffers into readable, formatted JSON blocks.</li>
+      <li><code>afterlink monitor &lt;host:port&gt; &lt;channel&gt;</code>: Listens to real-time pub/sub streams and prints routing traces.</li>
+    </ul>
+
+    <!-- Browser CDN -->
+    <h2 id="browser-cdn" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">6. Browser CDN Fallback Setup</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      If you are building simple frontend HTML interfaces without module bundlers, load the browser client fallback directly via CDN providers:
+    </p>
+    <CodeBlock code={cdnScript} lang="html" filename="index.html" />
+
+    <!-- TS Setup -->
+    <h2 id="typescript-setup" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">7. TypeScript Setup & Paths</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      If compiling with TypeScript, declare the paths inside your configuration file for proper module resolution:
+    </p>
+    <CodeBlock code={tsConfigCode} lang="json" filename="tsconfig.json" />
+
+    <!-- Navigation links -->
+    <div class="flex items-center justify-between border-t border-al-border/50 pt-8 mt-12 select-none">
+      <a href="/docs" class="text-xs text-al-muted hover:text-al-cyan transition-colors font-mono">
+        &larr; Getting Started
+      </a>
+      <a href="/docs/protocol" class="text-xs text-al-cyan hover:text-al-white transition-colors font-mono">
+        Binary Layout &rarr;
+      </a>
+    </div>
+  </div>
+</DocsLayout>

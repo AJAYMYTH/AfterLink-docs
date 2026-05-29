@@ -1,0 +1,401 @@
+---
+// src/pages/docs/api.astro
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+---
+
+<DocsLayout 
+  title="API Reference Guide" 
+  description="Comprehensive API manual for AfterLink Server, Client and sub-package utilities."
+>
+  <div class="space-y-6">
+    <div class="border-b border-al-border/50 pb-4">
+      <h1 class="text-3xl font-bold tracking-tight text-al-white mb-2">API Reference</h1>
+      <p class="text-sm text-al-muted leading-relaxed">
+        Complete constructor properties, method signatures, middleware chains, error tables, and TypeScript definitions for AfterLink.
+      </p>
+    </div>
+
+    <!-- TABLE OF CONTENTS -->
+    <div class="bg-al-card border border-al-border rounded-xl p-4 my-6 select-none font-mono text-2xs space-y-1">
+      <span class="text-al-cyan font-bold uppercase tracking-wider block mb-2">API Directory Mapping</span>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1">
+        <a href="#server-class" class="text-al-muted hover:text-al-white">&bull; Server Constructor Options</a>
+        <a href="#server-on" class="text-al-muted hover:text-al-white">&bull; server.on() method</a>
+        <a href="#server-use" class="text-al-muted hover:text-al-white">&bull; server.use() middleware</a>
+        <a href="#server-publish" class="text-al-muted hover:text-al-white">&bull; server.publish() pub/sub</a>
+        <a href="#server-broadcast" class="text-al-muted hover:text-al-white">&bull; server.broadcast() fan-out</a>
+        <a href="#server-close" class="text-al-muted hover:text-al-white">&bull; server.close() shutdown</a>
+        <a href="#client-class" class="text-al-muted hover:text-al-white">&bull; Client Constructor Options</a>
+        <a href="#client-conn" class="text-al-muted hover:text-al-white">&bull; client.connect() / disconnect()</a>
+        <a href="#client-req" class="text-al-muted hover:text-al-white">&bull; client.request() RPC loops</a>
+        <a href="#client-sub" class="text-al-muted hover:text-al-white">&bull; client.subscribe() channels</a>
+        <a href="#client-pub" class="text-al-muted hover:text-al-white">&bull; client.publish() streams</a>
+        <a href="#client-stream" class="text-al-muted hover:text-al-white">&bull; client.stream() chunks</a>
+        <a href="#error-table" class="text-al-muted hover:text-al-white">&bull; Protocol Error Codes</a>
+        <a href="#ts-types" class="text-al-muted hover:text-al-white">&bull; TypeScript Types Reference</a>
+      </div>
+    </div>
+
+    <!-- SERVER CLASS SECTION -->
+    <h2 id="server-class" class="text-xl font-bold tracking-tight text-al-white border-b border-al-border/30 pb-2 mt-12 select-none font-mono">Server Class Reference</h2>
+    
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Instantiated via <code>new Server(options)</code> or the wrapper helper <code>createServer(options)</code>.
+    </p>
+
+    <!-- Options grid -->
+    <h3 class="font-mono text-2xs font-bold text-al-muted tracking-wide uppercase mt-4 mb-2 select-none">Server Options Parameters</h3>
+    <div class="overflow-x-auto border border-al-border rounded-lg bg-al-dark/20 select-all mb-6">
+      <table class="w-full text-left font-mono text-xs divide-y divide-al-border select-all">
+        <thead class="bg-al-card text-al-muted select-none">
+          <tr>
+            <th class="p-3">Option</th>
+            <th class="p-3">Type</th>
+            <th class="p-3">Default</th>
+            <th class="p-3">Description</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-al-border tabular-nums select-all">
+          <tr><td class="p-3 font-semibold text-al-cyan">port</td><td class="p-3">number</td><td class="p-3">8080</td><td>TCP port configuration range.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">host</td><td class="p-3">string</td><td class="p-3">'0.0.0.0'</td><td>Network interface address mapping.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">idleTimeout</td><td class="p-3">number</td><td class="p-3">60000</td><td>Heartbeat delay threshold in milliseconds.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">maxConnections</td><td class="p-3">number</td><td class="p-3">10000</td><td>Peak concurrent active sockets allowance limits.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">tls</td><td class="p-3">object</td><td class="p-3">null</td><td>Pass key, cert buffers to activate secure TLS handshakes.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- server.on method block -->
+    <div id="server-on" class="method-block bg-al-card border border-al-border rounded-xl mb-6 overflow-hidden select-all shadow-sm">
+      <div class="method-header px-6 py-3.5 border-b border-al-border bg-[rgba(0,216,255,0.03)] flex items-center justify-between select-none">
+        <div class="flex items-center gap-3">
+          <span class="text-al-cyan font-mono font-bold text-sm">server.on()</span>
+          <span class="text-[9px] text-al-muted font-mono px-2 py-0.5 border border-al-border rounded select-none font-semibold">method</span>
+        </div>
+        <span class="text-2xs font-mono text-al-muted select-none">Callback Hooks</span>
+      </div>
+      <div class="px-6 py-5 space-y-4">
+        <p class="text-xs text-al-muted leading-relaxed select-all">
+          Registers a callback listener for specific route requests or system handshake events, optionally verifying with Zod validation models.
+        </p>
+        <div class="space-y-1.5 select-all">
+          <p class="text-[9px] text-al-muted font-mono uppercase tracking-widest font-bold select-none">Signature</p>
+          <pre class="bg-al-bg border border-al-border rounded-lg px-4 py-2.5 font-mono text-2xs text-al-cyan overflow-x-auto shadow-inner select-all">server.on(route: string, handler: (socket, payload) => void, schema?: ZodSchema)</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- server.use method block -->
+    <div id="server-use" class="method-block bg-al-card border border-al-border rounded-xl mb-6 overflow-hidden select-all shadow-sm">
+      <div class="method-header px-6 py-3.5 border-b border-al-border bg-[rgba(0,216,255,0.03)] flex items-center justify-between select-none">
+        <div class="flex items-center gap-3">
+          <span class="text-al-cyan font-mono font-bold text-sm">server.use()</span>
+          <span class="text-[9px] text-al-muted font-mono px-2 py-0.5 border border-al-border rounded select-none font-semibold">method</span>
+        </div>
+        <span class="text-2xs font-mono text-al-muted select-none">Middleware</span>
+      </div>
+      <div class="px-6 py-5 space-y-4">
+        <p class="text-xs text-al-muted leading-relaxed select-all">
+          Injects global middleware functions into the connection processing stack (e.g. JWT validations or packet logging).
+        </p>
+        <div class="space-y-1.5 select-all">
+          <p class="text-[9px] text-al-muted font-mono uppercase tracking-widest font-bold select-none">Signature</p>
+          <pre class="bg-al-bg border border-al-border rounded-lg px-4 py-2.5 font-mono text-2xs text-al-cyan overflow-x-auto shadow-inner select-all">server.use(middleware: (socket, frame, next) => void)</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- server.publish method block -->
+    <div id="server-publish" class="method-block bg-al-card border border-al-border rounded-xl mb-6 overflow-hidden select-all shadow-sm">
+      <div class="method-header px-6 py-3.5 border-b border-al-border bg-[rgba(0,216,255,0.03)] flex items-center justify-between select-none">
+        <div class="flex items-center gap-3">
+          <span class="text-al-cyan font-mono font-bold text-sm">server.publish()</span>
+          <span class="text-[9px] text-al-muted font-mono px-2 py-0.5 border border-al-border rounded select-none font-semibold">method</span>
+        </div>
+        <span class="text-2xs font-mono text-al-muted select-none">Pub/Sub</span>
+      </div>
+      <div class="px-6 py-5 space-y-4">
+        <p class="text-xs text-al-muted leading-relaxed select-all">
+          Pushes pub/sub broadcasts directly onto channel topics. Server manages delivery lists and relays <code>MSG_BROADCAST</code> (<code>0x05</code>) frames automatically.
+        </p>
+        <div class="space-y-1.5 select-all">
+          <p class="text-[9px] text-al-muted font-mono uppercase tracking-widest font-bold select-none">Signature</p>
+          <pre class="bg-al-bg border border-al-border rounded-lg px-4 py-2.5 font-mono text-2xs text-al-cyan overflow-x-auto shadow-inner select-all">server.publish(channel: string, payload: any)</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- server.broadcast method block -->
+    <div id="server-broadcast" class="method-block bg-al-card border border-al-border rounded-xl mb-6 overflow-hidden select-all shadow-sm">
+      <div class="method-header px-6 py-3.5 border-b border-al-border bg-[rgba(0,216,255,0.03)] flex items-center justify-between select-none">
+        <div class="flex items-center gap-3">
+          <span class="text-al-cyan font-mono font-bold text-sm">server.broadcast()</span>
+          <span class="text-[9px] text-al-muted font-mono px-2 py-0.5 border border-al-border rounded select-none font-semibold">method</span>
+        </div>
+        <span class="text-2xs font-mono text-al-muted select-none">Fan-Out</span>
+      </div>
+      <div class="px-6 py-5 space-y-4">
+        <p class="text-xs text-al-muted leading-relaxed select-all">
+          Transmits identical raw payload buffers to all active client sockets regardless of routing channel configurations.
+        </p>
+        <div class="space-y-1.5 select-all">
+          <p class="text-[9px] text-al-muted font-mono uppercase tracking-widest font-bold select-none">Signature</p>
+          <pre class="bg-al-bg border border-al-border rounded-lg px-4 py-2.5 font-mono text-2xs text-al-cyan overflow-x-auto shadow-inner select-all">server.broadcast(type: string, payload: any)</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- server.close method block -->
+    <div id="server-close" class="method-block bg-al-card border border-al-border rounded-xl mb-6 overflow-hidden select-all shadow-sm">
+      <div class="method-header px-6 py-3.5 border-b border-al-border bg-[rgba(0,216,255,0.03)] flex items-center justify-between select-none">
+        <div class="flex items-center gap-3">
+          <span class="text-al-cyan font-mono font-bold text-sm">server.close()</span>
+          <span class="text-[9px] text-al-muted font-mono px-2 py-0.5 border border-al-border rounded select-none font-semibold">method</span>
+        </div>
+        <span class="text-2xs font-mono text-al-muted select-none">Shutdown</span>
+      </div>
+      <div class="px-6 py-5 space-y-4">
+        <p class="text-xs text-al-muted leading-relaxed select-all">
+          Closes raw TCP bindings gracefully, terminating keepalive heartbeats, and closing active connections correctly.
+        </p>
+        <div class="space-y-1.5 select-all">
+          <p class="text-[9px] text-al-muted font-mono uppercase tracking-widest font-bold select-none">Signature</p>
+          <pre class="bg-al-bg border border-al-border rounded-lg px-4 py-2.5 font-mono text-2xs text-al-cyan overflow-x-auto shadow-inner select-all">server.close(callback?: () => void): Promise&lt;void&gt;</pre>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- CLIENT CLASS SECTION -->
+    <h2 id="client-class" class="text-xl font-bold tracking-tight text-al-white border-b border-al-border/30 pb-2 mt-16 select-none font-mono">Client Class Reference</h2>
+    
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Instantiated via <code>new Client(options)</code> or the wrapper helper <code>createClient(options)</code>.
+    </p>
+
+    <!-- Options grid -->
+    <h3 class="font-mono text-2xs font-bold text-al-muted tracking-wide uppercase mt-4 mb-2 select-none">Client Options Parameters</h3>
+    <div class="overflow-x-auto border border-al-border rounded-lg bg-al-dark/20 select-all mb-6">
+      <table class="w-full text-left font-mono text-xs divide-y divide-al-border select-all">
+        <thead class="bg-al-card text-al-muted select-none">
+          <tr>
+            <th class="p-3">Option</th>
+            <th class="p-3">Type</th>
+            <th class="p-3">Default</th>
+            <th class="p-3">Description</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-al-border tabular-nums select-all">
+          <tr><td class="p-3 font-semibold text-al-cyan">host</td><td class="p-3">string</td><td class="p-3">'127.0.0.1'</td><td>Host address of target AfterLink server.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">port</td><td class="p-3">number</td><td class="p-3">8080</td><td>Destination binding TCP port range.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">autoReconnect</td><td class="p-3">boolean</td><td class="p-3">true</td><td>Triggers socket re-connections upon socket drops.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">maxRetries</td><td class="p-3">number</td><td class="p-3">10</td><td>Limits reconnection sequences before throwing errors.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- client.connect / disconnect method block -->
+    <div id="client-conn" class="method-block bg-al-card border border-al-border rounded-xl mb-6 overflow-hidden select-all shadow-sm">
+      <div class="method-header px-6 py-3.5 border-b border-al-border bg-[rgba(0,216,255,0.03)] flex items-center justify-between select-none">
+        <div class="flex items-center gap-3">
+          <span class="text-al-cyan font-mono font-bold text-sm">client.connect() / disconnect()</span>
+          <span class="text-[9px] text-al-muted font-mono px-2 py-0.5 border border-al-border rounded select-none font-semibold">method</span>
+        </div>
+        <span class="text-2xs font-mono text-al-muted select-none">Connection Lifecycle</span>
+      </div>
+      <div class="px-6 py-5 space-y-4">
+        <p class="text-xs text-al-muted leading-relaxed select-all">
+          Triggers asynchronous handshakes to establish active socket bindings, or tears down established socket connections gracefully.
+        </p>
+        <div class="space-y-1.5 select-all">
+          <p class="text-[9px] text-al-muted font-mono uppercase tracking-widest font-bold select-none">Signature</p>
+          <pre class="bg-al-bg border border-al-border rounded-lg px-4 py-2.5 font-mono text-2xs text-al-cyan overflow-x-auto shadow-inner select-all">client.connect(): Promise&lt;void&gt;  |  client.disconnect(): Promise&lt;void&gt;</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- client.request method block -->
+    <div id="client-req" class="method-block bg-al-card border border-al-border rounded-xl mb-6 overflow-hidden select-all shadow-sm">
+      <div class="method-header px-6 py-3.5 border-b border-al-border bg-[rgba(0,216,255,0.03)] flex items-center justify-between select-none">
+        <div class="flex items-center gap-3">
+          <span class="text-al-cyan font-mono font-bold text-sm">client.request()</span>
+          <span class="text-[9px] text-al-muted font-mono px-2 py-0.5 border border-al-border rounded select-none font-semibold">method</span>
+        </div>
+        <span class="text-2xs font-mono text-al-muted select-none">RPC Loop</span>
+      </div>
+      <div class="px-6 py-5 space-y-4">
+        <p class="text-xs text-al-muted leading-relaxed select-all">
+          Dispatches structured RPC request packets (<code>MSG_REQUEST</code>) and returns matching Promise response elements resolving when server returns matching seq IDs.
+        </p>
+        <div class="space-y-1.5 select-all">
+          <p class="text-[9px] text-al-muted font-mono uppercase tracking-widest font-bold select-none">Signature</p>
+          <pre class="bg-al-bg border border-al-border rounded-lg px-4 py-2.5 font-mono text-2xs text-al-cyan overflow-x-auto shadow-inner select-all">client.request(route: string, body: any, options?: object): Promise&lt;any&gt;</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- client.subscribe method block -->
+    <div id="client-sub" class="method-block bg-al-card border border-al-border rounded-xl mb-6 overflow-hidden select-all shadow-sm">
+      <div class="method-header px-6 py-3.5 border-b border-al-border bg-[rgba(0,216,255,0.03)] flex items-center justify-between select-none">
+        <div class="flex items-center gap-3">
+          <span class="text-al-cyan font-mono font-bold text-sm">client.subscribe()</span>
+          <span class="text-[9px] text-al-muted font-mono px-2 py-0.5 border border-al-border rounded select-none font-semibold">method</span>
+        </div>
+        <span class="text-2xs font-mono text-al-muted select-none">Pub/Sub</span>
+      </div>
+      <div class="px-6 py-5 space-y-4">
+        <p class="text-xs text-al-muted leading-relaxed select-all">
+          Binds call functions to specific pub/sub streams. Instructs server routing layers by pushing <code>MSG_SUBSCRIBE</code> frames immediately.
+        </p>
+        <div class="space-y-1.5 select-all">
+          <p class="text-[9px] text-al-muted font-mono uppercase tracking-widest font-bold select-none">Signature</p>
+          <pre class="bg-al-bg border border-al-border rounded-lg px-4 py-2.5 font-mono text-2xs text-al-cyan overflow-x-auto shadow-inner select-all">client.subscribe(channel: string, callback: (payload, channel) => void): void</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- client.publish method block -->
+    <div id="client-pub" class="method-block bg-al-card border border-al-border rounded-xl mb-6 overflow-hidden select-all shadow-sm">
+      <div class="method-header px-6 py-3.5 border-b border-al-border bg-[rgba(0,216,255,0.03)] flex items-center justify-between select-none">
+        <div class="flex items-center gap-3">
+          <span class="text-al-cyan font-mono font-bold text-sm">client.publish()</span>
+          <span class="text-[9px] text-al-muted font-mono px-2 py-0.5 border border-al-border rounded select-none font-semibold">method</span>
+        </div>
+        <span class="text-2xs font-mono text-al-muted select-none">Pub/Sub</span>
+      </div>
+      <div class="px-6 py-5 space-y-4">
+        <p class="text-xs text-al-muted leading-relaxed select-all">
+          Publishes messages onto specified routing channels. Packages fields and transmits a single <code>MSG_PUBLISH</code> (<code>0x03</code>) packet.
+        </p>
+        <div class="space-y-1.5 select-all">
+          <p class="text-[9px] text-al-muted font-mono uppercase tracking-widest font-bold select-none">Signature</p>
+          <pre class="bg-al-bg border border-al-border rounded-lg px-4 py-2.5 font-mono text-2xs text-al-cyan overflow-x-auto shadow-inner select-all">client.publish(channel: string, payload: any): void</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- client.stream method block -->
+    <div id="client-stream" class="method-block bg-al-card border border-al-border rounded-xl mb-6 overflow-hidden select-all shadow-sm">
+      <div class="method-header px-6 py-3.5 border-b border-al-border bg-[rgba(0,216,255,0.03)] flex items-center justify-between select-none">
+        <div class="flex items-center gap-3">
+          <span class="text-al-cyan font-mono font-bold text-sm">client.stream()</span>
+          <span class="text-[9px] text-al-muted font-mono px-2 py-0.5 border border-al-border rounded select-none font-semibold">method</span>
+        </div>
+        <span class="text-2xs font-mono text-al-muted select-none">Streaming</span>
+      </div>
+      <div class="px-6 py-5 space-y-4">
+        <p class="text-xs text-al-muted leading-relaxed select-all">
+          Establishes interactive, multi-frame streaming pipelines. Dispatches structured <code>MSG_STREAM</code> packets sequentially and ends with a <code>MSG_STREAM_END</code> marker.
+        </p>
+        <div class="space-y-1.5 select-all">
+          <p class="text-[9px] text-al-muted font-mono uppercase tracking-widest font-bold select-none">Signature</p>
+          <pre class="bg-al-bg border border-al-border rounded-lg px-4 py-2.5 font-mono text-2xs text-al-cyan overflow-x-auto shadow-inner select-all">client.stream(route: string, body: any): Promise&lt;ReadableStream&gt;</pre>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- PROTOCOL ERROR CODES -->
+    <h2 id="error-table" class="text-xl font-bold tracking-tight text-al-white border-b border-al-border/30 pb-2 mt-16 select-none font-mono">Protocol Error Codes</h2>
+    
+    <div class="overflow-x-auto my-6 border border-al-border rounded-lg bg-al-dark/20 select-all">
+      <table class="w-full text-left font-mono text-xs divide-y divide-al-border select-all">
+        <thead class="bg-al-card text-al-cyan select-none">
+          <tr>
+            <th class="p-3">Error Code</th>
+            <th class="p-3">Error Constant</th>
+            <th class="p-3">Diagnostic Description & Root Cause</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-al-border tabular-nums text-al-text select-all">
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold">100</td>
+            <td class="p-3">ERR_MAGIC_MISMATCH</td>
+            <td class="p-3 select-all">Invalid magic identifier bytes. Sockets from hostile scans or HTTP requests.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold">101</td>
+            <td class="p-3">ERR_VERSION_UNSUPPORTED</td>
+            <td class="p-3 select-all">The client version constant is incompatible with this server.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold">400</td>
+            <td class="p-3">ERR_BAD_FRAME</td>
+            <td class="p-3 select-all">Corrupt framing format structure, length offsets mismatch.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold">401</td>
+            <td class="p-3">ERR_UNAUTHORIZED</td>
+            <td class="p-3 select-all">Missing, invalid or expired handshake JWT authentication tokens.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold">404</td>
+            <td class="p-3">ERR_ROUTE_NOT_FOUND</td>
+            <td class="p-3 select-all">No matching method path listener exists on this server.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold">422</td>
+            <td class="p-3">ERR_VALIDATION_FAILED</td>
+            <td class="p-3 select-all">The frame payload model does not conform to the registered Zod validation schema.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold">429</td>
+            <td class="p-3">ERR_RATE_LIMITED</td>
+            <td class="p-3 select-all">Connection request counts exceeded maximum specified configurations.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold">500</td>
+            <td class="p-3">ERR_INTERNAL_SERVER</td>
+            <td class="p-3 select-all">Unhandled exception occurred in server-side handler code.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TYPESCRIPT TYPES REFERENCE -->
+    <h2 id="ts-types" class="text-xl font-bold tracking-tight text-al-white border-b border-al-border/30 pb-2 mt-16 select-none font-mono">TypeScript Declarations</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Full TypeScript definitions for the core interfaces:
+    </p>
+    
+    <CodeBlock code={`export interface Frame {
+  magic: number[];      // [0xAF, 0x1C]
+  version: number;      // 0x01
+  type: number;         // Hex Message Type
+  seq: number;          // 0 - 65535
+  length: number;       // Payload size
+  payload: any;         // Parsed payload JS Object
+  rawPayload: Buffer;   // Raw buffer reference
+}
+
+export interface ServerOptions {
+  port?: number;
+  host?: string;
+  idleTimeout?: number;
+  maxConnections?: number;
+  tls?: {
+    key: Buffer;
+    cert: Buffer;
+  };
+}
+
+export interface ClientOptions {
+  host?: string;
+  port?: number;
+  autoReconnect?: boolean;
+  maxRetries?: number;
+}`} lang="typescript" filename="index.d.ts" />
+
+    <!-- Navigation links -->
+    <div class="flex items-center justify-between border-t border-al-border/50 pt-8 mt-12 select-none">
+      <a href="/docs/pubsub" class="text-xs text-al-muted hover:text-al-cyan transition-colors font-mono">
+        &larr; Pub/Sub System
+      </a>
+      <a href="/playground" class="text-xs text-al-cyan hover:text-al-white transition-colors font-mono">
+        Live Playground &rarr;
+      </a>
+    </div>
+
+  </div>
+</DocsLayout>
