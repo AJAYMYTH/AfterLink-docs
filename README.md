@@ -11,30 +11,33 @@ This website serves as the developer documentation, specifications, API guides, 
 
 ---
 
-## 🔗 Repository Ecosystem
+## Repository Ecosystem
 
 To explore the entire AfterLink environment, visit the corresponding repositories:
 
-*   **⚡ Parent Protocol Engine (Core):** [AJAYMYTH/AfterLink](https://github.com/AJAYMYTH/AfterLink.git) — Holds the core protocol parser, TypeScript client/server engines, and benchmarking suites.
-*   **📚 Documentation Hub (This Repo):** [AJAYMYTH/AfterLink-docs](https://github.com/AJAYMYTH/AfterLink-docs.git) — The Astro-powered responsive documentation website.
-*   **🤖 AI Agent Skill Repository:** [AJAYMYTH/afterlink-skill](https://github.com/AJAYMYTH/afterlink-skill) — AI agent actions, integrations, and tools designed for the `skills.sh` ecosystem to bootstrap AfterLink protocol configurations instantly.
+*   **Parent Protocol Engine (Core):** [AJAYMYTH/AfterLink](https://github.com/AJAYMYTH/AfterLink.git)  
+    ![Core Engine](https://img.shields.io/badge/Engine-Core-00d8ff?style=flat-square&logo=git) — Holds the core protocol parser, TypeScript client/server engines, and benchmarking suites.
+*   **Documentation Hub (This Repo):** [AJAYMYTH/AfterLink-docs](https://github.com/AJAYMYTH/AfterLink-docs.git)  
+    ![Documentation Hub](https://img.shields.io/badge/Docs-Hub-38bdf8?style=flat-square&logo=git) — The Astro-powered responsive documentation website.
+*   **AI Agent Skill Repository:** [AJAYMYTH/afterlink-skill](https://github.com/AJAYMYTH/afterlink-skill)  
+    ![AI Skills](https://img.shields.io/badge/AI_Skills-skills.sh-blueviolet?style=flat-square&logo=githubactions) — AI agent actions, integrations, and tools designed for the `skills.sh` ecosystem to bootstrap AfterLink protocol configurations instantly.
 
 ---
 
-## 🎨 Premium Visual Elements Implemented
+## Premium Visual Elements Implemented
 
 The documentation website is built with a dark theme aesthetic, dynamic layouts, and premium user interface animations:
 
-*   **🌌 High-Performance Stars Backdrop:** A custom Canvas-based drifting stars layer equipped with spring-damper cursor parallax and dynamic particle scaling. Responsive theme observers smoothly fade the stars in and out during dark/light mode toggles.
-*   **✨ Choreographed Staggered Loading:** The landing page utilizes staggered entrance animations with lens-focus blur shifts (`blur(4px)` to `blur(0)`) running on a high-fidelity deceleration curve (`cubic-bezier(0.16, 1, 0.3, 1)`).
-*   **🌀 Looping Organic Auroras:** Dual-gradient blurred color fields (cyan and blue) continuously drift and scale in opposition beneath the text, providing dynamic visual depth.
-*   **📊 Styled Comparison Badges:** Replaced system-default emojis in the Protocol Comparison table with modern, responsive custom SVG icon tags (Yes, No, Warning/Partial) styled matching the site's dark palette.
-*   **⚙️ 10-Byte Spec Explorer centerpiece:** An interactive byte-level visualizer where hovering or focusing on different header segments dynamically reveals its technical specs.
-*   **📱 Adaptive Mobile Dropdown:** A collapsible, GPU-accelerated dropdown menu for seamless mobile screen navigation that auto-collapses on clicking outside.
+*   **High-Performance Stars Backdrop:** A custom Canvas-based drifting stars layer equipped with spring-damper cursor parallax and dynamic particle scaling. Responsive theme observers smoothly fade the stars in and out during dark/light mode toggles.
+*   **Choreographed Staggered Loading:** The landing page utilizes staggered entrance animations with lens-focus blur shifts (`blur(4px)` to `blur(0)`) running on a high-fidelity deceleration curve (`cubic-bezier(0.16, 1, 0.3, 1)`).
+*   **Looping Organic Auroras:** Dual-gradient blurred color fields (cyan and blue) continuously drift and scale in opposition beneath the text, providing dynamic visual depth.
+*   **Styled Comparison Badges:** Replaced system-default emojis in the Protocol Comparison table with modern, responsive custom SVG icon tags (Yes, No, Warning/Partial) styled matching the site's dark palette.
+*   **10-Byte Spec Explorer Centerpiece:** An interactive byte-level visualizer where hovering or focusing on different header segments dynamically reveals its technical specs.
+*   **Adaptive Mobile Dropdown:** A collapsible, GPU-accelerated dropdown menu for seamless mobile screen navigation that auto-collapses on clicking outside.
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 Follow these steps to run the documentation website locally:
 
@@ -67,7 +70,7 @@ Static files will be generated inside the `/dist` directory.
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 AfterLink-docs/
@@ -96,6 +99,6 @@ AfterLink-docs/
 
 ---
 
-## 🛡️ License
+## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
