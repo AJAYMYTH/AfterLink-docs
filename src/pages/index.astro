@@ -83,10 +83,17 @@ import FrameVisualizer from '../components/FrameVisualizer.astro';
             <span class="text-al-text flex-1 text-xs sm:text-sm overflow-x-auto whitespace-nowrap" id="npm-cmd">npm install afterlink</span>
             <button 
               id="npm-btn-hero"
-              class="text-xs text-al-cyan hover:text-al-white transition-colors shrink-0 font-semibold cursor-pointer select-none"
+              class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-al-border hover:border-al-cyan/40 bg-al-bg hover:bg-al-card text-xs text-al-muted hover:text-al-cyan transition-all shrink-0 cursor-pointer select-none shadow-xs"
               aria-label="Copy npm install command"
             >
-              copy
+              <svg class="copy-svg h-3 w-3 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+              </svg>
+              <svg class="check-svg h-3 w-3 hidden text-al-green shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span class="btn-text">copy</span>
             </button>
           </div>
           <!-- npm badge link -->
@@ -126,10 +133,17 @@ import FrameVisualizer from '../components/FrameVisualizer.astro';
             <span class="text-al-text flex-1 text-xs sm:text-sm overflow-x-auto whitespace-nowrap" id="skill-cmd">npx skills add AJAYMYTH/afterlink-skill</span>
             <button 
               id="skill-btn-hero"
-              class="text-xs text-al-cyan hover:text-al-white transition-colors shrink-0 font-semibold cursor-pointer select-none"
+              class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-al-border hover:border-al-cyan/40 bg-al-bg hover:bg-al-card text-xs text-al-muted hover:text-al-cyan transition-all shrink-0 cursor-pointer select-none shadow-xs"
               aria-label="Copy agent skill command"
             >
-              copy
+              <svg class="copy-svg h-3 w-3 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+              </svg>
+              <svg class="check-svg h-3 w-3 hidden text-al-green shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span class="btn-text">copy</span>
             </button>
           </div>
         </div>
@@ -641,17 +655,30 @@ import FrameVisualizer from '../components/FrameVisualizer.astro';
     if (btn && textEl) {
       btn.addEventListener('click', async () => {
         const text = textEl.textContent || '';
+        const copySvg = btn.querySelector('.copy-svg');
+        const checkSvg = btn.querySelector('.check-svg');
+        const btnText = btn.querySelector('.btn-text');
+        
         try {
           await navigator.clipboard.writeText(text);
-          btn.textContent = 'copied!';
-          btn.classList.add('text-al-green');
-          btn.classList.remove('text-al-cyan');
           
-          setTimeout(() => {
-            btn.textContent = 'copy';
-            btn.classList.remove('text-al-green');
-            btn.classList.add('text-al-cyan');
-          }, 2000);
+          if (copySvg && checkSvg && btnText) {
+            copySvg.classList.add('hidden');
+            checkSvg.classList.remove('hidden');
+            btnText.textContent = 'copied';
+            
+            btn.classList.add('text-al-green', 'border-al-green/40', 'bg-al-green/5');
+            btn.classList.remove('text-al-muted');
+            
+            setTimeout(() => {
+              copySvg.classList.remove('hidden');
+              checkSvg.classList.add('hidden');
+              btnText.textContent = 'copy';
+              
+              btn.classList.remove('text-al-green', 'border-al-green/40', 'bg-al-green/5');
+              btn.classList.add('text-al-muted');
+            }, 2000);
+          }
         } catch (err) {
           console.error('Failed to copy command: ', err);
         }
