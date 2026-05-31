@@ -23,8 +23,17 @@ console.log(decoded.payload.toString()); // Hello World!
 ---
 
 <DocsLayout 
-  title="Binary Protocol Layout" 
-  description="Deep-dive technical specification of AfterLink's 10-byte fixed header binary protocol."
+  title="Binary Protocol Specification" 
+  description="Deep dive into AfterLink's 10-byte binary frame format, frame types, connection lifecycle, and wire-level protocol specification."
+  schema={{
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Binary Protocol Specification",
+    "description": "Deep dive into AfterLink's 10-byte binary frame format, frame types, connection lifecycle, and wire-level protocol specification.",
+    "author": { "@type": "Person", "name": "Javali Ajayakumar" },
+    "publisher": { "@type": "Organization", "name": "AfterLink" },
+    "mainEntityOfPage": "https://afterlink-docs.vercel.app/docs/protocol"
+  }}
 >
   <div class="space-y-6">
     <div class="border-b border-al-border/50 pb-4">
@@ -230,13 +239,15 @@ console.log(decoded.payload.toString()); // Hello World!
     </p>
     <CodeBlock code={codecExample} lang="javascript" filename="codec.js" />
 
-    <!-- Navigation links -->
-    <div class="flex items-center justify-between border-t border-al-border/50 pt-8 mt-12 select-none">
-      <a href="/docs/installation" class="text-xs text-al-muted hover:text-al-cyan transition-colors font-mono">
-        &larr; Package Installation
+    <!-- Prev/Next Navigation -->
+    <div class="flex justify-between items-center mt-16 pt-6 border-t border-al-border">
+      <a href="/docs/installation" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span class="group-hover:-translate-x-0.5 transition-transform">&larr;</span>
+        <span>Installation</span>
       </a>
-      <a href="/docs/validation" class="text-xs text-al-cyan hover:text-al-white transition-colors font-mono">
-        Automatic Validation &rarr;
+      <a href="/docs/api" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span>API Reference</span>
+        <span class="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
       </a>
     </div>
   </div>

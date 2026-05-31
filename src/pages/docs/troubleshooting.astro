@@ -67,8 +67,17 @@ const issues = [
 ---
 
 <DocsLayout 
-  title="Troubleshooting Guide" 
-  description="Common issues, error codes, and step-by-step diagnostic solutions for AfterLink server and client setups."
+  title="Troubleshooting — Connection, Frame & Performance Issues" 
+  description="Diagnose and fix common AfterLink issues including connection failures, frame parsing errors, performance bottlenecks, and error code reference."
+  schema={{
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Troubleshooting — Connection, Frame & Performance Issues",
+    "description": "Diagnose and fix common AfterLink issues including connection failures, frame parsing errors, performance bottlenecks, and error code reference.",
+    "author": { "@type": "Person", "name": "Javali Ajayakumar" },
+    "publisher": { "@type": "Organization", "name": "AfterLink" },
+    "mainEntityOfPage": "https://afterlink-docs.vercel.app/docs/troubleshooting"
+  }}
 >
   <div class="space-y-6">
     <div class="border-b border-al-border/50 pb-4">
@@ -109,6 +118,15 @@ const issues = [
           </div>
         </div>
       ))}
+    </div>
+
+    <!-- Prev/Next Navigation -->
+    <div class="flex justify-between items-center mt-16 pt-6 border-t border-al-border">
+      <a href="/docs/examples" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span class="group-hover:-translate-x-0.5 transition-transform">&larr;</span>
+        <span>Code Examples</span>
+      </a>
+      <span></span>
     </div>
   </div>
 </DocsLayout>

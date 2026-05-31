@@ -5,8 +5,12 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 ---
 
-<BaseLayout title="Interactive Playground — AfterLink">
+<BaseLayout 
+  title="AfterLink Protocol Playground — Build & Test Binary Frames" 
+  description="Interactive playground to build, test, and visualize AfterLink protocol binary frames in real-time. Experiment with CONNECT, MESSAGE, SUBSCRIBE and more frame types."
+>
   <Navbar />
+  <main id="main-content">
   
   <div class="max-w-5xl mx-auto px-4 sm:px-6 py-16 flex-1 flex flex-col justify-center">
 
@@ -143,6 +147,7 @@ import Footer from '../components/Footer.astro';
     </div>
   </div>
 
+  </main>
   <Footer />
 </BaseLayout>
 

@@ -35,8 +35,17 @@ server.on('validationError', (socket, error) => {
 ---
 
 <DocsLayout 
-  title="Automatic Validation" 
-  description="Learn how to define, register, and leverage automatic schema validation for AfterLink network frames."
+  title="Schema Validation — Zod Validators & Custom Rules" 
+  description="Implement automatic schema validation in AfterLink with built-in Zod validators, custom validation rules, and protocol-level payload rejection."
+  schema={{
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Schema Validation — Zod Validators & Custom Rules",
+    "description": "Implement automatic schema validation in AfterLink with built-in Zod validators, custom validation rules, and protocol-level payload rejection.",
+    "author": { "@type": "Person", "name": "Javali Ajayakumar" },
+    "publisher": { "@type": "Organization", "name": "AfterLink" },
+    "mainEntityOfPage": "https://afterlink-docs.vercel.app/docs/validation"
+  }}
 >
   <div class="space-y-6">
     <div class="border-b border-al-border/50 pb-4">
@@ -107,13 +116,15 @@ server.on('validationError', (socket, error) => {
   ]
 }`} lang="json" filename="error-response.json" />
 
-    <!-- Navigation links -->
-    <div class="flex items-center justify-between border-t border-al-border/50 pt-8 mt-12 select-none">
-      <a href="/docs/protocol" class="text-xs text-al-muted hover:text-al-cyan transition-colors font-mono">
-        &larr; Protocol Layout
+    <!-- Prev/Next Navigation -->
+    <div class="flex justify-between items-center mt-16 pt-6 border-t border-al-border">
+      <a href="/docs/pubsub" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span class="group-hover:-translate-x-0.5 transition-transform">&larr;</span>
+        <span>Pub/Sub System</span>
       </a>
-      <a href="/docs/api" class="text-xs text-al-cyan hover:text-al-white transition-colors font-mono">
-        Server & Client API &rarr;
+      <a href="/docs/skills" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span>Skills System</span>
+        <span class="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
       </a>
     </div>
   </div>

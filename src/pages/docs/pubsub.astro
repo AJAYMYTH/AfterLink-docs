@@ -30,8 +30,17 @@ client.subscribe('sensors.*', (payload, channel) => {
 ---
 
 <DocsLayout 
-  title="Pub/Sub System" 
-  description="Detailed guide to AfterLink's native, low-latency Pub/Sub messaging system and wildcard routing."
+  title="Pub/Sub System — Channel Messaging & Broadcasting" 
+  description="Learn AfterLink's built-in publish/subscribe system with native channel messaging, wildcard subscriptions, and zero-dependency broadcasting."
+  schema={{
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Pub/Sub System — Channel Messaging & Broadcasting",
+    "description": "Learn AfterLink's built-in publish/subscribe system with native channel messaging, wildcard subscriptions, and zero-dependency broadcasting.",
+    "author": { "@type": "Person", "name": "Javali Ajayakumar" },
+    "publisher": { "@type": "Organization", "name": "AfterLink" },
+    "mainEntityOfPage": "https://afterlink-docs.vercel.app/docs/pubsub"
+  }}
 >
   <div class="space-y-6">
     <div class="border-b border-al-border/50 pb-4">
@@ -90,13 +99,15 @@ client.subscribe('sensors.*', (payload, channel) => {
     
     <CodeBlock code={subClientPattern} lang="javascript" filename="wildcard-sub.js" />
 
-    <!-- Navigation links -->
-    <div class="flex items-center justify-between border-t border-al-border/50 pt-8 mt-12 select-none">
-      <a href="/docs/api" class="text-xs text-al-muted hover:text-al-cyan transition-colors font-mono">
-        &larr; Server & Client API
+    <!-- Prev/Next Navigation -->
+    <div class="flex justify-between items-center mt-16 pt-6 border-t border-al-border">
+      <a href="/docs/api" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span class="group-hover:-translate-x-0.5 transition-transform">&larr;</span>
+        <span>API Reference</span>
       </a>
-      <a href="/docs/examples" class="text-xs text-al-cyan hover:text-al-white transition-colors font-mono">
-        Code Examples &rarr;
+      <a href="/docs/validation" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span>Schema Validation</span>
+        <span class="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
       </a>
     </div>
   </div>

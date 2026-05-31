@@ -5,8 +5,17 @@ import CodeBlock from '../../components/CodeBlock.astro';
 ---
 
 <DocsLayout 
-  title="API Reference Guide" 
-  description="Comprehensive API manual for AfterLink Server, Client and sub-package utilities."
+  title="API Reference — Server, Client & Frame Types" 
+  description="Complete API reference for AfterLink server, client classes, frame types, configuration options, event handlers, and error codes."
+  schema={{
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "API Reference — Server, Client & Frame Types",
+    "description": "Complete API reference for AfterLink server, client classes, frame types, configuration options, event handlers, and error codes.",
+    "author": { "@type": "Person", "name": "Javali Ajayakumar" },
+    "publisher": { "@type": "Organization", "name": "AfterLink" },
+    "mainEntityOfPage": "https://afterlink-docs.vercel.app/docs/api"
+  }}
 >
   <div class="space-y-6">
     <div class="border-b border-al-border/50 pb-4">
@@ -387,13 +396,15 @@ export interface ClientOptions {
   maxRetries?: number;
 }`} lang="typescript" filename="index.d.ts" />
 
-    <!-- Navigation links -->
-    <div class="flex items-center justify-between border-t border-al-border/50 pt-8 mt-12 select-none">
-      <a href="/docs/pubsub" class="text-xs text-al-muted hover:text-al-cyan transition-colors font-mono">
-        &larr; Pub/Sub System
+    <!-- Prev/Next Navigation -->
+    <div class="flex justify-between items-center mt-16 pt-6 border-t border-al-border">
+      <a href="/docs/protocol" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span class="group-hover:-translate-x-0.5 transition-transform">&larr;</span>
+        <span>Protocol Specification</span>
       </a>
-      <a href="/playground" class="text-xs text-al-cyan hover:text-al-white transition-colors font-mono">
-        Live Playground &rarr;
+      <a href="/docs/pubsub" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span>Pub/Sub System</span>
+        <span class="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
       </a>
     </div>
 

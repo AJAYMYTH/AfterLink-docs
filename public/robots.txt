@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /playground
+
+# Sitemap
+Sitemap: https://afterlink-docs.vercel.app/sitemap-index.xml

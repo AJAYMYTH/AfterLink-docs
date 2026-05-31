@@ -37,8 +37,17 @@ client.on('connect', () => {
 ---
 
 <DocsLayout 
-  title="Getting Started" 
+  title="Getting Started with AfterLink" 
   description="Learn how to install, set up, and configure persistent, binary-precise AfterLink server and client communication."
+  schema={{
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Getting Started with AfterLink",
+    "description": "Learn how to install, set up, and configure persistent, binary-precise AfterLink server and client communication.",
+    "author": { "@type": "Person", "name": "Javali Ajayakumar" },
+    "publisher": { "@type": "Organization", "name": "AfterLink" },
+    "mainEntityOfPage": "https://afterlink-docs.vercel.app/docs"
+  }}
 >
   <div class="space-y-6">
     <div class="border-b border-al-border/50 pb-4">
@@ -108,6 +117,15 @@ client.on('connect', () => {
       <a href="/docs/protocol" class="block p-4 rounded-lg border border-al-border hover:border-al-cyan/40 bg-al-card/20 transition-all select-none">
         <h3 class="font-mono text-xs font-bold text-al-cyan mb-1">Binary Protocol Spec &rarr;</h3>
         <p class="text-3xs text-al-muted">Deep dive into the 10-byte header format.</p>
+      </a>
+    </div>
+
+    <!-- Prev/Next Navigation -->
+    <div class="flex justify-between items-center mt-16 pt-6 border-t border-al-border">
+      <span></span>
+      <a href="/docs/installation" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span>Installation</span>
+        <span class="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
       </a>
     </div>
   </div>

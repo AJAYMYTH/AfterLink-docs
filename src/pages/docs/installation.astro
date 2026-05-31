@@ -77,8 +77,17 @@ const tsConfigCode = `
 ---
 
 <DocsLayout 
-  title="Installation Guide" 
-  description="Detailed instructions on how to install AfterLink modules, CLI debuggers, and browser CDN scripts."
+  title="Install AfterLink — npm Setup Guide" 
+  description="Install AfterLink via npm, yarn, or pnpm. Set up server, client, browser, and CLI packages for high-performance binary protocol communication."
+  schema={{
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Install AfterLink — npm Setup Guide",
+    "description": "Install AfterLink via npm, yarn, or pnpm. Set up server, client, browser, and CLI packages for high-performance binary protocol communication.",
+    "author": { "@type": "Person", "name": "Javali Ajayakumar" },
+    "publisher": { "@type": "Organization", "name": "AfterLink" },
+    "mainEntityOfPage": "https://afterlink-docs.vercel.app/docs/installation"
+  }}
 >
   <div class="space-y-6">
     <div class="border-b border-al-border/50 pb-4">
@@ -203,13 +212,15 @@ const tsConfigCode = `
     </p>
     <CodeBlock code={tsConfigCode} lang="json" filename="tsconfig.json" />
 
-    <!-- Navigation links -->
-    <div class="flex items-center justify-between border-t border-al-border/50 pt-8 mt-12 select-none">
-      <a href="/docs" class="text-xs text-al-muted hover:text-al-cyan transition-colors font-mono">
-        &larr; Getting Started
+    <!-- Prev/Next Navigation -->
+    <div class="flex justify-between items-center mt-16 pt-6 border-t border-al-border">
+      <a href="/docs" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span class="group-hover:-translate-x-0.5 transition-transform">&larr;</span>
+        <span>Getting Started</span>
       </a>
-      <a href="/docs/protocol" class="text-xs text-al-cyan hover:text-al-white transition-colors font-mono">
-        Binary Layout &rarr;
+      <a href="/docs/protocol" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span>Protocol Specification</span>
+        <span class="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
       </a>
     </div>
   </div>

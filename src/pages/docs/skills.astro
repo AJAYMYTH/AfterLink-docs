@@ -4,8 +4,17 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 ---
 
 <DocsLayout 
-  title="AI Agent Skills" 
-  description="Teach your AI coding agents how to write validated AfterLink server routes, connection handshakes and schemas."
+  title="Skills System — Modular Plugin Architecture" 
+  description="Extend AfterLink with the modular Skills system. Create, register, and manage pluggable functionality with lifecycle hooks and AI agent integration."
+  schema={{
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Skills System — Modular Plugin Architecture",
+    "description": "Extend AfterLink with the modular Skills system. Create, register, and manage pluggable functionality with lifecycle hooks and AI agent integration.",
+    "author": { "@type": "Person", "name": "Javali Ajayakumar" },
+    "publisher": { "@type": "Organization", "name": "AfterLink" },
+    "mainEntityOfPage": "https://afterlink-docs.vercel.app/docs/skills"
+  }}
 >
   <div class="space-y-6">
     <div class="border-b border-al-border/50 pb-4">
@@ -85,6 +94,17 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
       </p>
     </div>
 
+    <!-- Prev/Next Navigation -->
+    <div class="flex justify-between items-center mt-16 pt-6 border-t border-al-border">
+      <a href="/docs/validation" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span class="group-hover:-translate-x-0.5 transition-transform">&larr;</span>
+        <span>Schema Validation</span>
+      </a>
+      <a href="/docs/examples" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span>Code Examples</span>
+        <span class="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+      </a>
+    </div>
   </div>
 </DocsLayout>
 

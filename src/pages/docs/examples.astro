@@ -88,8 +88,17 @@ client.on('reconnect', (attempt) => {
 ---
 
 <DocsLayout 
-  title="Code Examples" 
-  description="Explore production-ready examples built on top of the AfterLink binary socket protocol."
+  title="Code Examples — Chat, Dashboard & Notifications" 
+  description="Practical AfterLink code examples including real-time chat applications, live dashboards, and notification systems with full source code."
+  schema={{
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "Code Examples — Chat, Dashboard & Notifications",
+    "description": "Practical AfterLink code examples including real-time chat applications, live dashboards, and notification systems with full source code.",
+    "author": { "@type": "Person", "name": "Javali Ajayakumar" },
+    "publisher": { "@type": "Organization", "name": "AfterLink" },
+    "mainEntityOfPage": "https://afterlink-docs.vercel.app/docs/examples"
+  }}
 >
   <div class="space-y-6">
     <div class="border-b border-al-border/50 pb-4">
@@ -127,13 +136,15 @@ client.on('reconnect', (attempt) => {
     </p>
     <CodeBlock code={reconnectExample} lang="javascript" filename="reconnect-handling.js" />
 
-    <!-- Navigation links -->
-    <div class="flex items-center justify-between border-t border-al-border/50 pt-8 mt-12 select-none">
-      <a href="/docs/pubsub" class="text-xs text-al-muted hover:text-al-cyan transition-colors font-mono">
-        &larr; Pub/Sub System
+    <!-- Prev/Next Navigation -->
+    <div class="flex justify-between items-center mt-16 pt-6 border-t border-al-border">
+      <a href="/docs/skills" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span class="group-hover:-translate-x-0.5 transition-transform">&larr;</span>
+        <span>Skills System</span>
       </a>
-      <a href="/changelog" class="text-xs text-al-cyan hover:text-al-white transition-colors font-mono">
-        Changelog &rarr;
+      <a href="/docs/troubleshooting" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span>Troubleshooting</span>
+        <span class="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
       </a>
     </div>
   </div>

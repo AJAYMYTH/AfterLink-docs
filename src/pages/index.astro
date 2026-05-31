@@ -7,8 +7,25 @@ import FeatureCard from '../components/FeatureCard.astro';
 import FrameVisualizer from '../components/FrameVisualizer.astro';
 ---
 
-<BaseLayout title="AfterLink — High Performance Binary Protocol">
+<BaseLayout 
+  title="AfterLink — High-Performance Binary Protocol for Real-Time Communication" 
+  description="AfterLink is a high-performance binary protocol with persistent TCP connections, native pub/sub, and automatic schema validation. 76% faster than WebSocket with a 10-byte binary header."
+  schema={{
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "AfterLink",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Cross-platform",
+    "description": "A high-performance binary protocol with persistent TCP connections, native pub/sub, and automatic schema validation for real-time applications.",
+    "url": "https://afterlink-docs.vercel.app",
+    "author": { "@type": "Person", "name": "Javali Ajayakumar" },
+    "programmingLanguage": "JavaScript",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "license": "https://github.com/AJAYMYTH/AfterLink/blob/main/LICENSE"
+  }}
+>
   <Navbar />
+  <main id="main-content">
 
   <!-- Hero Section -->
   <section class="relative w-full overflow-hidden border-b border-al-border py-20 md:py-28 transition-colors">
@@ -530,6 +547,7 @@ import FrameVisualizer from '../components/FrameVisualizer.astro';
     </div>
   </section>
 
+  </main>
   <Footer />
 </BaseLayout>
 
