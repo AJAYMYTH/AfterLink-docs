@@ -93,8 +93,24 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
       <p class="text-xs text-al-muted leading-relaxed mb-4 select-all">
         Once the skill package is installed inside your local repository configurations, you can prompt your editor agent with high-level goals:
       </p>
-      <div class="bg-al-bg border border-al-border rounded-lg px-4 py-3.5 font-mono text-xs text-al-cyan italic select-all shadow-inner">
-        "According to the local AfterLink skill, scaffold a TCP socket server on port 3000 that registers a Zod schema validation model for creating posts, and hooks up a pub/sub stream for client notifications."
+      <div class="flex items-start sm:items-center gap-3 bg-al-bg border border-al-border rounded-lg px-4 py-3.5 font-mono shadow-inner select-all">
+        <span class="text-al-cyan italic text-xs flex-1 select-all" id="prompt-text">
+          "According to the local AfterLink skill, scaffold a TCP socket server on port 3000 that registers a Zod schema validation model for creating posts, and hooks up a pub/sub stream for client notifications."
+        </span>
+        <button 
+          onclick="copyCodeText(document.getElementById('prompt-text').textContent.trim(), this)"
+          class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-al-border hover:border-al-cyan/40 bg-al-card hover:bg-al-bg text-xs text-al-muted hover:text-al-cyan transition-all shrink-0 cursor-pointer select-none shadow-xs mt-1 sm:mt-0"
+          aria-label="Copy prompt text"
+        >
+          <svg class="copy-svg h-3 w-3 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+            <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+          </svg>
+          <svg class="check-svg h-3 w-3 hidden text-al-green shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span class="btn-text">copy</span>
+        </button>
       </div>
       <p class="text-[10px] text-al-muted mt-3 font-mono tracking-tight select-none">
         The agent will automatically locate the skill guidelines, fetch correct API signatures, and write validated node code.
