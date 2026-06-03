@@ -9,12 +9,14 @@ import Footer from '../components/Footer.astro';
   title="Contact AfterLink — Bug Reports, Feature Requests & Support" 
   description="Get in touch with the AfterLink team for bug reports, feature requests, integration inquiries, and partnership proposals. Fast response within 24 hours."
 >
+
   <Navbar />
   <main id="main-content">
   
-  <div class="max-w-xl mx-auto px-4 sm:px-6 py-20 flex-1 flex flex-col justify-center">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-20 flex-1">
 
-    <div class="text-center mb-10 select-none">
+    <!-- Page heading -->
+    <div class="text-center mb-12 select-none">
       <p class="text-al-cyan font-mono text-sm uppercase tracking-widest mb-3">Support Channel</p>
       <h1 class="text-3xl font-mono font-bold text-al-white">Get in Touch</h1>
       <p class="text-al-muted mt-3 text-sm leading-relaxed max-w-md mx-auto">
@@ -28,95 +30,170 @@ import Footer from '../components/Footer.astro';
       </a>
     </div>
 
-    <!-- Contact Form -->
-    <form 
-      id="contact-form"
-      class="space-y-6 bg-al-card border border-al-border p-6 sm:p-8 rounded-xl shadow-sm"
-    >
-      <div>
-        <label for="contact-name" class="text-[10px] text-al-muted font-mono uppercase tracking-widest block mb-2 font-semibold select-none">
-          Name
-        </label>
-        <input 
-          id="contact-name"
-          type="text" 
-          name="name" 
-          required 
-          placeholder="Javali Ajayakumar"
-          class="w-full bg-al-bg border border-al-border rounded-lg px-4 py-3 text-al-text font-mono text-sm placeholder:text-al-muted focus:border-al-cyan focus:ring-1 focus:ring-al-cyan outline-none transition-colors" 
-        />
+    <!-- Two-column: LinkedIn card + Contact form -->
+    <div class="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-10 items-start">
+
+      <!-- ── LinkedIn Profile Card (custom, always renders) ───────────── -->
+      <div class="flex flex-col items-center lg:items-start gap-5">
+        <p class="text-[10px] text-al-muted font-mono uppercase tracking-widest font-semibold select-none">Creator</p>
+
+        <!-- Profile card -->
+        <div class="w-[240px] rounded-2xl overflow-hidden border border-al-border bg-white dark:bg-[#1b1f23] shadow-lg transition-colors shrink-0">
+
+          <!-- Cover banner -->
+          <div class="h-[68px] relative" style="background: linear-gradient(135deg, #0073b1 0%, #00a0dc 60%, #00d8ff 100%);">
+            <!-- LinkedIn logo watermark -->
+            <div class="absolute top-3 right-3 opacity-30">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Avatar -->
+          <div class="px-5 -mt-8 relative">
+            <div class="w-16 h-16 rounded-full border-[3px] border-white dark:border-[#1b1f23] overflow-hidden bg-zinc-200 shadow-md transition-colors">
+              <img
+                src="/javali-avatar.jpeg"
+                alt="Javali Ajayakumar"
+                width="64"
+                height="64"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+          </div>
+
+          <!-- Info -->
+          <div class="px-5 pt-2 pb-5">
+            <h3 class="font-bold text-[15px] text-zinc-900 dark:text-white leading-tight mt-1">
+              Javali Ajayakumar
+            </h3>
+            <p class="text-[12px] text-zinc-600 dark:text-zinc-400 mt-0.5 leading-snug">
+              Creator of AfterLink
+            </p>
+            <p class="text-[12px] text-zinc-500 dark:text-zinc-500 mt-0.5 leading-snug">
+              Building AI Tools & Tech · Vibe Coder
+            </p>
+            <p class="text-[11px] text-zinc-400 dark:text-zinc-500 mt-1 flex items-center gap-1">
+              <!-- Location pin -->
+              <svg class="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
+              India
+            </p>
+
+            <!-- Divider -->
+            <div class="border-t border-zinc-100 dark:border-zinc-700/60 my-3"></div>
+
+            <!-- View profile CTA -->
+            <a
+              href="https://in.linkedin.com/in/javaliajayakumar"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center gap-2 w-full py-1.5 px-3 rounded-full border-2 border-[#0073b1] text-[#0073b1] dark:text-[#5bb4e4] dark:border-[#5bb4e4] text-[12px] font-bold hover:bg-[#0073b1]/8 dark:hover:bg-[#5bb4e4]/10 transition-colors"
+            >
+              <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+              View Profile
+            </a>
+          </div>
+        </div>
+
+        <!-- GitHub issue shortcut below card -->
+        <div class="text-center lg:text-left select-none">
+          <p class="text-xs text-al-muted leading-relaxed">Prefer public trackers?</p>
+          <a 
+            href="https://github.com/AJAYMYTH/AfterLink/issues"
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="text-al-cyan font-mono text-xs hover:underline mt-1 inline-block focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan focus-visible:rounded px-1"
+          >
+            Open a GitHub Issue ↗
+          </a>
+        </div>
       </div>
 
+      <!-- ── Contact Form ────────────────────────────────────────────── -->
       <div>
-        <label for="contact-email" class="text-[10px] text-al-muted font-mono uppercase tracking-widest block mb-2 font-semibold select-none">
-          Email Address
-        </label>
-        <input 
-          id="contact-email"
-          type="email" 
-          name="email" 
-          required 
-          placeholder="you@example.com"
-          class="w-full bg-al-bg border border-al-border rounded-lg px-4 py-3 text-al-text font-mono text-sm placeholder:text-al-muted focus:border-al-cyan focus:ring-1 focus:ring-al-cyan outline-none transition-colors" 
-        />
-      </div>
-
-      <div>
-        <label for="contact-subject" class="text-[10px] text-al-muted font-mono uppercase tracking-widest block mb-2 font-semibold select-none">
-          Subject
-        </label>
-        <select 
-          id="contact-subject"
-          name="subject"
-          class="w-full bg-al-bg border border-al-border rounded-lg px-4 py-3 text-al-text font-mono text-sm focus:border-al-cyan focus:ring-1 focus:ring-al-cyan outline-none transition-colors cursor-pointer"
+        <form 
+          id="contact-form"
+          class="space-y-6 bg-al-card border border-al-border p-6 sm:p-8 rounded-xl shadow-sm"
         >
-          <option>Bug report</option>
-          <option>Feature request</option>
-          <option>Partnership</option>
-          <option>General question</option>
-          <option>Other</option>
-        </select>
+          <div>
+            <label for="contact-name" class="text-[10px] text-al-muted font-mono uppercase tracking-widest block mb-2 font-semibold select-none">
+              Name
+            </label>
+            <input 
+              id="contact-name"
+              type="text" 
+              name="name" 
+              required 
+              placeholder="Javali Ajayakumar"
+              class="w-full bg-al-bg border border-al-border rounded-lg px-4 py-3 text-al-text font-mono text-sm placeholder:text-al-muted focus:border-al-cyan focus:ring-1 focus:ring-al-cyan outline-none transition-colors" 
+            />
+          </div>
+
+          <div>
+            <label for="contact-email" class="text-[10px] text-al-muted font-mono uppercase tracking-widest block mb-2 font-semibold select-none">
+              Email Address
+            </label>
+            <input 
+              id="contact-email"
+              type="email" 
+              name="email" 
+              required 
+              placeholder="you@example.com"
+              class="w-full bg-al-bg border border-al-border rounded-lg px-4 py-3 text-al-text font-mono text-sm placeholder:text-al-muted focus:border-al-cyan focus:ring-1 focus:ring-al-cyan outline-none transition-colors" 
+            />
+          </div>
+
+          <div>
+            <label for="contact-subject" class="text-[10px] text-al-muted font-mono uppercase tracking-widest block mb-2 font-semibold select-none">
+              Subject
+            </label>
+            <select 
+              id="contact-subject"
+              name="subject"
+              class="w-full bg-al-bg border border-al-border rounded-lg px-4 py-3 text-al-text font-mono text-sm focus:border-al-cyan focus:ring-1 focus:ring-al-cyan outline-none transition-colors cursor-pointer"
+            >
+              <option>Bug report</option>
+              <option>Feature request</option>
+              <option>Partnership</option>
+              <option>General question</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="contact-message" class="text-[10px] text-al-muted font-mono uppercase tracking-widest block mb-2 font-semibold select-none">
+              Message
+            </label>
+            <textarea 
+              id="contact-message"
+              name="message" 
+              rows="5" 
+              required 
+              placeholder="Describe your question or issue details…"
+              class="w-full bg-al-bg border border-al-border rounded-lg px-4 py-3 text-al-text font-mono text-xs placeholder:text-al-muted focus:border-al-cyan focus:ring-1 focus:ring-al-cyan outline-none transition-colors resize-none font-mono"
+            ></textarea>
+          </div>
+
+          <button 
+            type="submit"
+            class="w-full bg-al-cyan text-al-bg font-mono font-bold py-3 rounded-lg hover:opacity-90 active:scale-[0.99] transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-al-cyan"
+          >
+            Send Message
+          </button>
+
+          <!-- Submission Status Panel -->
+          <p id="form-status" class="text-center text-xs font-mono py-2 rounded border hidden" aria-live="polite"></p>
+
+        </form>
       </div>
 
-      <div>
-        <label for="contact-message" class="text-[10px] text-al-muted font-mono uppercase tracking-widest block mb-2 font-semibold select-none">
-          Message
-        </label>
-        <textarea 
-          id="contact-message"
-          name="message" 
-          rows="5" 
-          required 
-          placeholder="Describe your question or issue details…"
-          class="w-full bg-al-bg border border-al-border rounded-lg px-4 py-3 text-al-text font-mono text-xs placeholder:text-al-muted focus:border-al-cyan focus:ring-1 focus:ring-al-cyan outline-none transition-colors resize-none font-mono"
-        ></textarea>
-      </div>
-
-      <button 
-        type="submit"
-        class="w-full bg-al-cyan text-al-bg font-mono font-bold py-3 rounded-lg hover:opacity-90 active:scale-[0.99] transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-al-cyan"
-      >
-        Send Message
-      </button>
-
-      <!-- Submission Status Panel -->
-      <p id="form-status" class="text-center text-xs font-mono py-2 rounded border hidden" aria-live="polite"></p>
-
-    </form>
-
-    <!-- Alternative issue trackers -->
-    <div class="mt-12 text-center select-none">
-      <p class="text-xs text-al-muted leading-relaxed">Prefer public trackers?</p>
-      <a 
-        href="https://github.com/AJAYMYTH/AfterLink/issues"
-        target="_blank" 
-        rel="noopener noreferrer"
-        class="text-al-cyan font-mono text-xs hover:underline mt-1 inline-block focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-al-cyan focus-visible:rounded px-1"
-      >
-        Open a GitHub Issue ↗
-      </a>
     </div>
-
   </div>
 
   </main>
@@ -124,6 +201,7 @@ import Footer from '../components/Footer.astro';
 </BaseLayout>
 
 <script>
+  // ── Contact form submit ────────────────────────────────────────────────
   const form = document.getElementById('contact-form') as HTMLFormElement;
   const statusEl = document.getElementById('form-status');
 

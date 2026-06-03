@@ -13,6 +13,7 @@
   --color-al-green: #22c55e;
   --color-al-blue: #0070f3;
 
+  --font-display: 'Geist', 'DM Sans', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
   --font-body: 'DM Sans', system-ui, sans-serif;
   
@@ -81,9 +82,12 @@ pre {
   padding: 1.25rem;
 }
 
-/* Scroll margin for headings for sticky navbar compatibility */
+/* Headings — Geist SemiBold (closest free match to OpenAI Sans 600) */
 h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 600;
   scroll-margin-top: 80px;
+  letter-spacing: -0.02em;
 }
 
 /* Responsive typography clamp settings */
