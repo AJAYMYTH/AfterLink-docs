@@ -74,6 +74,12 @@ const tsConfigCode = `
   }
 }
 `;
+
+const aiAssistantInstall = `
+# Install globally
+npm install -g @afterlink/ai-assistant
+afterlink-ai
+`;
 ---
 
 <DocsLayout 
@@ -153,6 +159,15 @@ const tsConfigCode = `
             <td class="p-3">Command-line debuggers, packet tracers, and validators</td>
             <td class="p-3">Global / CLI</td>
           </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">
+              <a href="https://www.npmjs.com/package/@afterlink/ai-assistant" target="_blank" rel="noopener noreferrer" class="hover:underline">@afterlink/ai-assistant</a>
+            </td>
+            <td class="p-3">Offline RAG AI assistant — answers AfterLink questions in your terminal</td>
+            <td class="p-3">
+              <a href="https://www.npmjs.com/package/@afterlink/ai-assistant" target="_blank" rel="noopener noreferrer" class="hover:underline text-al-cyan">Global / CLI</a>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -211,6 +226,13 @@ const tsConfigCode = `
       If compiling with TypeScript, declare the paths inside your configuration file for proper module resolution:
     </p>
     <CodeBlock code={tsConfigCode} lang="json" filename="tsconfig.json" />
+
+    <!-- AI Assistant -->
+    <h2 id="ai-assistant" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">8. AI Assistant (optional)</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Install the offline AI assistant to ask questions directly in your terminal:
+    </p>
+    <CodeBlock code={aiAssistantInstall} lang="bash" filename="Terminal" />
 
     <!-- Prev/Next Navigation -->
     <div class="flex justify-between items-center mt-16 pt-6 border-t border-al-border">

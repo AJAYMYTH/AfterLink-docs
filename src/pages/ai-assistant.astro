@@ -1,0 +1,315 @@
+---
+// src/pages/ai-assistant.astro
+import DocsLayout from '../layouts/DocsLayout.astro';
+import CodeBlock from '../components/CodeBlock.astro';
+
+const globalInstall = `
+npm install -g @afterlink/ai-assistant
+afterlink-ai
+`;
+
+const localInstall = `
+npm install @afterlink/ai-assistant
+node node_modules/@afterlink/ai-assistant/src/chat.js
+`;
+---
+
+<DocsLayout
+  title="AI Assistant (Offline) — AfterLink Docs"
+  description="AfterLink ships a 100% offline proprietary AI assistant — a local RAG pipeline that answers technical questions about AfterLink directly in your terminal. No internet. No API keys. No cloud."
+  schema={{
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "AI Assistant (Offline) — AfterLink Docs",
+    "description": "AfterLink ships a 100% offline proprietary AI assistant — a local RAG pipeline that answers technical questions about AfterLink directly in your terminal. No internet. No API keys. No cloud.",
+    "author": { "@type": "Person", "name": "Javali Ajayakumar" },
+    "publisher": { "@type": "Organization", "name": "AfterLink" },
+    "mainEntityOfPage": "https://afterlink-docs.vercel.app/ai-assistant"
+  }}
+>
+  <div class="space-y-6">
+
+    <!-- Page Header -->
+    <div class="border-b border-al-border/50 pb-4">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-al-cyan/30 bg-al-cyan/5 px-2.5 py-0.5 font-mono text-[10px] text-al-cyan tracking-wider uppercase">
+          <span class="h-1.5 w-1.5 rounded-full bg-al-cyan animate-pulse"></span>
+          100% Offline
+        </span>
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/5 px-2.5 py-0.5 font-mono text-[10px] text-emerald-400 tracking-wider uppercase">
+          No API Keys
+        </span>
+      </div>
+      <h1 class="text-3xl font-bold tracking-tight text-al-white mb-2">AI Assistant <span class="text-al-muted font-normal">(Offline)</span></h1>
+      <p class="text-sm text-al-muted leading-relaxed">
+        AfterLink ships a 100% offline proprietary AI assistant — a local RAG
+        (Retrieval-Augmented Generation) pipeline that answers technical questions
+        about AfterLink directly in your terminal. No internet. No API keys. No cloud.
+      </p>
+    </div>
+
+    <!-- Overview callout -->
+    <div class="bg-al-card border border-al-border rounded-xl p-6 my-6 select-all shadow-sm">
+      <h2 class="font-mono text-xs font-bold text-al-cyan uppercase tracking-wider mb-2">What is it?</h2>
+      <p class="text-xs text-al-text leading-relaxed">
+        The <code class="text-al-cyan">@afterlink/ai-assistant</code> package bundles a fully offline Retrieval-Augmented Generation (RAG) pipeline. It uses FAISS vector search, BM25 keyword matching, and a local cross-encoder reranker to answer your questions about AfterLink with verified <strong class="text-al-white">100% accuracy</strong> — entirely on your machine with no network calls.
+      </p>
+    </div>
+
+    <!-- Installation -->
+    <h2 id="installation" class="text-lg font-semibold tracking-tight text-al-white mt-10 mb-3 select-none font-mono">Installation</h2>
+
+    <p class="text-xs text-al-muted leading-relaxed select-all mb-4">
+      Install globally to use the <code class="text-al-cyan">afterlink-ai</code> command anywhere on your system:
+    </p>
+    <CodeBlock code={globalInstall} lang="bash" filename="Terminal — Global" />
+
+    <p class="text-xs text-al-muted leading-relaxed select-all mt-6 mb-4">
+      Or install locally inside your project and run it directly:
+    </p>
+    <CodeBlock code={localInstall} lang="bash" filename="Terminal — Local" />
+
+    <!-- Example Session -->
+    <h2 id="example-session" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">Example Session</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all mb-4">
+      Here is what a real interactive session looks like — showing the assistant's sourced, structured output:
+    </p>
+
+    <!-- Terminal Session Mockup -->
+    <div class="bg-al-black border border-al-border rounded-xl overflow-hidden shadow-lg select-all font-mono text-xs">
+      <!-- Terminal chrome bar -->
+      <div class="flex items-center gap-2 px-4 py-3 border-b border-al-border/60 bg-al-card/60 select-none">
+        <span class="h-3 w-3 rounded-full bg-red-500/70"></span>
+        <span class="h-3 w-3 rounded-full bg-amber-400/70"></span>
+        <span class="h-3 w-3 rounded-full bg-emerald-500/70"></span>
+        <span class="ml-3 text-al-muted text-[10px] tracking-widest uppercase">afterlink-ai — terminal</span>
+      </div>
+      <!-- Session content -->
+      <div class="p-5 space-y-4 leading-relaxed text-[11.5px]">
+        <!-- User prompt -->
+        <div class="flex gap-3">
+          <span class="text-al-cyan shrink-0 font-bold select-none">You ›</span>
+          <span class="text-al-white">how to set up a TLS server</span>
+        </div>
+        <!-- Source line -->
+        <div class="text-al-muted/70 text-[10px] font-mono">
+          Assistant › <span class="text-emerald-400">[Source: Server SDK: tls.js | Confidence: 99.4% | Latency: 493ms]</span>
+        </div>
+        <!-- Description block -->
+        <div class="space-y-1 pl-4 border-l-2 border-al-cyan/30">
+          <p class="text-al-cyan font-semibold text-[10px] uppercase tracking-wider">🔹 Description / Overview</p>
+          <p class="text-al-text">
+            To enable TLS on your AfterLink server, use <code class="text-al-cyan">generateDevCerts()</code> for local
+            development or pass your own key/cert pair for production.
+          </p>
+        </div>
+        <!-- Code boilerplate -->
+        <div class="space-y-2 pl-4 border-l-2 border-amber-400/30">
+          <p class="text-amber-400 font-semibold text-[10px] uppercase tracking-wider">⚡ Code Boilerplate & Example</p>
+          <div class="bg-al-bg/60 border border-al-border rounded-lg p-4 overflow-x-auto text-[11px] leading-relaxed">
+            <div><span class="text-al-muted">const</span> {"{ Server, generateDevCerts }"} = <span class="text-al-cyan">require</span>(<span class="text-amber-300">'@afterlink/server'</span>);</div>
+            <div><span class="text-al-muted">const</span> {"{ key, cert }"} = <span class="text-al-cyan">await</span> <span class="text-emerald-400">generateDevCerts</span>({"{ commonName: 'srv' }"});</div>
+            <div><span class="text-al-muted">const</span> server = <span class="text-al-cyan">new</span> <span class="text-emerald-400">Server</span>({"{"}</div>
+            <div class="pl-4">port: <span class="text-amber-300">4443</span>,</div>
+            <div class="pl-4">tls: {"{ enabled: true, key, cert, rejectUnauthorized: false }"},</div>
+            <div>{"}"});</div>
+            <div><span class="text-al-cyan">await</span> server.<span class="text-emerald-400">listen</span>();</div>
+          </div>
+        </div>
+        <!-- Resources -->
+        <div class="space-y-1 pl-4 border-l-2 border-al-blue/30">
+          <p class="text-al-blue font-semibold text-[10px] uppercase tracking-wider">🔗 Official Resources & Sources</p>
+          <ul class="text-al-muted space-y-0.5">
+            <li>Main Documentation: <a href="https://afterlink-docs.vercel.app" target="_blank" rel="noopener noreferrer" class="text-al-cyan hover:underline">afterlink-docs.vercel.app</a></li>
+            <li>GitHub Code Base: <a href="https://github.com/AJAYMYTH/AfterLink" target="_blank" rel="noopener noreferrer" class="text-al-cyan hover:underline">github.com/AJAYMYTH/AfterLink</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Terminal Commands -->
+    <h2 id="terminal-commands" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">Terminal Commands</h2>
+    <div class="overflow-x-auto border border-al-border rounded-lg bg-al-dark/20 select-all">
+      <table class="w-full text-left font-mono text-xs divide-y divide-al-border select-all">
+        <thead class="bg-al-black/40 text-al-muted select-none">
+          <tr>
+            <th class="p-3">Command</th>
+            <th class="p-3">Description</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-al-border select-all">
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">afterlink-ai</td>
+            <td class="p-3">Start the interactive AI assistant</td>
+          </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">/reset</td>
+            <td class="p-3">Clear conversation memory</td>
+          </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">/history</td>
+            <td class="p-3">Show past queries this session</td>
+          </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">/stats</td>
+            <td class="p-3">Show helpfulness feedback stats</td>
+          </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">/quit</td>
+            <td class="p-3">Exit the assistant</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- How It Works -->
+    <h2 id="how-it-works" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">How It Works</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all mb-4">
+      Every query goes through a multi-stage offline pipeline — no external service calls at any stage:
+    </p>
+    <div class="overflow-x-auto border border-al-border rounded-lg bg-al-dark/20 select-all">
+      <table class="w-full text-left font-mono text-xs divide-y divide-al-border select-all">
+        <thead class="bg-al-black/40 text-al-muted select-none">
+          <tr>
+            <th class="p-3">Component</th>
+            <th class="p-3">Technology</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-al-border select-all">
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">Vector store</td>
+            <td class="p-3">FAISS (local, in-process)</td>
+          </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">Embeddings</td>
+            <td class="p-3"><code>all-MiniLM-L6-v2</code> via <code>@xenova/transformers</code></td>
+          </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">Keyword search</td>
+            <td class="p-3">BM25 (Okapi BM25, fully offline)</td>
+          </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">Reranker</td>
+            <td class="p-3"><code>ms-marco-MiniLM-L-6-v2</code> cross-encoder</td>
+          </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">Query preprocessing</td>
+            <td class="p-3">Levenshtein spell-correction + acronym/synonym expansion</td>
+          </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">Session memory</td>
+            <td class="p-3">Sliding-window context (last 10 turns)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Benchmark Results -->
+    <h2 id="benchmarks" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">Benchmark Results</h2>
+
+    <!-- Big stat cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 select-none">
+      <div class="text-center p-5 bg-al-card border border-al-border rounded-xl shadow-xs">
+        <p class="text-2xl font-mono font-bold text-al-cyan tabular-nums">100%</p>
+        <p class="text-al-muted text-[10px] mt-1.5 leading-tight">overall accuracy<br/>(54/54 queries)</p>
+      </div>
+      <div class="text-center p-5 bg-al-card border border-al-border rounded-xl shadow-xs">
+        <p class="text-2xl font-mono font-bold text-al-cyan tabular-nums">434ms</p>
+        <p class="text-al-muted text-[10px] mt-1.5 leading-tight">avg query latency<br/>target &lt; 500ms</p>
+      </div>
+      <div class="text-center p-5 bg-al-card border border-al-border rounded-xl shadow-xs">
+        <p class="text-2xl font-mono font-bold text-al-cyan tabular-nums">~250MB</p>
+        <p class="text-al-muted text-[10px] mt-1.5 leading-tight">RAM usage<br/>target &lt; 1GB</p>
+      </div>
+      <div class="text-center p-5 bg-al-card border border-emerald-500/20 rounded-xl shadow-xs">
+        <p class="text-2xl font-mono font-bold text-emerald-400 tabular-nums">None</p>
+        <p class="text-al-muted text-[10px] mt-1.5 leading-tight">internet required<br/>fully offline ✓</p>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto border border-al-border rounded-lg bg-al-dark/20 select-all">
+      <table class="w-full text-left font-mono text-xs divide-y divide-al-border select-all">
+        <thead class="bg-al-black/40 text-al-muted select-none">
+          <tr>
+            <th class="p-3">Metric</th>
+            <th class="p-3">Result</th>
+            <th class="p-3">Target</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-al-border select-all">
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">Overall accuracy</td>
+            <td class="p-3 text-emerald-400 font-semibold">100% (54/54 queries)</td>
+            <td class="p-3 text-al-muted">≥ 80%</td>
+          </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">Avg query latency</td>
+            <td class="p-3 text-emerald-400 font-semibold">434 ms</td>
+            <td class="p-3 text-al-muted">&lt; 500 ms</td>
+          </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">RAM usage</td>
+            <td class="p-3 text-emerald-400 font-semibold">~250 MB</td>
+            <td class="p-3 text-al-muted">&lt; 1 GB</td>
+          </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">Internet required</td>
+            <td class="p-3 text-emerald-400 font-semibold">None — fully offline</td>
+            <td class="p-3 text-al-muted">Offline</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="text-[10px] text-al-muted mt-3 font-mono tracking-tight italic select-all">
+      Accuracy categories: Exact Match · Synonyms · Typos · Follow-up · Out-of-scope · Abbreviations — all at 100%.
+    </p>
+
+    <!-- Requirements -->
+    <h2 id="requirements" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">Requirements</h2>
+    <ul class="list-disc pl-5 space-y-1.5 text-xs text-al-muted select-all">
+      <li><strong class="text-al-white">Node.js</strong> version <code>≥ 20</code></li>
+      <li><strong class="text-al-white">~500 MB</strong> disk space (for local model weights, downloaded on first run)</li>
+      <li><strong class="text-al-white">~250 MB</strong> RAM during operation</li>
+    </ul>
+
+    <!-- Links -->
+    <h2 id="links" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">Links</h2>
+    <ul class="space-y-2 text-xs text-al-muted select-all">
+      <li class="flex items-center gap-2">
+        <svg class="w-3.5 h-3.5 text-al-cyan shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M0 0h24v24H0V0zm7.07 4.5H3v15h9v-3H7.07V4.5zm2.93 0v12h3V7.5h3v9h3V4.5H10z"/>
+        </svg>
+        <span>npm:</span>
+        <a href="https://www.npmjs.com/package/@afterlink/ai-assistant" target="_blank" rel="noopener noreferrer" class="text-al-cyan hover:underline">npmjs.com/package/@afterlink/ai-assistant ↗</a>
+      </li>
+      <li class="flex items-center gap-2">
+        <svg class="w-3.5 h-3.5 text-al-cyan shrink-0" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+        <span>GitHub:</span>
+        <a href="https://github.com/AJAYMYTH/AfterLink/tree/main/packages/ai-assistant" target="_blank" rel="noopener noreferrer" class="text-al-cyan hover:underline">github.com/AJAYMYTH/AfterLink/…/ai-assistant ↗</a>
+      </li>
+      <li class="flex items-center gap-2">
+        <svg class="w-3.5 h-3.5 text-al-cyan shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+        <span>Benchmark report:</span>
+        <a href="https://github.com/AJAYMYTH/AfterLink/blob/main/BENCHMARKS.md" target="_blank" rel="noopener noreferrer" class="text-al-cyan hover:underline">github.com/AJAYMYTH/AfterLink/…/BENCHMARKS.md ↗</a>
+      </li>
+    </ul>
+
+    <!-- Prev/Next Navigation -->
+    <div class="flex justify-between items-center mt-16 pt-6 border-t border-al-border">
+      <a href="/docs/installation" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span class="group-hover:-translate-x-0.5 transition-transform">&larr;</span>
+        <span>Installation</span>
+      </a>
+      <a href="/docs" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span>Getting Started</span>
+        <span class="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+      </a>
+    </div>
+
+  </div>
+</DocsLayout>
