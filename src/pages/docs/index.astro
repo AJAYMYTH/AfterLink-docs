@@ -4,10 +4,10 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 import CodeBlock from '../../components/CodeBlock.astro';
 
 const quickServer = `
-import { createServer } from 'afterlink';
+const { Server } = require('@afterlink/server');
 
 // Fire up binary server
-const server = createServer({ port: 8080 });
+const server = new Server({ port: 8080 });
 
 // Handle frame connections
 server.on('message', (socket, frame) => {
@@ -19,10 +19,10 @@ server.on('message', (socket, frame) => {
 `;
 
 const quickClient = `
-import { createClient } from 'afterlink';
+const { Client } = require('@afterlink/client');
 
 // Connect to AfterLink TCP daemon
-const client = createClient({ port: 8080 });
+const client = new Client({ port: 8080 });
 
 client.on('connect', () => {
   console.log('Socket channel ready');
@@ -89,9 +89,9 @@ client.on('connect', () => {
     <!-- Installation -->
     <h2 id="installation" class="text-lg font-semibold tracking-tight text-al-white mt-10 mb-3 select-none">Installation</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all mb-4">
-      Install the main AfterLink module from the npm registry:
+      Install the standard AfterLink scoped packages from the npm registry:
     </p>
-    <CodeBlock code="npm install afterlink" lang="bash" filename="Terminal" />
+    <CodeBlock code="npm install @afterlink/core @afterlink/server @afterlink/client @afterlink/browser @afterlink/cli" lang="bash" filename="Terminal" />
 
     <!-- Server Quick Start -->
     <h2 id="quick-start-server" class="text-lg font-semibold tracking-tight text-al-white mt-10 mb-3 select-none">Quick Start — Server</h2>

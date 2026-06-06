@@ -3,9 +3,30 @@
 import DocsLayout from '../../layouts/DocsLayout.astro';
 import CodeBlock from '../../components/CodeBlock.astro';
 
-const fullInstall = `
-# Recommended: forces installation of the absolute latest version (v1.2.4+)
-npm install afterlink@latest
+const npmInstall = `
+# Install standard AfterLink scoped packages via npm
+npm install @afterlink/core @afterlink/server @afterlink/client @afterlink/browser @afterlink/cli
+`;
+
+const pnpmInstall = `
+# Install standard AfterLink scoped packages via pnpm
+pnpm add @afterlink/core @afterlink/server @afterlink/client @afterlink/browser @afterlink/cli
+`;
+
+const yarnInstall = `
+# Install standard AfterLink scoped packages via yarn
+yarn add @afterlink/core @afterlink/server @afterlink/client @afterlink/browser @afterlink/cli
+`;
+
+const githubNpmrc = `
+# .npmrc configuration to route the @ajaymyth scope to GitHub Packages
+@ajaymyth:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=YOUR_PAT
+`;
+
+const githubInstall = `
+# Install a scoped package from GitHub Packages
+npm install @ajaymyth/server
 `;
 
 const modularInstall = `
@@ -20,10 +41,10 @@ npm install @afterlink/browser
 `;
 
 const quickServer = `
-import { createServer } from 'afterlink';
+const { Server } = require('@afterlink/server');
 
 // Fire up binary server
-const server = createServer({ port: 8080 });
+const server = new Server({ port: 8080 });
 
 // Handle frame connections
 server.on('message', (socket, frame) => {
@@ -35,10 +56,10 @@ server.on('message', (socket, frame) => {
 `;
 
 const quickClient = `
-import { createClient } from 'afterlink';
+const { Client } = require('@afterlink/client');
 
 // Connect to AfterLink TCP daemon
-const client = createClient({ port: 8080 });
+const client = new Client({ port: 8080 });
 
 client.on('connect', () => {
   console.log('Socket channel ready');
@@ -58,7 +79,7 @@ npm install -g @afterlink/cli
 
 const cdnScript = `
 <!-- Load client SDK directly in html files via CDN fallback -->
-<script src="https://unpkg.com/@afterlink/browser@1.2.0/dist/index.global.js"></script>
+<script src="https://unpkg.com/@afterlink/browser@1.2.4/dist/index.global.js"></script>
 <script>
   const client = AfterLinkBrowser.createClient({ host: '127.0.0.1', port: 4000 });
 </script>
@@ -111,12 +132,44 @@ afterlink-ai
       <li><strong>Operating System:</strong> Linux, macOS, or Windows (WSL recommended)</li>
     </ul>
 
-    <!-- Main install wrapper -->
-    <h2 id="core-package" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">1. Standard Installation</h2>
+    <!-- Two Distribution Channels -->
+    <h2 id="distribution-channels" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">1. Distribution Channels</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all">
-      For most backend servers and client applications, installing the all-in-one <code>afterlink</code> library is recommended. This ensures version 1.2.4+ with 0 vulnerabilities is installed:
+      AfterLink packages are published to two separate registries. Choose the channel that best suits your deployment environment.
     </p>
-    <CodeBlock code={fullInstall} lang="bash" filename="Terminal" />
+
+    <!-- Registry 1: npm (Standard) -->
+    <h3 class="text-sm font-semibold text-al-white mt-6 mb-2">Registry 1: npm (Standard / Recommended)</h3>
+    <p class="text-xs text-al-muted leading-relaxed mb-4">
+      The standard release packages are published on the public npm registry under the official <code>@afterlink/*</code> scope. You can install all key modules in one command using your preferred package manager:
+    </p>
+
+    <div class="space-y-4">
+      <div>
+        <span class="text-3xs font-mono uppercase tracking-wider text-al-muted block mb-1">npm</span>
+        <CodeBlock code={npmInstall} lang="bash" filename="Terminal" />
+      </div>
+      <div>
+        <span class="text-3xs font-mono uppercase tracking-wider text-al-muted block mb-1">pnpm</span>
+        <CodeBlock code={pnpmInstall} lang="bash" filename="Terminal" />
+      </div>
+      <div>
+        <span class="text-3xs font-mono uppercase tracking-wider text-al-muted block mb-1">yarn</span>
+        <CodeBlock code={yarnInstall} lang="bash" filename="Terminal" />
+      </div>
+    </div>
+
+    <!-- Registry 2: GitHub Packages (Alternative) -->
+    <h3 class="text-sm font-semibold text-al-white mt-8 mb-2">Registry 2: GitHub Packages (Alternative)</h3>
+    <p class="text-xs text-al-muted leading-relaxed mb-4">
+      As an alternative distribution channel, packages are also published to GitHub Packages under the <code>@ajaymyth/*</code> scope. To fetch packages from GitHub, route the <code>@ajaymyth</code> scope in your local <code>.npmrc</code> configuration file:
+    </p>
+    <CodeBlock code={githubNpmrc} lang="ini" filename=".npmrc" />
+    
+    <p class="text-xs text-al-muted leading-relaxed mt-4 mb-2">
+      After setting up your <code>.npmrc</code> file with your GitHub Personal Access Token (PAT), install the scoped package directly:
+    </p>
+    <CodeBlock code={githubInstall} lang="bash" filename="Terminal" />
 
     <!-- Streamlining Note -->
     <div class="my-4 border-l-2 border-al-cyan bg-al-card/15 p-4 rounded-r-lg">
@@ -142,27 +195,27 @@ afterlink-ai
         </thead>
         <tbody class="divide-y divide-al-border select-all">
           <tr class="hover:bg-al-card/35 transition-colors">
-            <td class="p-3 font-semibold text-al-cyan">@afterlink/core</td>
+            <td class="p-3 font-semibold text-al-cyan">@afterlink/core / @ajaymyth/core</td>
             <td class="p-3">Binary frame codec (encoder, decoder, segment layouts)</td>
             <td class="p-3">Any / Universal</td>
           </tr>
           <tr class="hover:bg-al-card/35 transition-colors">
-            <td class="p-3 font-semibold text-al-cyan">@afterlink/server</td>
+            <td class="p-3 font-semibold text-al-cyan">@afterlink/server / @ajaymyth/server</td>
             <td class="p-3">High-throughput TCP server runtime module</td>
             <td class="p-3">Node.js Server</td>
           </tr>
           <tr class="hover:bg-al-card/35 transition-colors">
-            <td class="p-3 font-semibold text-al-cyan">@afterlink/client</td>
+            <td class="p-3 font-semibold text-al-cyan">@afterlink/client / @ajaymyth/client</td>
             <td class="p-3">Persistent TCP client wrapper with auto-reconnect</td>
             <td class="p-3">Node.js Client</td>
           </tr>
           <tr class="hover:bg-al-card/35 transition-colors">
-            <td class="p-3 font-semibold text-al-cyan">@afterlink/browser</td>
+            <td class="p-3 font-semibold text-al-cyan">@afterlink/browser / @ajaymyth/browser</td>
             <td class="p-3">WebSocket fallback SDK with binary streaming support</td>
             <td class="p-3">Web Browser</td>
           </tr>
           <tr class="hover:bg-al-card/35 transition-colors">
-            <td class="p-3 font-semibold text-al-cyan">@afterlink/cli</td>
+            <td class="p-3 font-semibold text-al-cyan">@afterlink/cli / @ajaymyth/cli</td>
             <td class="p-3">Command-line debuggers, packet tracers, and validators</td>
             <td class="p-3">Global / CLI</td>
           </tr>
@@ -227,22 +280,33 @@ afterlink-ai
     </p>
     <CodeBlock code={cdnScript} lang="html" filename="index.html" />
 
+    <!-- Browser Compatibility & Bundler Integration -->
+    <h2 id="browser-compatibility" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">7. Browser Compatibility & Bundling Fixes</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      To guarantee compatibility across Node.js and client-side web environments, the core package (<code>@afterlink/core</code> / <code>@ajaymyth/core</code>) has been upgraded with a native <code>"browser"</code> mapping configuration inside its <code>package.json</code>.
+    </p>
+    <div class="my-4 border-l-2 border-al-cyan bg-al-card/15 p-4 rounded-r-lg">
+      <p class="text-xs text-al-text leading-relaxed select-all">
+        When bundling for the browser (such as in <code>@afterlink/browser</code>), modern bundlers like <strong>esbuild</strong>, <strong>webpack</strong>, or <strong>Vite</strong> will automatically detect this mapping. They will dynamically ignore and stub out Node-specific modules (<code>'net'</code>, <code>'tls'</code>, and <code>'zlib'</code>) and disable Node-specific client files (like <code>TcpClient</code>). This ensures the package builds and functions flawlessly in web applications without requiring complex custom configuration.
+      </p>
+    </div>
+
     <!-- TS Setup -->
-    <h2 id="typescript-setup" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">7. TypeScript Setup & Paths</h2>
+    <h2 id="typescript-setup" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">8. TypeScript Setup & Paths</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all">
       If compiling with TypeScript, declare the paths inside your configuration file for proper module resolution:
     </p>
     <CodeBlock code={tsConfigCode} lang="json" filename="tsconfig.json" />
 
     <!-- AI Assistant -->
-    <h2 id="ai-assistant" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">8. AI Assistant (optional)</h2>
+    <h2 id="ai-assistant" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">9. AI Assistant (optional)</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all">
       Install the offline AI assistant to ask questions directly in your terminal:
     </p>
     <CodeBlock code={aiAssistantInstall} lang="bash" filename="Terminal" />
 
     <!-- Upgrading an Existing Project -->
-    <h2 id="upgrading-project" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">9. Upgrading an Existing Project</h2>
+    <h2 id="upgrading-project" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">10. Upgrading an Existing Project</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all">
       If you already have AfterLink installed and want to upgrade all packages to the latest versions in one go:
     </p>

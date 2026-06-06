@@ -4,8 +4,8 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 import CodeBlock from '../../components/CodeBlock.astro';
 
 const validationExample = `
-import { createServer } from 'afterlink';
-import { z } from 'zod';
+const { Server } = require('@afterlink/server');
+const { z } = require('zod');
 
 // Define expected payload validation schema
 const MessageSchema = z.object({
@@ -14,7 +14,7 @@ const MessageSchema = z.object({
   timestamp: z.number().int()
 });
 
-const server = createServer({ port: 8080 });
+const server = new Server({ port: 8080 });
 
 // Register server schema validation for DATA type messages (0x01)
 server.registerSchema('DATA', MessageSchema);

@@ -4,9 +4,9 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 import CodeBlock from '../../components/CodeBlock.astro';
 
 const pubClient = `
-import { createClient } from 'afterlink';
+const { Client } = require('@afterlink/client');
 
-const client = createClient({ port: 8080 });
+const client = new Client({ port: 8080 });
 
 client.on('connect', () => {
   console.log('Connected to AfterLink pipeline');

@@ -5,14 +5,14 @@ import CodeBlock from '../../components/CodeBlock.astro';
 
 const chatAppExample = `
 // ==================== server.js ====================
-import { createServer } from 'afterlink';
-const server = createServer({ port: 8080 });
+const { Server } = require('@afterlink/server');
+const server = new Server({ port: 8080 });
 
 console.log('AfterLink Chat Daemon active on 8080');
 
 // ==================== client.js ====================
-import { createClient } from 'afterlink';
-const client = createClient({ port: 8080 });
+const { Client } = require('@afterlink/client');
+const client = new Client({ port: 8080 });
 
 client.on('connect', () => {
   // Subscribe to central messaging channel
@@ -26,8 +26,8 @@ client.on('connect', () => {
 `;
 
 const metricsDashboardExample = `
-import { createServer } from 'afterlink';
-const server = createServer({ port: 8080 });
+const { Server } = require('@afterlink/server');
+const server = new Server({ port: 8080 });
 
 // Periodically stream CPU, Memory metrics to dashboard clients
 setInterval(() => {
@@ -45,8 +45,8 @@ setInterval(() => {
 `;
 
 const rpcExample = `
-import { createClient } from 'afterlink';
-const client = createClient({ port: 8080 });
+const { Client } = require('@afterlink/client');
+const client = new Client({ port: 8080 });
 
 // Utility to handle RPC Request/Response over binary framing
 function request(method, params) {
@@ -69,9 +69,9 @@ function request(method, params) {
 `;
 
 const reconnectExample = `
-import { createClient } from 'afterlink';
+const { Client } = require('@afterlink/client');
 
-const client = createClient({
+const client = new Client({
   port: 8080,
   autoReconnect: true,
   maxRetries: 10

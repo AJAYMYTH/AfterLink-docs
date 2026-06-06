@@ -4,10 +4,11 @@ import DocsLayout from '../layouts/DocsLayout.astro';
 
 const releases = [
   {
-    version: 'v1.2.0',
-    date: '2026-05-30',
+    version: 'v1.2.4',
+    date: '2026-06-06',
     tag: 'latest',
     changes: [
+      { type: 'new',  text: 'Dual-registry distribution: official npm scoped (@afterlink/*) and alternative GitHub Packages (@ajaymyth/*) support' },
       { type: 'new',  text: 'TLS/SSL support with afterlinks:// URI scheme' },
       { type: 'new',  text: 'JWT authentication middleware built-in' },
       { type: 'new',  text: 'Browser WebSocket bridge (@afterlink/browser)' },
@@ -16,6 +17,7 @@ const releases = [
       { type: 'new',  text: 'Health endpoints: /__health, /__health/live, /__health/ready' },
       { type: 'new',  text: 'Streaming support: res.stream() + client.stream()' },
       { type: 'new',  text: 'CLI tool: afterlink ping, call, inspect, monitor' },
+      { type: 'fix',  text: 'Browser compatibility: package.json "browser" mapping stubs Node net, tls, and zlib modules' },
       { type: 'fix',  text: 'Sequence number wrap-around edge case (65535 → 0)' },
       { type: 'fix',  text: 'Memory leak on long-idle connections fixed' },
       { type: 'fix',  text: 'Pub/Sub unsubscribe now correctly cleans up handlers' },
