@@ -40,10 +40,24 @@ const highlightedHtml = await codeToHtml(trimmed, {
   /* Strip background & spacing Shiki sets inline on <pre> */
   .shiki-inject pre {
     background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
     margin: 0 !important;
     padding: 0 !important;
     font-size: inherit !important;
     line-height: 1.65 !important;
+  }
+
+  .shiki-inject code {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
   }
 
   /* Light mode – read the --shiki-light variable on each span */
