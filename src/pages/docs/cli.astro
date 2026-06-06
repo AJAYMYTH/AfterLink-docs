@@ -1,0 +1,120 @@
+---
+// src/pages/docs/cli.astro
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+
+const pingExample = `afterlink ping 127.0.0.1:8080`;
+const callExample = `afterlink call 127.0.0.1:8080 /api/users '{"id": 42}'`;
+const inspectExample = `afterlink inspect 020000000a0000000102`;
+const monitorExample = `afterlink monitor 127.0.0.1:8080 chat.lobby`;
+const upgradeExample = `# Upgrade all AfterLink packages in the current project
+afterlink upgrade
+
+# Upgrade globally
+afterlink upgrade --global`;
+---
+
+<DocsLayout
+  title="CLI Tool Reference — Command-Line Devtools"
+  description="Command-line reference guide for the AfterLink CLI inspector, trace monitors, remote calls, and package upgrades."
+  schema={{
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": "CLI Tool Reference — Command-Line Devtools",
+    "description": "Command-line reference guide for the AfterLink CLI inspector, trace monitors, remote calls, and package upgrades.",
+    "author": { "@type": "Person", "name": "Javali Ajayakumar" },
+    "publisher": { "@type": "Organization", "name": "AfterLink" },
+    "mainEntityOfPage": "https://afterlink-docs.vercel.app/docs/cli"
+  }}
+>
+  <div class="space-y-6">
+    <div class="border-b border-al-border/50 pb-4">
+      <h1 class="text-3xl font-bold tracking-tight text-al-white mb-2">CLI Reference</h1>
+      <p class="text-sm text-al-muted leading-relaxed">
+        AfterLink includes a command-line interface (CLI) to trace active frame streams, inspect live connection channels, generate mock frame sequences, and manage package upgrades.
+      </p>
+    </div>
+
+    <!-- Commands List -->
+    <h2 id="commands" class="text-lg font-semibold tracking-tight text-al-white mt-8 mb-4 font-mono">Commands</h2>
+
+    <!-- ping -->
+    <div class="space-y-3 pt-4 border-t border-al-border/30">
+      <h3 id="ping" class="text-base font-semibold font-mono text-al-cyan">`ping` — Heartbeat latency check</h3>
+      <p class="text-xs text-al-muted leading-relaxed">
+        Sends persistent ping packets to calculate heartbeat round-trip latencies for any active AfterLink server socket.
+      </p>
+      <p class="text-2xs font-bold text-al-muted font-mono uppercase tracking-wider">Usage:</p>
+      <CodeBlock code="afterlink ping <host:port>" lang="bash" filename="Terminal" />
+      <p class="text-2xs font-bold text-al-muted font-mono uppercase tracking-wider">Example:</p>
+      <CodeBlock code={pingExample} lang="bash" filename="Terminal" />
+    </div>
+
+    <!-- call -->
+    <div class="space-y-3 pt-6 border-t border-al-border/30">
+      <h3 id="call" class="text-base font-semibold font-mono text-al-cyan">`call` — RPC invocation</h3>
+      <p class="text-xs text-al-muted leading-relaxed">
+        Invokes direct RPC endpoints on the target server and reports matching reply values in real time.
+      </p>
+      <p class="text-2xs font-bold text-al-muted font-mono uppercase tracking-wider">Usage:</p>
+      <CodeBlock code="afterlink call <host:port> <route> [payload]" lang="bash" filename="Terminal" />
+      <p class="text-2xs font-bold text-al-muted font-mono uppercase tracking-wider">Example:</p>
+      <CodeBlock code={callExample} lang="bash" filename="Terminal" />
+    </div>
+
+    <!-- inspect -->
+    <div class="space-y-3 pt-6 border-t border-al-border/30">
+      <h3 id="inspect" class="text-base font-semibold font-mono text-al-cyan">`inspect` — Frame decoder</h3>
+      <p class="text-xs text-al-muted leading-relaxed">
+        Decodes raw wire hex buffers into readable, formatted JSON blocks matching the 10-byte header layout.
+      </p>
+      <p class="text-2xs font-bold text-al-muted font-mono uppercase tracking-wider">Usage:</p>
+      <CodeBlock code="afterlink inspect <hex-string>" lang="bash" filename="Terminal" />
+      <p class="text-2xs font-bold text-al-muted font-mono uppercase tracking-wider">Example:</p>
+      <CodeBlock code={inspectExample} lang="bash" filename="Terminal" />
+    </div>
+
+    <!-- monitor -->
+    <div class="space-y-3 pt-6 border-t border-al-border/30">
+      <h3 id="monitor" class="text-base font-semibold font-mono text-al-cyan">`monitor` — Live channel tracer</h3>
+      <p class="text-xs text-al-muted leading-relaxed">
+        Listens to real-time pub/sub streams on a specific channel and prints routing traces.
+      </p>
+      <p class="text-2xs font-bold text-al-muted font-mono uppercase tracking-wider">Usage:</p>
+      <CodeBlock code="afterlink monitor <host:port> <channel>" lang="bash" filename="Terminal" />
+      <p class="text-2xs font-bold text-al-muted font-mono uppercase tracking-wider">Example:</p>
+      <CodeBlock code={monitorExample} lang="bash" filename="Terminal" />
+    </div>
+
+    <!-- upgrade -->
+    <div class="space-y-3 pt-6 border-t border-al-border/30">
+      <h3 id="upgrade" class="text-base font-semibold font-mono text-al-cyan">`upgrade` — Upgrade AfterLink packages</h3>
+      <p class="text-xs text-al-muted leading-relaxed">
+        Upgrades all installed AfterLink packages in the current project (dependencies and devDependencies) to their latest versions. Detects the package manager (npm, pnpm, yarn) automatically from the lockfile.
+      </p>
+      
+      <p class="text-2xs font-bold text-al-muted font-mono uppercase tracking-wider">Usage:</p>
+      <CodeBlock code="afterlink upgrade [options]" lang="bash" filename="Terminal" />
+
+      <p class="text-2xs font-bold text-al-muted font-mono uppercase tracking-wider">Options:</p>
+      <div class="bg-al-dark/20 border border-al-border rounded-lg p-3 font-mono text-2xs text-al-muted space-y-1">
+        <div><span class="text-al-cyan">-g, --global</span>   Upgrade AfterLink packages globally</div>
+      </div>
+
+      <p class="text-2xs font-bold text-al-muted font-mono uppercase tracking-wider">Examples:</p>
+      <CodeBlock code={upgradeExample} lang="bash" filename="Terminal" />
+    </div>
+
+    <!-- Prev/Next Navigation -->
+    <div class="flex justify-between items-center mt-16 pt-6 border-t border-al-border">
+      <a href="/docs/installation" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span class="group-hover:-translate-x-0.5 transition-transform">&larr;</span>
+        <span>Installation</span>
+      </a>
+      <a href="/ai-assistant" class="group flex items-center gap-2 text-sm font-mono text-al-muted hover:text-al-cyan transition-colors">
+        <span>AI Assistant</span>
+        <span class="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+      </a>
+    </div>
+  </div>
+</DocsLayout>

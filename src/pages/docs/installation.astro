@@ -4,8 +4,8 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 import CodeBlock from '../../components/CodeBlock.astro';
 
 const fullInstall = `
-# Installation of the monolithic wrapper bundle
-npm install afterlink
+# Recommended: forces installation of the absolute latest version (v1.2.4+)
+npm install afterlink@latest
 `;
 
 const modularInstall = `
@@ -114,9 +114,16 @@ afterlink-ai
     <!-- Main install wrapper -->
     <h2 id="core-package" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">1. Standard Installation</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all">
-      For most backend servers and client applications, installing the all-in-one <code>afterlink</code> library is recommended. This includes the server, client, validation, and codec utilities automatically:
+      For most backend servers and client applications, installing the all-in-one <code>afterlink</code> library is recommended. This ensures version 1.2.4+ with 0 vulnerabilities is installed:
     </p>
     <CodeBlock code={fullInstall} lang="bash" filename="Terminal" />
+
+    <!-- Streamlining Note -->
+    <div class="my-4 border-l-2 border-al-cyan bg-al-card/15 p-4 rounded-r-lg">
+      <p class="text-xs text-al-text leading-relaxed select-all">
+        <strong class="text-al-white">Note:</strong> Starting in v1.2.4, the umbrella <code>afterlink</code> package is optimized for speed and production safety. It has 0 security vulnerabilities and a very small dependency footprint. It installs core, server, client, browser, and CLI tools. The optional terminal AI assistant (<code>@afterlink/ai-assistant</code>) is kept separate. If you want the offline AI assistant, install it explicitly.
+      </p>
+    </div>
 
     <!-- Modular distributions -->
     <h2 id="modular-packages" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">2. Modular Distribution Packages</h2>
@@ -233,6 +240,13 @@ afterlink-ai
       Install the offline AI assistant to ask questions directly in your terminal:
     </p>
     <CodeBlock code={aiAssistantInstall} lang="bash" filename="Terminal" />
+
+    <!-- Upgrading an Existing Project -->
+    <h2 id="upgrading-project" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">9. Upgrading an Existing Project</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      If you already have AfterLink installed and want to upgrade all packages to the latest versions in one go:
+    </p>
+    <CodeBlock code="npx afterlink upgrade" lang="bash" filename="Terminal" />
 
     <!-- Prev/Next Navigation -->
     <div class="flex justify-between items-center mt-16 pt-6 border-t border-al-border">

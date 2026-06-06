@@ -4,8 +4,12 @@ import DocsLayout from '../layouts/DocsLayout.astro';
 import CodeBlock from '../components/CodeBlock.astro';
 
 const globalInstall = `
+# Recommended: install globally to run anywhere
 npm install -g @afterlink/ai-assistant
 afterlink-ai
+
+# Or run on-demand via npx:
+npx @afterlink/ai-assistant
 `;
 
 const localInstall = `
