@@ -110,6 +110,27 @@ import { ScrollReveal } from '../components/lightswind/scroll-reveal';
               <span class="btn-text">copy</span>
             </button>
           </div>
+          
+          <!-- Monolith install command -->
+          <div class="flex items-center gap-3 bg-al-bg/40 dark:bg-black/30 border border-al-cyan/20 dark:border-al-cyan/25 rounded-lg px-4 py-3 font-mono shadow-sm select-all backdrop-blur-md mt-2.5" style="box-shadow: 0 0 18px -4px rgba(0,216,255,0.12), inset 0 1px 0 rgba(255,255,255,0.06);">
+            <span class="text-al-muted select-none text-xs sm:text-sm">$</span>
+            <span class="text-al-text flex-1 text-xs sm:text-sm overflow-x-auto whitespace-nowrap" id="npm-mono-cmd">npm install afterlink@latest</span>
+            <button 
+              id="npm-mono-btn-hero"
+              class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border border-al-border hover:border-al-cyan/40 bg-al-bg hover:bg-al-card text-xs text-al-muted hover:text-al-cyan transition-all shrink-0 cursor-pointer select-none shadow-xs"
+              aria-label="Copy monolith install command"
+            >
+              <svg class="copy-svg h-3 w-3 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+              </svg>
+              <svg class="check-svg h-3 w-3 hidden text-al-green shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span class="btn-text">copy</span>
+            </button>
+          </div>
+
           <!-- npm badge link -->
           <a 
             href="https://www.npmjs.com/package/@afterlink/server"
@@ -764,6 +785,7 @@ import { ScrollReveal } from '../components/lightswind/scroll-reveal';
   };
 
   setupHeroCopy('npm-btn-hero', 'npm-cmd');
+  setupHeroCopy('npm-mono-btn-hero', 'npm-mono-cmd');
   setupHeroCopy('skill-btn-hero', 'skill-cmd');
   setupHeroCopy('upgrade-btn-hero', 'upgrade-cmd');
 </script>
