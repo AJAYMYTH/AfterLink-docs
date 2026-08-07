@@ -2,119 +2,459 @@
 // src/pages/changelog.astro
 import DocsLayout from '../layouts/DocsLayout.astro';
 
+// ─── Source of truth: https://github.com/AJAYMYTH/AfterLink ───
 const releases = [
+  {
+    version: 'v2.0.2',
+    date: '2026-07-07',
+    tag: 'latest',
+    type: 'patch',
+    summary: 'Patch release with incremental fixes and improvements over v2.0.1.',
+    changes: [
+      { type: 'fix',  text: 'Incremental stability and compatibility improvements across all packages' },
+    ]
+  },
+  {
+    version: 'v2.0.1',
+    date: '2026-07-06',
+    tag: null,
+    type: 'patch',
+    summary: 'Critical npm publishing fixes, Redis Cluster support, and Dart SDK serialization fix.',
+    changes: [
+      { type: 'fix',     text: 'npm Publishing — renamed root workspace package to avoid name collision, updated scope-renaming script to recursively replace scope names inside code and markdown documentation' },
+      { type: 'new',     text: 'Redis Cluster Support — enabled cluster-wide pub/sub and slot routing in @ajaymyth/cluster using Redis.Cluster when configured with a nodes array or cluster flag' },
+      { type: 'fix',     text: 'Dart SDK — migrated from streaming-only messagepack dependency to standard msgpack_dart package, resolving compilation issues and ensuring robust MessagePack serialization' },
+    ]
+  },
+  {
+    version: 'v2.0.0',
+    date: '2026-07-03',
+    tag: null,
+    type: 'major',
+    summary: 'Protocol v2, multi-language SDKs, and production-grade observability.',
+    changes: [
+      { type: 'new',  text: 'Protocol v2 Header — 16-byte fixed layout with version negotiation (v1/v2), priority queues (0-7), custom string routing keys (0-255 bytes), ROUTE_REQUEST and PRIORITY_ACK frame types' },
+      { type: 'new',  text: 'Node Clustering — new @ajaymyth/cluster package with Redis-backed shared pub/sub routing, worker crash detection/restarts, and SIGUSR2 rolling restarts' },
+      { type: 'new',  text: 'Metrics & Observability — self-contained Prometheus endpoint, Grafana dashboard JSON template, OpenTelemetry-compliant TracingManager with AsyncLocalStorage context propagation' },
+      { type: 'new',  text: 'Python SDK — async client, async server, sync wrapper, type hints, and Pydantic validation support' },
+      { type: 'new',  text: 'Dart Client SDK — native TCP and web WebSocket transports using conditional compilation loaders' },
+    ]
+  },
   {
     version: 'v1.2.4',
     date: '2026-06-06',
-    tag: 'latest',
+    tag: null,
+    type: 'patch',
+    summary: 'Security hardening and CLI upgrade command.',
     changes: [
-      { type: 'new',  text: 'Dual-registry distribution: official npm scoped (@afterlink/*) and alternative GitHub Packages (@ajaymyth/*) support' },
-      { type: 'new',  text: 'TLS/SSL support with afterlinks:// URI scheme' },
-      { type: 'new',  text: 'JWT authentication middleware built-in' },
-      { type: 'new',  text: 'Browser WebSocket bridge (@afterlink/browser)' },
-      { type: 'new',  text: 'Rate limiting: maxRequests + windowMs config' },
-      { type: 'new',  text: 'Payload compression (zlib) for frames > 1KB' },
-      { type: 'new',  text: 'Health endpoints: /__health, /__health/live, /__health/ready' },
-      { type: 'new',  text: 'Streaming support: res.stream() + client.stream()' },
-      { type: 'new',  text: 'CLI tool: afterlink ping, call, inspect, monitor' },
-      { type: 'fix',  text: 'Browser compatibility: package.json "browser" mapping stubs Node net, tls, and zlib modules' },
-      { type: 'fix',  text: 'Sequence number wrap-around edge case (65535 → 0)' },
-      { type: 'fix',  text: 'Memory leak on long-idle connections fixed' },
-      { type: 'fix',  text: 'Pub/Sub unsubscribe now correctly cleans up handlers' },
-      { type: 'perf', text: 'MessagePack serialization 18% faster (msgpackr upgrade)' },
+      { type: 'new',     text: 'afterlink upgrade CLI command to easily keep all packages up to date' },
+      { type: 'new',     text: 'Umbrella afterlink package now uses latest version resolution for all dependencies' },
+      { type: 'fix',     text: 'Security: Removed @ajaymyth/ai-assistant from default dependencies — eliminates vulnerable ML packages (LangChain, protobufjs), bringing vulnerability count to 0' },
+      { type: 'fix',     text: 'Switched npm publication to pnpm publish to correctly resolve workspace:* dependencies' },
+    ]
+  },
+  {
+    version: 'v1.2.1',
+    date: '2026-06-01',
+    tag: null,
+    type: 'patch',
+    summary: 'Critical JWT auth fix and TcpClient addition.',
+    changes: [
+      { type: 'fix',     text: 'Connection._validateAuth — replaced synchronous require(\'jose\') with await import(\'jose\') for ESM-only jose v6 compatibility' },
+      { type: 'fix',     text: 'Connection._handleHandshake — made async with await before _validateAuth, fixing session.user always being null' },
+      { type: 'fix',     text: 'session.user — decoded JWT payload now stored on _jwtPayload and written during HELLO handshake for correct user context' },
+      { type: 'fix',     text: 'ws-bridge JWT auth — handleWsHandshake now async with jwtVerify, WebSocket sessions populate session.user correctly' },
+      { type: 'fix',     text: 'ws-bridge frame coalescing — fixed silent frame loss when HELLO and REQUEST arrive in same TCP packet' },
+      { type: 'fix',     text: 'ws-bridge CORS — connections without Origin header now allowed when cors.origins is empty (default)' },
+      { type: 'new',     text: '@ajaymyth/core TcpClient — new class wrapping net.Socket with full AfterLink framing, Promise-based connect() and request()' },
+      { type: 'new',     text: 'TypeScript — TcpClient, TcpClientOptions, and HelloData interfaces added to types/index.d.ts' },
+    ]
+  },
+  {
+    version: 'v1.2.0',
+    date: '2026-05-19',
+    tag: null,
+    type: 'minor',
+    summary: 'Error taxonomy, health endpoints, browser SDK, WebSocket bridge, and CLI tool.',
+    changes: [
+      { type: 'new',     text: 'Error taxonomy — AfterLinkError base + 22 typed subclasses (ProtocolError, AuthError, RouteError, ValidationError, RateLimitError, ConnectionError, ServerError, CompressionError)' },
+      { type: 'new',     text: 'fromError(), fromFramePayload(), getErrorClassByCode() utility functions' },
+      { type: 'new',     text: 'TypeScript definitions (.d.ts) for @ajaymyth/core, @ajaymyth/server, @ajaymyth/client' },
+      { type: 'new',     text: 'Health endpoint — /__health, /__health/live, /__health/ready, /__health/stats with configurable thresholds' },
+      { type: 'new',     text: 'Protocol detection on TCP socket (GET vs HELLO frame) for same-port health checks' },
+      { type: 'new',     text: 'Browser SDK (@ajaymyth/browser) — zero-dependency WebSocket client with auto-reconnect, ping/keepalive, pub/sub' },
+      { type: 'new',     text: 'WebSocket bridge (ws-bridge.js) — translates WS binary frames to AfterLink frames with CORS origin validation' },
+      { type: 'new',     text: 'CLI tool (@ajaymyth/cli) — afterlink ping, call, inspect, monitor commands with colored terminal output' },
+      { type: 'new',     text: 'examples/browser-example/ — working browser demo with inline client, health dashboard, chat pub/sub' },
+      { type: 'new',     text: '67 new tests — 39 error class, 11 health, 8 CLI integration, 9 browser integration' },
+      { type: 'changed', text: 'Connection.js — PING/PONG handled at connection level (no longer dispatched to router)' },
+      { type: 'changed', text: 'Server.js rewritten — stats tracking, health endpoint integration, WS bridge, state machine lifecycle' },
+      { type: 'changed', text: 'Router.js — latency tracking via finally block and _onRequestComplete callback hook' },
+      { type: 'changed', text: 'All throw new Error() replaced with typed errors across core, server, and client packages' },
+      { type: 'fix',     text: 'Frame.js and Serializer.js reverted to native Error/RangeError to eliminate circular require() dependencies' },
+      { type: 'fix',     text: 'Used workspace:* protocol for @ajaymyth/core dependency to fix vitest module resolution' },
+      { type: 'fix',     text: 'Browser client ws.send() now sends Buffer directly to avoid ArrayBuffer size mismatch' },
+    ]
+  },
+  {
+    version: 'v1.1.2',
+    date: '2026-05-19',
+    tag: null,
+    type: 'patch',
+    summary: 'npm package documentation improvements.',
+    changes: [
+      { type: 'new',     text: 'Full README.md included in all npm packages (@ajaymyth/core, @ajaymyth/server, @ajaymyth/client, afterlink)' },
+      { type: 'new',     text: 'Package pages on npm now show complete documentation, features, and quick start guides' },
+    ]
+  },
+  {
+    version: 'v1.1.1',
+    date: '2026-05-19',
+    tag: null,
+    type: 'patch',
+    summary: 'npm registry compatibility fix.',
+    changes: [
+      { type: 'fix',     text: 'Normalized workspace:* dependencies to ^1.1.1 for npm registry compatibility' },
+      { type: 'fix',     text: 'All packages now install correctly via npm install afterlink' },
     ]
   },
   {
     version: 'v1.1.0',
-    date: '2026-02-14',
+    date: '2026-05-19',
     tag: null,
+    type: 'minor',
+    summary: 'TLS/SSL, compression, rate limiting, and graceful shutdown.',
     changes: [
-      { type: 'new',  text: 'Pub/Sub routing engine — subscribe, publish, broadcast' },
-      { type: 'new',  text: 'Auto sequence numbering for all frames' },
-      { type: 'new',  text: 'Zod schema validation on route handlers' },
-      { type: 'new',  text: 'Middleware chain — server.use()' },
-      { type: 'fix',  text: 'Connection timeout handling improved' },
+      { type: 'new',     text: 'TLS/SSL encryption via afterlinks:// URL scheme with generateDevCerts() utility' },
+      { type: 'new',     text: 'zlib/Brotli payload compression with per-frame Flags bit and negotiation in handshake' },
+      { type: 'new',     text: 'Per-connection token-bucket rate limiting with RATE_LIMITED error code and retryAfter' },
+      { type: 'new',     text: 'server.close() graceful shutdown — drains active requests, SERVER_CLOSING frame type (0x11)' },
+      { type: 'new',     text: 'Server lifecycle events: closing, drained, closed + client server-closing event' },
+      { type: 'new',     text: 'server.handleProcessSignals() — auto-registers SIGTERM/SIGINT handlers' },
+      { type: 'new',     text: 'Flags byte specification in frame header (bit 0: compressed) with capability advertisement' },
+      { type: 'new',     text: 'Three new examples: tls-example, compression-example, rate-limit-shutdown-example' },
+      { type: 'changed', text: 'HELLO/HELLO_ACK payloads extended with capabilities, compression, and rateLimit fields' },
+      { type: 'changed', text: 'server.close() now async (returns Promise) — drains active requests before closing' },
+      { type: 'changed', text: 'server.on() now supports both route registration and event listening' },
+      { type: 'changed', text: 'Server version bumped to AL/1.1 in HELLO_ACK' },
+      { type: 'fix',     text: 'Client autoReconnect correctly distinguishes graceful vs unplanned disconnects' },
+      { type: 'fix',     text: 'Rate limiter middleware properly integrated into request handling pipeline' },
+      { type: 'fix',     text: 'Request tracking for accurate graceful shutdown drain detection' },
+    ]
+  },
+  {
+    version: 'v1.0.1',
+    date: '2026-05-18',
+    tag: null,
+    type: 'patch',
+    summary: 'Initial TLS support and capabilities handshake.',
+    changes: [
+      { type: 'new',     text: 'TLS/SSL encryption support via afterlinks:// URL scheme' },
+      { type: 'new',     text: 'generateDevCerts() utility for development environments' },
+      { type: 'new',     text: 'TLS transport wrappers for server and client' },
+      { type: 'new',     text: 'TLS error types: TLS_CERT_UNTRUSTED, TLS_CERT_ERROR, TLS_CONFIG_ERROR' },
+      { type: 'new',     text: 'Server.isTLS() and Client.isTLS() methods' },
+      { type: 'new',     text: 'examples/tls-example/ demo' },
+      { type: 'changed', text: 'HELLO handshake updated with capabilities field' },
+      { type: 'changed', text: 'All packages bumped to v1.0.1' },
     ]
   },
   {
     version: 'v1.0.0',
-    date: '2025-11-01',
+    date: '2026-05-01',
     tag: null,
+    type: 'major',
+    summary: 'Initial release — binary TCP protocol, pub/sub, and middleware system.',
     changes: [
-      { type: 'new', text: '10-byte binary frame protocol specification' },
-      { type: 'new', text: 'TCP persistent connections (Node.js net module)' },
-      { type: 'new', text: '@afterlink/server — route handler system' },
-      { type: 'new', text: '@afterlink/client — connect, request, disconnect' },
+      { type: 'new', text: 'Binary TCP communication protocol with 10-byte frame header' },
+      { type: 'new', text: 'Frame types: REQUEST, RESPONSE, STREAM_START/DATA/END, ERROR, PING/PONG, BROADCAST, SUBSCRIBE, UNSUBSCRIBE, PUBLISH, CLOSE, CLOSE_ACK, HELLO, HELLO_ACK' },
       { type: 'new', text: 'MessagePack payload serialization' },
-      { type: 'new', text: 'Initial npm release' },
+      { type: 'new', text: 'HELLO/HELLO_ACK connection handshake' },
+      { type: 'new', text: 'Request/response with 32-bit message ID (multiplexing)' },
+      { type: 'new', text: 'Built-in Pub/Sub (PUBLISH/SUBSCRIBE/UNSUBSCRIBE)' },
+      { type: 'new', text: 'Express-style middleware chain' },
+      { type: 'new', text: 'Automatic Zod schema validation per route' },
+      { type: 'new', text: 'JWT authentication option in HELLO handshake' },
+      { type: 'new', text: 'Auto-reconnect client with configurable delay and max attempts' },
+      { type: 'new', text: 'Ping/pong keep-alive' },
+      { type: 'new', text: 'Streaming frames (STREAM_START / STREAM_DATA / STREAM_END)' },
+      { type: 'new', text: 'Monorepo structure: @ajaymyth/core, @ajaymyth/server, @ajaymyth/client' },
+      { type: 'new', text: 'afterlink meta-package — installs all three packages' },
+      { type: 'new', text: 'Published to npm: npmjs.com/package/afterlink' },
+      { type: 'new', text: 'Demo suite: hello-world, chat, dashboard, microservice, demo-runner' },
+      { type: 'new', text: 'DEPLOYMENT.md guide (PM2, Docker, Railway, Render, Fly.io, AWS, Kubernetes)' },
+      { type: 'new', text: 'SECURITY.md policy' },
     ]
-  }
+  },
 ];
+
+// Compute stats for the header
+const totalReleases = releases.length;
+const totalChanges = releases.reduce((sum, r) => sum + r.changes.length, 0);
+const latestVersion = releases[0].version;
+const latestDate = releases[0].date;
+
+// Badge config helper
+function getBadge(type: string) {
+  switch (type) {
+    case 'new':     return { color: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400', label: 'NEW' };
+    case 'fix':     return { color: 'bg-amber-400/10 border-amber-400/30 text-amber-400', label: 'FIX' };
+    case 'changed': return { color: 'bg-sky-400/10 border-sky-400/30 text-sky-400', label: 'CHG' };
+    case 'perf':    return { color: 'bg-violet-400/10 border-violet-400/30 text-violet-400', label: 'PERF' };
+    default:        return { color: 'bg-al-border/20 border-al-border text-al-muted', label: type.toUpperCase() };
+  }
+}
+
+function getVersionBadge(type: string) {
+  switch (type) {
+    case 'major': return { color: 'bg-rose-500/10 border-rose-500/40 text-rose-400', label: 'MAJOR' };
+    case 'minor': return { color: 'bg-sky-400/10 border-sky-400/40 text-sky-400', label: 'MINOR' };
+    case 'patch': return { color: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400', label: 'PATCH' };
+    default:      return { color: 'bg-al-border/20 border-al-border text-al-muted', label: type.toUpperCase() };
+  }
+}
 ---
 
-<DocsLayout 
-  title="Changelog — Version History & Protocol Updates" 
-  description="Track all changes, new features, bug fixes, and protocol updates across AfterLink releases. Complete version history from v0.8.0 to latest."
+<DocsLayout
+  title="Changelog — Complete Version History"
+  description="Complete changelog for AfterLink — all releases from v1.0.0 to the latest v2.0.0. Track new features, breaking changes, bug fixes, and protocol updates."
 >
   <main id="main-content">
-  <div class="space-y-8 max-w-3xl">
-    <div class="border-b border-al-border/50 pb-4 select-none">
-      <h1 class="text-3xl font-bold tracking-tight text-al-white mb-2">Changelog</h1>
-      <p class="text-sm text-al-muted leading-relaxed">
-        Chronological record of official AfterLink specification releases, package updates, and upcoming features.
-      </p>
+  <div class="space-y-10 max-w-4xl">
+
+    <!-- ─── Header Section ─── -->
+    <div class="border-b border-al-border/50 pb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+        <div>
+          <h1 class="text-3xl font-bold tracking-tight text-al-white mb-2">Changelog</h1>
+          <p class="text-sm text-al-muted leading-relaxed max-w-xl">
+            Complete history of AfterLink releases, sourced from the
+            <a href="https://github.com/AJAYMYTH/AfterLink/blob/main/CHANGELOG.md" target="_blank" rel="noopener noreferrer" class="text-al-cyan hover:underline underline-offset-2">official GitHub repository</a>.
+            Follows <a href="https://keepachangelog.com/en/1.0.0/" target="_blank" rel="noopener noreferrer" class="text-al-cyan/70 hover:text-al-cyan hover:underline underline-offset-2">Keep a Changelog</a> &
+            <a href="https://semver.org/" target="_blank" rel="noopener noreferrer" class="text-al-cyan/70 hover:text-al-cyan hover:underline underline-offset-2">Semantic Versioning</a>.
+          </p>
+        </div>
+      </div>
+
+      <!-- Stats Bar -->
+      <div class="flex flex-wrap gap-4 sm:gap-6 text-xs font-mono text-al-muted">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-al-cyan animate-pulse"></span>
+          <span>Latest: <span class="text-al-white font-semibold">{latestVersion}</span></span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-al-muted/60">│</span>
+          <span>{totalReleases} releases</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-al-muted/60">│</span>
+          <span>{totalChanges} documented changes</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-al-muted/60">│</span>
+          <span>Since {releases[releases.length - 1].date}</span>
+        </div>
+      </div>
     </div>
 
-    <!-- Timeline Wrapper -->
-    <div class="relative pl-6 sm:pl-8 border-l border-al-border space-y-12 select-all">
-      {releases.map((release) => (
-        <div class="relative select-all">
-          
-          <!-- Chronological Marker Dot -->
-          <span class={`absolute -left-[31px] sm:-left-[39px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-al-bg border select-none ${
-            release.tag === 'latest' 
-              ? 'border-al-cyan shadow-[0_0_8px_rgba(0,216,255,0.3)]' 
-              : 'border-al-border'
-          }`}>
-            <span class={`h-1.5 w-1.5 rounded-full ${
-              release.tag === 'latest' ? 'bg-al-cyan animate-pulse' : 'bg-al-muted/50'
-            }`}></span>
-          </span>
-          
-          <!-- Version Info -->
-          <div class="flex flex-wrap items-baseline gap-2.5 mb-4 select-none">
-            <h2 class="text-lg font-mono font-bold text-al-white">{release.version}</h2>
-            {release.tag && (
-              <span class="rounded bg-al-cyan/10 border border-al-cyan/30 px-1.5 py-0.5 font-mono text-[9px] font-semibold text-al-cyan uppercase tracking-wider select-none">
-                {release.tag}
-              </span>
-            )}
-            <span class="font-mono text-3xs text-al-muted tracking-tight select-none">
-              Released: {release.date}
-            </span>
-          </div>
-          
-          <!-- Changes List -->
-          <ul class="space-y-3 font-mono text-xs select-all">
-            {release.changes.map((change) => {
-              let badgeColor = '';
-              if (change.type === 'new') badgeColor = 'bg-al-green/10 border-al-green/30 text-al-green';
-              else if (change.type === 'fix') badgeColor = 'bg-yellow-400/10 border-yellow-400/30 text-yellow-400';
-              else if (change.type === 'perf') badgeColor = 'bg-al-blue/10 border-al-blue/30 text-al-cyan';
-              
-              return (
-                <li class="flex items-start gap-3 select-all">
-                  <span class={`rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider border select-none shrink-0 w-11 text-center ${badgeColor}`}>
-                    {change.type}
-                  </span>
-                  <span class="text-al-text select-all leading-relaxed pt-0.5">{change.text}</span>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      ))}
+    <!-- ─── Filter Buttons ─── -->
+    <div class="flex flex-wrap gap-2" id="version-filters">
+      <button data-filter="all" class="filter-btn active rounded-lg px-3 py-1.5 text-xs font-mono font-medium border border-al-border/50 text-al-muted hover:text-al-white hover:border-al-cyan/40 transition-all cursor-pointer select-none">
+        All
+      </button>
+      <button data-filter="major" class="filter-btn rounded-lg px-3 py-1.5 text-xs font-mono font-medium border border-al-border/50 text-al-muted hover:text-al-white hover:border-rose-400/40 transition-all cursor-pointer select-none">
+        Major
+      </button>
+      <button data-filter="minor" class="filter-btn rounded-lg px-3 py-1.5 text-xs font-mono font-medium border border-al-border/50 text-al-muted hover:text-al-white hover:border-sky-400/40 transition-all cursor-pointer select-none">
+        Minor
+      </button>
+      <button data-filter="patch" class="filter-btn rounded-lg px-3 py-1.5 text-xs font-mono font-medium border border-al-border/50 text-al-muted hover:text-al-white hover:border-emerald-400/40 transition-all cursor-pointer select-none">
+        Patch
+      </button>
     </div>
+
+    <!-- ─── Timeline ─── -->
+    <div class="relative pl-6 sm:pl-8 border-l border-al-border/60 space-y-14" id="changelog-timeline">
+      {releases.map((release, index) => {
+        const vBadge = getVersionBadge(release.type);
+        const isLatest = release.tag === 'latest';
+
+        return (
+          <article
+            class="relative changelog-entry"
+            data-version-type={release.type}
+            id={`release-${release.version.replace('v', '')}`}
+          >
+            <!-- Timeline Marker -->
+            <span class={`absolute -left-[31px] sm:-left-[39px] top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-al-bg border select-none ${
+              isLatest
+                ? 'border-al-cyan shadow-[0_0_10px_rgba(0,216,255,0.35)]'
+                : 'border-al-border'
+            }`}>
+              <span class={`h-1.5 w-1.5 rounded-full ${
+                isLatest ? 'bg-al-cyan animate-pulse' : 'bg-al-muted/50'
+              }`}></span>
+            </span>
+
+            <!-- Version Header -->
+            <div class="flex flex-wrap items-baseline gap-2.5 mb-1.5 select-none">
+              <h2 class="text-xl font-mono font-bold text-al-white">
+                <a href={`#release-${release.version.replace('v', '')}`} class="hover:text-al-cyan transition-colors">
+                  {release.version}
+                </a>
+              </h2>
+              {isLatest && (
+                <span class="rounded-md bg-al-cyan/10 border border-al-cyan/30 px-2 py-0.5 font-mono text-[9px] font-semibold text-al-cyan uppercase tracking-wider">
+                  latest
+                </span>
+              )}
+              <span class={`rounded-md border px-2 py-0.5 font-mono text-[9px] font-semibold uppercase tracking-wider ${vBadge.color}`}>
+                {vBadge.label}
+              </span>
+            </div>
+
+            <!-- Meta: Date + Summary -->
+            <div class="flex flex-col gap-1 mb-5">
+              <span class="font-mono text-[11px] text-al-muted tracking-tight select-none">
+                Released {release.date} · {release.changes.length} change{release.changes.length !== 1 ? 's' : ''}
+              </span>
+              <p class="text-sm text-al-muted/80 leading-relaxed">{release.summary}</p>
+            </div>
+
+            <!-- Changes List -->
+            <ul class="space-y-2.5 font-mono text-xs">
+              {release.changes.map((change) => {
+                const badge = getBadge(change.type);
+                return (
+                  <li class="flex items-start gap-3 group">
+                    <span class={`rounded-md px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider border select-none shrink-0 w-11 text-center ${badge.color}`}>
+                      {badge.label}
+                    </span>
+                    <span class="text-al-text leading-relaxed pt-0.5 group-hover:text-al-white transition-colors">{change.text}</span>
+                  </li>
+                );
+              })}
+            </ul>
+
+            {/* Separator between releases (except last) */}
+            {index < releases.length - 1 && (
+              <div class="mt-10 border-b border-dashed border-al-border/30"></div>
+            )}
+          </article>
+        );
+      })}
+    </div>
+
+    <!-- ─── Footer CTA ─── -->
+    <div class="border-t border-al-border/40 pt-8 pb-4">
+      <div class="rounded-xl border border-al-border/50 bg-al-card/30 p-6 text-center">
+        <p class="text-sm text-al-muted mb-4">
+          This changelog is automatically synced from the
+          <a href="https://github.com/AJAYMYTH/AfterLink" target="_blank" rel="noopener noreferrer" class="text-al-cyan hover:underline underline-offset-2 font-medium">AJAYMYTH/AfterLink</a>
+          repository.
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-3">
+          <a
+            href="https://github.com/AJAYMYTH/AfterLink/blob/main/CHANGELOG.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 rounded-lg border border-al-border px-4 py-2 text-xs font-mono font-medium text-al-muted hover:text-al-white hover:border-al-cyan/40 transition-all"
+          >
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.137 20.162 22 16.418 22 12c0-5.523-4.477-10-10-10z"></path>
+            </svg>
+            View on GitHub
+          </a>
+          <a
+            href="https://github.com/AJAYMYTH/AfterLink/releases"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 rounded-lg border border-al-border px-4 py-2 text-xs font-mono font-medium text-al-muted hover:text-al-white hover:border-al-cyan/40 transition-all"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"></path>
+            </svg>
+            GitHub Releases
+          </a>
+          <a
+            href="https://www.npmjs.com/package/afterlink"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 rounded-lg border border-al-border px-4 py-2 text-xs font-mono font-medium text-al-muted hover:text-al-white hover:border-al-cyan/40 transition-all"
+          >
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M0 7.334v8h6.666v1.332H12v-1.332h12v-8H0zm6.666 6.664H5.334v-4H3.999v4H1.335V8.667h5.331v5.331zm4 0v1.336H8.001V8.667h5.334v5.332h-2.669v-.001zm12.001 0h-1.33v-4h-1.336v4h-1.335v-4h-1.33v4h-2.671V8.667h8.002v5.331zM10.665 10H12v2.667h-1.335V10z"></path>
+            </svg>
+            npm Package
+          </a>
+        </div>
+      </div>
+    </div>
+
   </div>
   </main>
 </DocsLayout>
+
+<style>
+  .filter-btn.active {
+    border-color: var(--al-cyan);
+    color: var(--al-cyan);
+    background-color: rgba(0, 216, 255, 0.06);
+  }
+
+  .changelog-entry {
+    animation: fadeSlideIn 0.3s ease-out both;
+  }
+
+  .changelog-entry.hidden-by-filter {
+    display: none;
+  }
+
+  @keyframes fadeSlideIn {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Stagger animation for entries */
+  .changelog-entry:nth-child(1) { animation-delay: 0ms; }
+  .changelog-entry:nth-child(2) { animation-delay: 40ms; }
+  .changelog-entry:nth-child(3) { animation-delay: 80ms; }
+  .changelog-entry:nth-child(4) { animation-delay: 120ms; }
+  .changelog-entry:nth-child(5) { animation-delay: 160ms; }
+  .changelog-entry:nth-child(6) { animation-delay: 200ms; }
+  .changelog-entry:nth-child(7) { animation-delay: 240ms; }
+  .changelog-entry:nth-child(8) { animation-delay: 280ms; }
+  .changelog-entry:nth-child(9) { animation-delay: 320ms; }
+</style>
+
+<script>
+  // Version filter functionality
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const entries = document.querySelectorAll('.changelog-entry');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.getAttribute('data-filter');
+
+      // Update active state
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Filter entries
+      entries.forEach(entry => {
+        const versionType = entry.getAttribute('data-version-type');
+        if (filter === 'all' || versionType === filter) {
+          entry.classList.remove('hidden-by-filter');
+        } else {
+          entry.classList.add('hidden-by-filter');
+        }
+      });
+    });
+  });
+</script>
