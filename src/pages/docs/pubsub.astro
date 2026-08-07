@@ -4,7 +4,7 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 import CodeBlock from '../../components/CodeBlock.astro';
 
 const pubClient = `
-const { Client } = require('@afterlink/client');
+const { Client } = require('@ajaymyth/client');
 
 const client = new Client({ port: 8080 });
 
@@ -16,8 +16,8 @@ client.on('connect', () => {
     console.log(\`[Global Chat]: \${payload.text}\`);
   });
 
-  // 2. Publish to channel
-  client.publish('chat.global', { text: 'Hello developers!' });
+  // 2. Publish to channel with priority queue & routing key (Protocol v2)
+  client.publish('chat.global', { text: 'Hello developers!' }, { priority: 7, routingKey: 'chat.vip' });
 });
 `;
 
@@ -26,6 +26,28 @@ const subClientPattern = `
 client.subscribe('sensors.*', (payload, channel) => {
   console.log(\`Received broadcast on \${channel}: \`, payload);
 });
+`;
+
+const clusterPubSubPattern = `
+const { ClusterManager } = require('@ajaymyth/cluster');
+
+// Configure Redis / Redis Cluster cross-node shared pub/sub
+const cluster = new ClusterManager({
+  workers: 'auto',
+  redis: {
+    nodes: ['10.0.0.1:6379', '10.0.0.2:6379', '10.0.0.3:6379'],
+    cluster: true // Enabled in v2.0.1+
+  }
+});
+
+cluster.on('worker', (server) => {
+  // Shared channel messages are automatically synchronized across all workers
+  server.subscribe('notifications.*', (payload, channel) => {
+    console.log(\`[Worker \${process.pid}] \${channel}:\`, payload);
+  });
+});
+
+cluster.start();
 `;
 ---
 
@@ -98,6 +120,28 @@ client.subscribe('sensors.*', (payload, channel) => {
     </ul>
     
     <CodeBlock code={subClientPattern} lang="javascript" filename="wildcard-sub.js" />
+
+    <!-- Cross-Node Redis & Redis Cluster Shared Pub/Sub -->
+    <h2 id="cluster-pubsub" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">Cross-Node Redis & Redis Cluster Shared Pub/Sub</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Using <code>@ajaymyth/cluster</code>, AfterLink pub/sub channels automatically bridge across worker process boundaries and multi-server instances using Redis or Redis Cluster (<code>Redis.Cluster</code> support added in v2.0.1). Messages published on any node are routed transparently across all subscribed socket workers.
+    </p>
+
+    <CodeBlock code={clusterPubSubPattern} lang="javascript" filename="cluster-pubsub.js" />
+
+    <!-- Priority Queues and Routing Keys -->
+    <h2 id="priority-routing-keys" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">Priority Queues & Custom Routing Keys</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Protocol v2 embeds <strong>priority level queues (0-7)</strong> and <strong>custom string routing keys (0-255 bytes)</strong> directly inside the 16-byte fixed binary header:
+    </p>
+    <ul class="list-disc pl-5 space-y-2 text-xs text-al-muted select-all mb-4">
+      <li>
+        <strong>Priority Queues (0-7):</strong> Priority level <code>7</code> represents urgent system traffic (e.g. <code>PRIORITY_ACK</code>, emergency alerts), while level <code>0</code> is default background traffic. Server output buffers process higher priority frame queues first under high load.
+      </li>
+      <li>
+        <strong>Custom String Routing Keys (0-255 bytes):</strong> Enables fine-grained routing filters and topic key metadata without needing to modify the main channel name or deserialize the MessagePack payload body.
+      </li>
+    </ul>
 
     <!-- Prev/Next Navigation -->
     <div class="flex justify-between items-center mt-16 pt-6 border-t border-al-border">

@@ -85,6 +85,144 @@ client.on('reconnect', (attempt) => {
   console.log(\`Successfully reconnected on attempt #\${attempt}!\`);
 });
 `;
+
+const nodeClusterExample = `
+// ==================== cluster-master.js ====================
+const { ClusterManager } = require('@ajaymyth/cluster');
+
+// Spawn multi-worker cluster with Redis-backed shared pub/sub routing
+const cluster = new ClusterManager({
+  workers: 'auto', // Auto-scales across CPU cores
+  port: 8080,
+  redis: {
+    // Single node or Redis Cluster slot routing (v2.0.1+)
+    clusters: [{ host: '127.0.0.1', port: 6379 }],
+    keyPrefix: 'afterlink:cluster:'
+  },
+  restartOnCrash: true
+});
+
+// Zero-downtime rolling worker reload on SIGUSR2
+process.on('SIGUSR2', async () => {
+  console.log('Rolling restart initiated across cluster worker pool...');
+  await cluster.reloadWorkers();
+});
+
+cluster.start().then(() => {
+  console.log(\`Cluster master PID \${process.pid} routing active on port 8080\`);
+});
+`;
+
+const pythonSdkExample = `
+# ==================== python_server.py ====================
+import asyncio
+from pydantic import BaseModel
+from afterlink import AsyncServer, Frame, Priority
+
+class UserActionPayload(BaseModel):
+    user_id: str
+    action: str
+    metadata: dict = {}
+
+app = AsyncServer(host="127.0.0.1", port=8080)
+
+@app.route("user.action")
+async def handle_action(frame: Frame[UserActionPayload]) -> dict:
+    payload = frame.payload  # Type-hinted Pydantic model
+    print(f"[{payload.user_id}] Action: {payload.action} (Priority: {frame.priority})")
+    return {"status": "success", "processed_by": "python_sdk"}
+
+# ==================== python_client.py ====================
+from afterlink import AsyncClient, Priority
+
+async def main():
+    # Async context manager handles handshake and pipeline lifecycle
+    async with AsyncClient("127.0.0.1", 8080) as client:
+        # Transmit Protocol v2 frame with priority queue 5 & custom routing key
+        response = await client.request(
+            route="user.action",
+            payload={"user_id": "usr_772", "action": "login"},
+            priority=Priority.HIGH  # Priority level (0-7)
+        )
+        print("Server response:", response)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+`;
+
+const dartSdkExample = `
+// ==================== main.dart ====================
+import 'package:afterlink/afterlink.dart';
+
+void main() async {
+  // Conditional compilation loader automatically selects
+  // native TCP (io) or WebSocket bridge (web) depending on target platform
+  final client = AfterLinkClient(
+    host: '127.0.0.1',
+    port: 8080,
+    autoReconnect: true,
+  );
+
+  client.onConnect(() {
+    print('AfterLink Dart client active via native/web transport');
+
+    // Subscribe to cluster-wide pub/sub channel using msgpack_dart codec
+    client.subscribe('telemetry.stream', (frame) {
+      print('Stream event: \${frame.payload}');
+    });
+
+    // Transmit high-priority Protocol v2 frame
+    client.publish(
+      'telemetry.stream',
+      {'device': 'flutter_mobile', 'battery': 95},
+      priority: 6,
+    );
+  });
+
+  await client.connect();
+}
+`;
+
+const observabilityExample = `
+// ==================== server-metrics.js ====================
+const { Server } = require('@ajaymyth/server');
+const { PrometheusMetrics, TracingManager } = require('@ajaymyth/core');
+
+// OpenTelemetry-compliant TracingManager with AsyncLocalStorage context propagation
+const tracer = new TracingManager({
+  serviceName: 'afterlink-edge-service',
+  exporterUrl: 'http://localhost:4318/v1/traces'
+});
+
+// Self-contained Prometheus metric exporter
+const metrics = new PrometheusMetrics({
+  prefix: 'afterlink_',
+  collectDefaultMetrics: true
+});
+
+const server = new Server({
+  port: 8080,
+  tracing: tracer,
+  metrics: metrics
+});
+
+// Expose Prometheus metric scrape endpoint
+server.get('/metrics', async (req, res) => {
+  res.setHeader('Content-Type', metrics.contentType);
+  res.send(await metrics.metrics());
+});
+
+// Route handler with traced span context
+server.on('payment.process', async (socket, frame) => {
+  const span = tracer.startSpan('processPayment', { frameId: frame.id });
+  try {
+    metrics.incrementCounter('payments_processed_total', { status: 'success' });
+    return { status: 'completed', txnId: 'txn_9012' };
+  } finally {
+    span.end();
+  }
+});
+`;
 ---
 
 <DocsLayout 
@@ -104,7 +242,7 @@ client.on('reconnect', (attempt) => {
     <div class="border-b border-al-border/50 pb-4">
       <h1 class="text-3xl font-bold tracking-tight text-al-white mb-2">Code Examples</h1>
       <p class="text-sm text-al-muted leading-relaxed">
-        Production-grade code recipes showing how to construct real-time systems, dashboard metrics, RPC workflows, and robust clients.
+        Production-grade code recipes showing how to construct real-time systems, dashboard metrics, RPC workflows, multi-worker clustering, Python/Dart SDK pipelines, and OpenTelemetry observability.
       </p>
     </div>
 
@@ -135,6 +273,34 @@ client.on('reconnect', (attempt) => {
       How to handle internet dropouts and socket pipe failures gracefully with AfterLink's native backoff reconnect parameters:
     </p>
     <CodeBlock code={reconnectExample} lang="javascript" filename="reconnect-handling.js" />
+
+    <!-- Node Clustering -->
+    <h2 id="node-clustering" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">5. Node Clustering & Shared Pub/Sub (@ajaymyth/cluster)</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Spawns multi-worker processes with Redis-backed shared pub/sub routing, worker crash detection, and SIGUSR2 zero-downtime rolling restarts:
+    </p>
+    <CodeBlock code={nodeClusterExample} lang="javascript" filename="cluster-master.js" />
+
+    <!-- Python SDK -->
+    <h2 id="python-sdk" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">6. Python SDK (Async Client & Server)</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Build async Python servers and clients with full type hints, Pydantic model validation, priority queues, and Protocol v2 frame support:
+    </p>
+    <CodeBlock code={pythonSdkExample} lang="python" filename="python_server.py" />
+
+    <!-- Dart SDK -->
+    <h2 id="dart-sdk" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">7. Dart & Flutter SDK (Native TCP & Web Transports)</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Cross-platform Dart client utilizing conditional compilation loaders for native TCP sockets (desktop/mobile) and WebSockets (web):
+    </p>
+    <CodeBlock code={dartSdkExample} lang="dart" filename="main.dart" />
+
+    <!-- Prometheus & OpenTelemetry -->
+    <h2 id="metrics-tracing" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">8. Prometheus Metrics & OpenTelemetry Tracing</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Expose self-contained Prometheus metric scrape endpoints and propagate AsyncLocalStorage trace contexts with OpenTelemetry:
+    </p>
+    <CodeBlock code={observabilityExample} lang="javascript" filename="server-metrics.js" />
 
     <!-- Prev/Next Navigation -->
     <div class="flex justify-between items-center mt-16 pt-6 border-t border-al-border">

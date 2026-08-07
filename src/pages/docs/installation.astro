@@ -5,17 +5,35 @@ import CodeBlock from '../../components/CodeBlock.astro';
 
 const npmInstall = `
 # Install standard AfterLink scoped packages via npm
-npm install @afterlink/core @afterlink/server @afterlink/client @afterlink/browser @afterlink/cli
+npm install @afterlink/core @afterlink/server @afterlink/client @afterlink/cluster @afterlink/browser @afterlink/cli
 `;
 
 const pnpmInstall = `
 # Install standard AfterLink scoped packages via pnpm
-pnpm add @afterlink/core @afterlink/server @afterlink/client @afterlink/browser @afterlink/cli
+pnpm add @afterlink/core @afterlink/server @afterlink/client @afterlink/cluster @afterlink/browser @afterlink/cli
 `;
 
 const yarnInstall = `
 # Install standard AfterLink scoped packages via yarn
-yarn add @afterlink/core @afterlink/server @afterlink/client @afterlink/browser @afterlink/cli
+yarn add @afterlink/core @afterlink/server @afterlink/client @afterlink/cluster @afterlink/browser @afterlink/cli
+`;
+
+const clusterInstall = `
+# Install AfterLink Node clustering package
+npm install @ajaymyth/cluster
+`;
+
+const pythonInstall = `
+# Install Python SDK from PyPI
+pip install afterlink
+`;
+
+const dartInstall = `
+# Install Dart SDK from pub.dev
+dart pub add afterlink
+
+# Or for Flutter projects:
+flutter pub add afterlink
 `;
 
 const githubNpmrc = `
@@ -26,15 +44,15 @@ const githubNpmrc = `
 
 const githubInstall = `
 # Install a scoped package from GitHub Packages
-npm install @ajaymyth/server
+npm install @ajaymyth/server @ajaymyth/cluster
 `;
 
 const modularInstall = `
 # Core binary codec only (no network server)
 npm install @afterlink/core
 
-# Server and connection modules for Node
-npm install @afterlink/server @afterlink/client
+# Server, client, and clustering modules for Node
+npm install @afterlink/server @afterlink/client @afterlink/cluster
 
 # Client SDK for web browsers
 npm install @afterlink/browser
@@ -79,7 +97,7 @@ npm install -g @afterlink/cli
 
 const cdnScript = `
 <!-- Load client SDK directly in html files via CDN fallback -->
-<script src="https://unpkg.com/@afterlink/browser@1.2.4/dist/index.global.js"></script>
+<script src="https://unpkg.com/@afterlink/browser@2.0.2/dist/index.global.js"></script>
 <script>
   const client = AfterLinkBrowser.createClient({ host: '127.0.0.1', port: 4000 });
 </script>
@@ -90,7 +108,8 @@ const tsConfigCode = `
   "compilerOptions": {
     "moduleResolution": "node",
     "paths": {
-      "@afterlink/*": ["./node_modules/@afterlink/*"]
+      "@afterlink/*": ["./node_modules/@afterlink/*"],
+      "@ajaymyth/*": ["./node_modules/@ajaymyth/*"]
     }
   }
 }
@@ -104,13 +123,13 @@ afterlink-ai
 ---
 
 <DocsLayout 
-  title="Install AfterLink — npm Setup Guide" 
-  description="Install AfterLink via npm, yarn, or pnpm. Set up server, client, browser, and CLI packages for high-performance binary protocol communication."
+  title="Install AfterLink v2.0.2 — Setup Guide" 
+  description="Install AfterLink v2.0.2 via npm, pip, or pub. Set up server, client, cluster, Python, Dart, browser, and CLI packages for binary protocol communication."
   schema={{
     "@context": "https://schema.org",
     "@type": "TechArticle",
-    "headline": "Install AfterLink — npm Setup Guide",
-    "description": "Install AfterLink via npm, yarn, or pnpm. Set up server, client, browser, and CLI packages for high-performance binary protocol communication.",
+    "headline": "Install AfterLink v2.0.2 — Setup Guide",
+    "description": "Install AfterLink v2.0.2 via npm, pip, or pub. Set up server, client, cluster, Python, Dart, browser, and CLI packages for binary protocol communication.",
     "author": { "@type": "Person", "name": "Javali Ajayakumar" },
     "publisher": { "@type": "Organization", "name": "AfterLink" },
     "mainEntityOfPage": "https://afterlink-docs.vercel.app/docs/installation"
@@ -120,14 +139,16 @@ afterlink-ai
     <div class="border-b border-al-border/50 pb-4">
       <h1 class="text-3xl font-bold tracking-tight text-al-white mb-2">Package Installation</h1>
       <p class="text-sm text-al-muted leading-relaxed">
-        AfterLink is designed with strict modularity in mind. You can install the monolith package, pull individual libraries, or load browser wrappers to fit your production stack footprint.
+        AfterLink v2.0.2 is designed with strict modularity in mind. You can install the monolith package, pull individual libraries for Node.js, Python, or Dart, or load browser wrappers to fit your production stack footprint.
       </p>
     </div>
 
     <!-- Requirements -->
     <h2 id="requirements" class="text-lg font-semibold tracking-tight text-al-white mt-8 mb-3 select-none font-mono">System Requirements</h2>
     <ul class="list-disc pl-5 space-y-1.5 text-xs text-al-muted select-all">
-      <li><strong>Node.js:</strong> version <code>v20.0.0</code> or higher (LTS recommended)</li>
+      <li><strong>Node.js:</strong> version <code>v18.0.0</code> or higher (v20+ LTS recommended)</li>
+      <li><strong>Python:</strong> version <code>3.8+</code> (for Python SDK)</li>
+      <li><strong>Dart / Flutter:</strong> Dart <code>3.0+</code> / Flutter <code>3.0+</code> (for Dart SDK)</li>
       <li><strong>npm:</strong> version <code>v9.0.0</code> or higher</li>
       <li><strong>Operating System:</strong> Linux, macOS, or Windows (WSL recommended)</li>
     </ul>
@@ -174,14 +195,14 @@ afterlink-ai
     <!-- Streamlining Note -->
     <div class="my-4 border-l-2 border-al-cyan bg-al-card/15 p-4 rounded-r-lg">
       <p class="text-xs text-al-text leading-relaxed select-all">
-        <strong class="text-al-white">Note:</strong> Starting in v1.2.4, the umbrella <code>afterlink</code> package is optimized for speed and production safety. It has 0 security vulnerabilities and a very small dependency footprint. It installs core, server, client, browser, and CLI tools. The optional terminal AI assistant (<code>@afterlink/ai-assistant</code>) is kept separate. If you want the offline AI assistant, install it explicitly.
+        <strong class="text-al-white">Note:</strong> Starting in v2.0.0+, the umbrella <code>afterlink</code> package is optimized for speed and production safety. It has 0 security vulnerabilities and a small dependency footprint. It installs core, server, client, cluster, browser, and CLI tools. The optional terminal AI assistant (<code>@afterlink/ai-assistant</code>) is kept separate. If you want the offline AI assistant, install it explicitly.
       </p>
     </div>
 
     <!-- Modular distributions -->
     <h2 id="modular-packages" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">2. Modular Distribution Packages</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all mb-4">
-      If you are building lightweight microservices or embedded nodes and want to optimize package bundle size, you can import only the specific packages you need:
+      If you are building lightweight microservices, embedded nodes, or multi-language services, you can install only the specific packages you need:
     </p>
     
     <div class="overflow-x-auto my-6 border border-al-border rounded-lg bg-al-dark/20 select-all">
@@ -190,34 +211,49 @@ afterlink-ai
           <tr>
             <th class="p-3">Package Name</th>
             <th class="p-3">Purpose</th>
-            <th class="p-3">Context</th>
+            <th class="p-3">Context / Registry</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-al-border select-all">
           <tr class="hover:bg-al-card/35 transition-colors">
             <td class="p-3 font-semibold text-al-cyan">@afterlink/core / @ajaymyth/core</td>
-            <td class="p-3">Binary frame codec (encoder, decoder, segment layouts)</td>
-            <td class="p-3">Any / Universal</td>
+            <td class="p-3">Binary frame codec (encoder, decoder, Protocol v2 16-byte header)</td>
+            <td class="p-3">Any / Universal (npm)</td>
           </tr>
           <tr class="hover:bg-al-card/35 transition-colors">
             <td class="p-3 font-semibold text-al-cyan">@afterlink/server / @ajaymyth/server</td>
-            <td class="p-3">High-throughput TCP server runtime module</td>
-            <td class="p-3">Node.js Server</td>
+            <td class="p-3">High-throughput TCP server runtime module with Prometheus & tracing</td>
+            <td class="p-3">Node.js Server (npm)</td>
           </tr>
           <tr class="hover:bg-al-card/35 transition-colors">
             <td class="p-3 font-semibold text-al-cyan">@afterlink/client / @ajaymyth/client</td>
-            <td class="p-3">Persistent TCP client wrapper with auto-reconnect</td>
-            <td class="p-3">Node.js Client</td>
+            <td class="p-3">Persistent TCP client wrapper with auto-reconnect & priority framing</td>
+            <td class="p-3">Node.js Client (npm)</td>
+          </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">@ajaymyth/cluster</td>
+            <td class="p-3">Redis-backed Node clustering, worker crash detection, and SIGUSR2 restarts</td>
+            <td class="p-3">Node.js Server (npm)</td>
+          </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">afterlink (PyPI)</td>
+            <td class="p-3">Native Python SDK with async client/server, sync wrapper, & Pydantic validation</td>
+            <td class="p-3">Python 3.8+ (PyPI)</td>
+          </tr>
+          <tr class="hover:bg-al-card/35 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">afterlink (pub.dev)</td>
+            <td class="p-3">Dart & Flutter SDK with native TCP and web WebSocket transports</td>
+            <td class="p-3">Dart 3.0+ / Flutter (pub.dev)</td>
           </tr>
           <tr class="hover:bg-al-card/35 transition-colors">
             <td class="p-3 font-semibold text-al-cyan">@afterlink/browser / @ajaymyth/browser</td>
             <td class="p-3">WebSocket fallback SDK with binary streaming support</td>
-            <td class="p-3">Web Browser</td>
+            <td class="p-3">Web Browser (npm)</td>
           </tr>
           <tr class="hover:bg-al-card/35 transition-colors">
             <td class="p-3 font-semibold text-al-cyan">@afterlink/cli / @ajaymyth/cli</td>
             <td class="p-3">Command-line debuggers, packet tracers, and validators</td>
-            <td class="p-3">Global / CLI</td>
+            <td class="p-3">Global / CLI (npm)</td>
           </tr>
           <tr class="hover:bg-al-card/35 transition-colors">
             <td class="p-3 font-semibold text-al-cyan">
@@ -225,7 +261,7 @@ afterlink-ai
             </td>
             <td class="p-3">Offline RAG AI assistant — answers AfterLink questions in your terminal</td>
             <td class="p-3">
-              <a href="https://www.npmjs.com/package/@afterlink/ai-assistant" target="_blank" rel="noopener noreferrer" class="hover:underline text-al-cyan">Global / CLI</a>
+              <a href="https://www.npmjs.com/package/@afterlink/ai-assistant" target="_blank" rel="noopener noreferrer" class="hover:underline text-al-cyan">Global / CLI (npm)</a>
             </td>
           </tr>
         </tbody>
@@ -233,26 +269,47 @@ afterlink-ai
     </div>
 
     <p class="text-xs text-al-muted leading-relaxed select-all">
-      Install selected modular distributions as follows:
+      Install selected modular Node distributions as follows:
     </p>
     <CodeBlock code={modularInstall} lang="bash" filename="Terminal" />
 
+    <!-- Node Clustering -->
+    <h2 id="node-clustering-install" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">3. Node Clustering Package (@ajaymyth/cluster)</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all mb-4">
+      To scale AfterLink horizontally across multi-core Node.js servers with shared Redis pub/sub routing, worker crash detection, and SIGUSR2 rolling restarts, install <code>@ajaymyth/cluster</code>:
+    </p>
+    <CodeBlock code={clusterInstall} lang="bash" filename="Terminal" />
+
+    <!-- Python SDK Installation -->
+    <h2 id="python-sdk-install" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">4. Python SDK Installation (afterlink)</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all mb-4">
+      The AfterLink Python SDK is published on PyPI under the <code>afterlink</code> package name. Install it using <code>pip</code>:
+    </p>
+    <CodeBlock code={pythonInstall} lang="bash" filename="Terminal" />
+
+    <!-- Dart SDK Installation -->
+    <h2 id="dart-sdk-install" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">5. Dart & Flutter SDK Installation (afterlink)</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all mb-4">
+      The Dart client SDK is available on pub.dev under <code>afterlink</code>. Add it to your Dart or Flutter project:
+    </p>
+    <CodeBlock code={dartInstall} lang="bash" filename="Terminal" />
+
     <!-- Quick Start Server -->
-    <h2 id="quickstart-server" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">3. Quick Start — Server</h2>
+    <h2 id="quickstart-server" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">6. Quick Start — Server</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all">
       Create a server script in your project root to handle binary framing:
     </p>
     <CodeBlock code={quickServer} lang="javascript" filename="server.js" />
 
     <!-- Quick Start Client -->
-    <h2 id="quickstart-client" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">4. Quick Start — Client</h2>
+    <h2 id="quickstart-client" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">7. Quick Start — Client</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all">
       Establish a persistent connection from your client and publish your first frame:
     </p>
     <CodeBlock code={quickClient} lang="javascript" filename="client.js" />
 
     <!-- Command line devtools -->
-    <h2 id="cli-devtools" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">5. Command-Line Developer Tools</h2>
+    <h2 id="cli-devtools" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">8. Command-Line Developer Tools</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all">
       AfterLink includes a command-line interface (CLI) to trace active frame streams, inspect live connection channels, and generate mock frame sequences during development:
     </p>
@@ -274,14 +331,14 @@ afterlink-ai
     </ul>
 
     <!-- Browser CDN -->
-    <h2 id="browser-cdn" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">6. Browser CDN Fallback Setup</h2>
+    <h2 id="browser-cdn" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">9. Browser CDN Fallback Setup</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all">
       If you are building simple frontend HTML interfaces without module bundlers, load the browser client fallback directly via CDN providers:
     </p>
     <CodeBlock code={cdnScript} lang="html" filename="index.html" />
 
     <!-- Browser Compatibility & Bundler Integration -->
-    <h2 id="browser-compatibility" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">7. Browser Compatibility & Bundling Fixes</h2>
+    <h2 id="browser-compatibility" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">10. Browser Compatibility & Bundling Fixes</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all">
       To guarantee compatibility across Node.js and client-side web environments, the core package (<code>@afterlink/core</code> / <code>@ajaymyth/core</code>) has been upgraded with a native <code>"browser"</code> mapping configuration inside its <code>package.json</code>.
     </p>
@@ -292,23 +349,23 @@ afterlink-ai
     </div>
 
     <!-- TS Setup -->
-    <h2 id="typescript-setup" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">8. TypeScript Setup & Paths</h2>
+    <h2 id="typescript-setup" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">11. TypeScript Setup & Paths</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all">
       If compiling with TypeScript, declare the paths inside your configuration file for proper module resolution:
     </p>
     <CodeBlock code={tsConfigCode} lang="json" filename="tsconfig.json" />
 
     <!-- AI Assistant -->
-    <h2 id="ai-assistant" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">9. AI Assistant (optional)</h2>
+    <h2 id="ai-assistant" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">12. AI Assistant (optional)</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all">
       Install the offline AI assistant to ask questions directly in your terminal:
     </p>
     <CodeBlock code={aiAssistantInstall} lang="bash" filename="Terminal" />
 
     <!-- Upgrading an Existing Project -->
-    <h2 id="upgrading-project" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">10. Upgrading an Existing Project</h2>
+    <h2 id="upgrading-project" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">13. Upgrading an Existing Project to v2.0.2</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all">
-      If you already have AfterLink installed and want to upgrade all packages to the latest versions in one go:
+      If you already have AfterLink installed and want to upgrade all packages to the latest v2.0.2 versions in one go:
     </p>
     <CodeBlock code="npx afterlink upgrade" lang="bash" filename="Terminal" />
 

@@ -5,8 +5,15 @@ import CodeBlock from '../../components/CodeBlock.astro';
 
 const pingExample = `afterlink ping 127.0.0.1:8080`;
 const callExample = `afterlink call 127.0.0.1:8080 /api/users '{"id": 42}'`;
-const inspectExample = `afterlink inspect 020000000a0000000102`;
+const inspectExample = `afterlink inspect af1c0201000700010575736572730000000c`;
 const monitorExample = `afterlink monitor 127.0.0.1:8080 chat.lobby`;
+const clusterExample = `# Check active cluster workers and Redis pub/sub state
+afterlink cluster status
+
+# Trigger zero-downtime SIGUSR2 rolling restart
+afterlink cluster reload`;
+const metricsExample = `afterlink metrics 127.0.0.1:9090`;
+const traceExample = `afterlink trace 127.0.0.1:8080 users.get`;
 const upgradeExample = `# Upgrade all AfterLink packages in the current project
 afterlink upgrade
 
@@ -66,7 +73,7 @@ afterlink upgrade --global`;
     <div class="space-y-3 pt-6 border-t border-al-border/30">
       <h3 id="inspect" class="text-base font-semibold font-mono text-al-cyan">`inspect` — Frame decoder</h3>
       <p class="text-xs text-al-muted leading-relaxed">
-        Decodes raw wire hex buffers into readable, formatted JSON blocks matching the 10-byte header layout.
+        Decodes raw wire hex buffers into readable, formatted JSON blocks matching the 16-byte Protocol v2 header layout (version, flags, priority queue, routing key, payload length).
       </p>
       <p class="text-2xs font-bold text-al-muted font-mono uppercase tracking-wider">Usage:</p>
       <CodeBlock code="afterlink inspect <hex-string>" lang="bash" filename="Terminal" />
@@ -84,6 +91,31 @@ afterlink upgrade --global`;
       <CodeBlock code="afterlink monitor <host:port> <channel>" lang="bash" filename="Terminal" />
       <p class="text-2xs font-bold text-al-muted font-mono uppercase tracking-wider">Example:</p>
       <CodeBlock code={monitorExample} lang="bash" filename="Terminal" />
+    </div>
+
+    <!-- cluster -->
+    <div class="space-y-3 pt-6 border-t border-al-border/30">
+      <h3 id="cluster" class="text-base font-semibold font-mono text-al-cyan">`cluster` — Node cluster manager</h3>
+      <p class="text-xs text-al-muted leading-relaxed">
+        Inspects running worker process pools, monitors shared Redis pub/sub node health, and triggers SIGUSR2 rolling restarts.
+      </p>
+      <p class="text-2xs font-bold text-al-muted font-mono uppercase tracking-wider">Usage:</p>
+      <CodeBlock code="afterlink cluster <status|reload>" lang="bash" filename="Terminal" />
+      <p class="text-2xs font-bold text-al-muted font-mono uppercase tracking-wider">Example:</p>
+      <CodeBlock code={clusterExample} lang="bash" filename="Terminal" />
+    </div>
+
+    <!-- metrics & trace -->
+    <div class="space-y-3 pt-6 border-t border-al-border/30">
+      <h3 id="observability-cli" class="text-base font-semibold font-mono text-al-cyan">`metrics` & `trace` — Observability tools</h3>
+      <p class="text-xs text-al-muted leading-relaxed">
+        Fetches live Prometheus metrics endpoints and inspects OpenTelemetry context propagation across RPC frame flows.
+      </p>
+      <p class="text-2xs font-bold text-al-muted font-mono uppercase tracking-wider">Usage:</p>
+      <CodeBlock code="afterlink metrics <host:port>  |  afterlink trace <host:port> <route>" lang="bash" filename="Terminal" />
+      <p class="text-2xs font-bold text-al-muted font-mono uppercase tracking-wider">Examples:</p>
+      <CodeBlock code={metricsExample} lang="bash" filename="Terminal" />
+      <CodeBlock code={traceExample} lang="bash" filename="Terminal" />
     </div>
 
     <!-- upgrade -->

@@ -63,6 +63,36 @@ const issues = [
     fix: 'Install the AfterLink command-line tools distribution globally through npm.',
     code: 'npm install -g @afterlink/cli'
   },
+  {
+    problem: 'Protocol v2 Header parse error (code 102)',
+    cause: '16-byte fixed header layout mismatch, failed v1/v2 version negotiation, priority queue level > 7, or custom routing key length > 255 bytes.',
+    fix: 'Ensure client and server both support Protocol v2 (16-byte header format). Verify priority levels stay between 0 and 7, and routing keys stay within 255 bytes.',
+    code: 'const frame = Frame.createV2({ route: "user.data", priority: 3, payload });'
+  },
+  {
+    problem: 'Cluster worker sync or Redis Cluster MOVED error',
+    cause: 'Workers in @ajaymyth/cluster failed to sync shared pub/sub routes, or Redis Cluster slot routing failed on single-node Redis configs.',
+    fix: 'In @ajaymyth/cluster (v2.0.1+), pass a cluster nodes array via Redis.Cluster for slot routing, or verify Redis pub/sub connectivity across nodes.',
+    code: 'new ClusterManager({ redis: { clusters: [{ host: "10.0.0.1", port: 6379 }] } })'
+  },
+  {
+    problem: 'SIGUSR2 worker reload deadlock',
+    cause: 'Master process reloads cluster workers before active socket pipes drain or process signal handlers exit cleanly.',
+    fix: 'Specify gracefulShutdownTimeout in ClusterManager and attach listener hooks for worker process signals before reload.',
+    code: 'cluster.on("workerExit", (worker, code) => console.warn(`Worker ${worker.id} exited with code ${code}`));'
+  },
+  {
+    problem: 'Python SDK connection or event loop error',
+    cause: 'AsyncClient instantiated outside of an active asyncio event loop, or connection attempted to incorrect host/port.',
+    fix: 'Wrap AsyncClient inside an async with AsyncClient(...) context manager within an active asyncio event loop (asyncio.run()).',
+    code: 'async with AsyncClient("127.0.0.1", 8080) as client:\n    await client.request("route", payload)'
+  },
+  {
+    problem: 'Dart SDK SocketException or Msgpack error',
+    cause: 'Flutter Web target attempting native TCP socket creation or legacy streaming messagepack dependency issue.',
+    fix: 'In afterlink v2.0.1+, Dart SDK uses conditional compilation loaders for native TCP (io) vs WebSockets (web) and uses msgpack_dart serialization.',
+    code: 'final client = AfterLinkClient(host: "127.0.0.1", port: 8080);'
+  },
 ];
 ---
 

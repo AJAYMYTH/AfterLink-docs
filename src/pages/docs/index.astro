@@ -34,15 +34,68 @@ client.on('connect', () => {
   });
 });
 `;
+
+const clusterQuick = `
+const { ClusterManager } = require('@ajaymyth/cluster');
+
+// Launch clustered workers with Redis-backed pub/sub routing
+const cluster = new ClusterManager({
+  workers: 4,
+  redis: { host: '127.0.0.1', port: 6379 },
+  rollingRestarts: true, // SIGUSR2 rolling restarts
+});
+
+cluster.start();
+`;
+
+const pythonQuick = `
+import asyncio
+from afterlink import AsyncClient
+
+async def main():
+    # Connect native Python client to AfterLink daemon
+    client = AsyncClient(host="127.0.0.1", port=8080)
+    await client.connect()
+    
+    # Send RPC request with type hints & Pydantic validation
+    response = await client.request("sensor/status", {"id": 42})
+    print("Received:", response)
+
+asyncio.run(main())
+`;
+
+const dartQuick = `
+import 'package:afterlink/afterlink.dart';
+
+void main() async {
+  // Connect Dart client (native TCP or web WebSocket transport)
+  final client = AfterLinkClient(host: '127.0.0.1', port: 8080);
+  await client.connect();
+  
+  // Publish binary frame
+  client.send('sensor-stream', {'temperature': 21.4});
+}
+`;
+
+const observabilityQuick = `
+const { Server, TracingManager } = require('@ajaymyth/server');
+
+// Initialize server with Prometheus endpoint and OpenTelemetry tracing
+const server = new Server({
+  port: 8080,
+  metrics: { enabled: true, path: '/metrics' },
+  tracing: new TracingManager({ serviceName: 'afterlink-cluster' }),
+});
+`;
 ---
 
 <DocsLayout 
-  title="Getting Started with AfterLink" 
+  title="Getting Started with AfterLink v2.0.2" 
   description="Learn how to install, set up, and configure persistent, binary-precise AfterLink server and client communication."
   schema={{
     "@context": "https://schema.org",
     "@type": "TechArticle",
-    "headline": "Getting Started with AfterLink",
+    "headline": "Getting Started with AfterLink v2.0.2",
     "description": "Learn how to install, set up, and configure persistent, binary-precise AfterLink server and client communication.",
     "author": { "@type": "Person", "name": "Javali Ajayakumar" },
     "publisher": { "@type": "Organization", "name": "AfterLink" },
@@ -53,7 +106,7 @@ client.on('connect', () => {
     <div class="border-b border-al-border/50 pb-4">
       <h1 class="text-3xl font-bold tracking-tight text-al-white mb-2">Getting Started</h1>
       <p class="text-sm text-al-muted leading-relaxed">
-        AfterLink is a high-performance application-layer binary protocol engineered for persistent, real-time node communication. Learn how to configure a persistent server and client connection with built-in speed.
+        AfterLink v2.0.2 is a high-performance application-layer binary protocol engineered for persistent, real-time node communication across Node.js, Python, and Dart. Learn how to configure persistent server and client connections with built-in speed, priority queues, and clustering.
       </p>
     </div>
 
@@ -63,15 +116,23 @@ client.on('connect', () => {
       <ul class="space-y-2.5 text-xs text-al-text">
         <li class="flex items-start gap-2 select-all">
           <span class="text-al-cyan font-bold font-mono select-none">●</span>
+          <strong>Protocol v2 16-Byte Header:</strong> Fixed 16-byte header with version negotiation (v1/v2), 8 priority queues (0-7), and custom string routing keys (0-255 bytes).
+        </li>
+        <li class="flex items-start gap-2 select-all">
+          <span class="text-al-cyan font-bold font-mono select-none">●</span>
           <strong>76% Faster than WebSockets:</strong> Streamlined binary framing reduces TCP wire transmission latencies to a bare minimum.
         </li>
         <li class="flex items-start gap-2 select-all">
           <span class="text-al-cyan font-bold font-mono select-none">●</span>
-          <strong>90% Less Wire Overhead:</strong> A fixed 10-byte header format eliminates heavy HTTP header transport bloat.
+          <strong>Node Clustering & Redis Pub/Sub:</strong> High-availability worker management via <code>@ajaymyth/cluster</code> with crash detection, SIGUSR2 rolling restarts, and Redis Cluster slot routing.
         </li>
         <li class="flex items-start gap-2 select-all">
           <span class="text-al-cyan font-bold font-mono select-none">●</span>
-          <strong>Built-in Pub/Sub Engine:</strong> Broadcast real-time frames directly from the protocol layer without external brokers.
+          <strong>Multi-Language SDKs:</strong> First-class Python (<code>afterlink</code> on PyPI) and Dart/Flutter (<code>afterlink</code> on pub.dev) SDKs with native TCP and WebSocket transports.
+        </li>
+        <li class="flex items-start gap-2 select-all">
+          <span class="text-al-cyan font-bold font-mono select-none">●</span>
+          <strong>Built-in Observability:</strong> Self-contained Prometheus metrics endpoint, Grafana dashboard JSON template, and OpenTelemetry-compliant <code>TracingManager</code> with AsyncLocalStorage context propagation.
         </li>
       </ul>
     </div>
@@ -82,16 +143,18 @@ client.on('connect', () => {
       Ensure your local environment matches the requirements before starting implementation:
     </p>
     <ul class="list-disc pl-5 space-y-1.5 text-xs text-al-muted select-all">
-      <li>Node.js version <code>v18.0.0</code> or higher</li>
+      <li>Node.js version <code>v18.0.0</code> or higher (v20+ recommended)</li>
+      <li>Python 3.8+ (if using the Python SDK)</li>
+      <li>Dart 3.0+ / Flutter 3.0+ (if using the Dart SDK)</li>
       <li>npm, pnpm, or yarn package manager</li>
-    </li>
+    </ul>
 
     <!-- Installation -->
     <h2 id="installation" class="text-lg font-semibold tracking-tight text-al-white mt-10 mb-3 select-none">Installation</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all mb-4">
       Install the standard AfterLink scoped packages from the npm registry:
     </p>
-    <CodeBlock code="npm install @afterlink/core @afterlink/server @afterlink/client @afterlink/browser @afterlink/cli" lang="bash" filename="Terminal" />
+    <CodeBlock code="npm install @afterlink/core @afterlink/server @afterlink/client @afterlink/cluster @afterlink/browser @afterlink/cli" lang="bash" filename="Terminal" />
 
     <!-- Server Quick Start -->
     <h2 id="quick-start-server" class="text-lg font-semibold tracking-tight text-al-white mt-10 mb-3 select-none">Quick Start — Server</h2>
@@ -107,16 +170,44 @@ client.on('connect', () => {
     </p>
     <CodeBlock code={quickClient} lang="javascript" filename="client.js" />
 
-    <!-- First Message explanation -->
+    <!-- Node Clustering -->
+    <h2 id="node-clustering" class="text-lg font-semibold tracking-tight text-al-white mt-10 mb-3 select-none">Node Clustering</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all mb-4">
+      Scale AfterLink across multi-core systems using <code>@ajaymyth/cluster</code>. Includes Redis-backed shared pub/sub routing, worker crash detection/restarts, and zero-downtime SIGUSR2 rolling restarts:
+    </p>
+    <CodeBlock code={clusterQuick} lang="javascript" filename="cluster.js" />
+
+    <!-- Python SDK -->
+    <h2 id="python-sdk" class="text-lg font-semibold tracking-tight text-al-white mt-10 mb-3 select-none">Python SDK</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all mb-4">
+      AfterLink provides a native Python SDK (<code>pip install afterlink</code>) featuring async client/server APIs, synchronous wrappers, full type hints, and Pydantic schema validation:
+    </p>
+    <CodeBlock code={pythonQuick} lang="python" filename="main.py" />
+
+    <!-- Dart SDK -->
+    <h2 id="dart-sdk" class="text-lg font-semibold tracking-tight text-al-white mt-10 mb-3 select-none">Dart & Flutter SDK</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all mb-4">
+      Connect Dart and Flutter apps seamlessly using the <code>afterlink</code> package on pub.dev. Supports native TCP sockets on desktop/mobile and WebSocket fallback on web via conditional compilation:
+    </p>
+    <CodeBlock code={dartQuick} lang="dart" filename="main.dart" />
+
+    <!-- Metrics & Observability -->
+    <h2 id="observability" class="text-lg font-semibold tracking-tight text-al-white mt-10 mb-3 select-none">Metrics & Observability</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all mb-4">
+      Monitor server performance using built-in Prometheus endpoints, Grafana dashboard JSON templates, and OpenTelemetry-compliant <code>TracingManager</code> context propagation across binary frames:
+    </p>
+    <CodeBlock code={observabilityQuick} lang="javascript" filename="server.js" />
+
+    <!-- Next Steps -->
     <h2 id="next-steps" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-4 select-none">Next Steps</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
       <a href="/docs/installation" class="block p-4 rounded-lg border border-al-border hover:border-al-cyan/40 bg-al-card/20 transition-all select-none">
         <h3 class="font-mono text-xs font-bold text-al-cyan mb-1">Package Installation &rarr;</h3>
-        <p class="text-3xs text-al-muted">Explore modular package distributions and setups.</p>
+        <p class="text-3xs text-al-muted">Explore modular package distributions, Python, Dart, and cluster setups.</p>
       </a>
       <a href="/docs/protocol" class="block p-4 rounded-lg border border-al-border hover:border-al-cyan/40 bg-al-card/20 transition-all select-none">
         <h3 class="font-mono text-xs font-bold text-al-cyan mb-1">Binary Protocol Spec &rarr;</h3>
-        <p class="text-3xs text-al-muted">Deep dive into the 10-byte header format.</p>
+        <p class="text-3xs text-al-muted">Deep dive into the 16-byte Protocol v2 header format.</p>
       </a>
     </div>
 
@@ -130,3 +221,4 @@ client.on('connect', () => {
     </div>
   </div>
 </DocsLayout>
+

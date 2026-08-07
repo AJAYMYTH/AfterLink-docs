@@ -4,7 +4,7 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 import CodeBlock from '../../components/CodeBlock.astro';
 
 const validationExample = `
-const { Server } = require('@afterlink/server');
+const { Server } = require('@ajaymyth/server');
 const { z } = require('zod');
 
 // Define expected payload validation schema
@@ -29,8 +29,49 @@ server.on('message', (socket, frame) => {
 server.on('validationError', (socket, error) => {
   console.error('Socket sent a bad payload:', error.issues);
   
-  // AfterLink automatically replies with a MSG_ERROR (0x05) frame to the client
+  // AfterLink automatically replies with a MSG_ERROR (0x08) frame to the client
 });
+`;
+
+const pythonValidationExample = `
+from afterlink import AsyncServer
+from pydantic import BaseModel, Field
+
+class OrderPayload(BaseModel):
+    user_id: int = Field(gt=0)
+    item_symbol: str = Field(min_length=1, max_length=10)
+    quantity: int = Field(gt=0, le=1000)
+
+server = AsyncServer(host="0.0.0.0", port=8080)
+
+# Register Pydantic schema validation for 'order.create' route
+server.register_schema("order.create", OrderPayload)
+
+@server.on("order.create")
+async def create_order(socket, payload: OrderPayload):
+    # Payload is automatically validated and parsed into OrderPayload!
+    print(f"Order for user {payload.user_id}: {payload.quantity}x {payload.item_symbol}")
+`;
+
+const dartValidationExample = `
+import 'package:afterlink/afterlink.dart';
+
+class UserProfile {
+  final String username;
+  final String email;
+
+  UserProfile({required this.username, required this.email});
+
+  factory UserProfile.fromMap(Map<String, dynamic> map) {
+    if (map['username'] == null || (map['username'] as String).length < 3) {
+      throw ValidationException('Username must be at least 3 characters');
+    }
+    return UserProfile(username: map['username'], email: map['email']);
+  }
+}
+
+final client = AfterLinkClient(host: '127.0.0.1', port: 8080);
+client.registerDecoder<UserProfile>('user.profile', UserProfile.fromMap);
 `;
 ---
 
@@ -59,8 +100,48 @@ server.on('validationError', (socket, error) => {
     <div class="bg-al-cyan/5 border border-al-cyan/20 rounded-lg p-6 my-6 select-all">
       <h2 class="font-mono text-xs font-bold text-al-cyan uppercase tracking-wider mb-2">Protocol-Level Shield</h2>
       <p class="text-2xs text-al-text leading-relaxed">
-        Typical websocket servers receive buffers, parse JSON string representations, and only then run validation in the handler. If a packet is malformed, your processor has already allocated CPU cycles and memory. AfterLink parses the 10-byte header length, parses the buffer, validates it at the decoder boundary, and rejects bad sockets immediately.
+        Typical websocket servers receive buffers, parse JSON string representations, and only then run validation in the handler. If a packet is malformed, your processor has already allocated CPU cycles and memory. AfterLink parses the 16-byte Protocol v2 header, validates priority bounds (0-7) and routing key lengths (0-255B), verifies payload length, validates schema boundaries, and rejects bad sockets immediately.
       </p>
+    </div>
+
+    <!-- Protocol v2 Header Validation -->
+    <h2 id="header-validation" class="text-lg font-semibold tracking-tight text-al-white mt-10 mb-3 select-none">Protocol v2 Header Validation</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Before attempting MessagePack payload deserialization or schema validation, AfterLink enforces strict binary header checks:
+    </p>
+
+    <div class="overflow-x-auto my-4 border border-al-border rounded-lg bg-al-dark/20 select-all">
+      <table class="w-full text-left font-mono text-xs divide-y divide-al-border select-all">
+        <thead class="bg-al-card text-al-cyan select-none">
+          <tr>
+            <th class="p-3">Header Field</th>
+            <th class="p-3">Validation Rule</th>
+            <th class="p-3">Failure Behavior & Error Code</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-al-border tabular-nums text-al-text select-all">
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold text-al-cyan">Magic Identifier</td>
+            <td class="p-3">Must match <code>0xAF 0x1C</code></td>
+            <td class="p-3">Socket destroyed immediately; <code>ERR_MAGIC_MISMATCH</code> (100)</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold text-al-green">Protocol Version</td>
+            <td class="p-3">Version negotiation <code>0x01</code> or <code>0x02</code></td>
+            <td class="p-3">Frame rejected; <code>ERR_VERSION_UNSUPPORTED</code> (101)</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold text-yellow-500">Priority Level</td>
+            <td class="p-3">Integer range <code>0 &le; priority &le; 7</code></td>
+            <td class="p-3">Frame rejected; <code>ERR_BAD_FRAME</code> (400)</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold text-purple-400">Routing Key Length</td>
+            <td class="p-3">Byte length <code>0 &le; len &le; 255</code></td>
+            <td class="p-3">Frame rejected; <code>ERR_BAD_FRAME</code> (400)</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- How Validation works step-by-step -->
@@ -77,33 +158,50 @@ server.on('validationError', (socket, error) => {
         </div>
         <div class="text-center font-bold text-al-cyan select-none">&darr;</div>
         <div class="flex justify-between items-center bg-al-black/40 p-2.5 rounded border border-al-border select-all">
-          <span class="text-al-white">2. Decode Header (10B)</span>
-          <span class="text-al-muted">Check Magic (0xAF1C) and get Payload Length</span>
+          <span class="text-al-white">2. Decode Header (16B)</span>
+          <span class="text-al-muted">Check Magic (0xAF1C), Version Negotiation (v1/v2), Priority (0-7), Routing Key length, and Payload Length</span>
         </div>
         <div class="text-center font-bold text-al-cyan select-none">&darr;</div>
         <div class="flex justify-between items-center bg-al-cyan/5 p-2.5 rounded border border-al-cyan/20 select-all">
-          <span class="text-al-cyan">3. Schema Check (Zod)</span>
+          <span class="text-al-cyan">3. Schema Check (Zod / Pydantic)</span>
           <span class="text-al-text">Runs pre-registered type validator against raw payload</span>
         </div>
         <div class="text-center font-bold text-al-cyan select-none">&darr;</div>
         <div class="flex justify-between items-center bg-al-black/40 p-2.5 rounded border border-al-border select-all">
           <span class="text-al-white">4. Handler Dispatch</span>
-          <span class="text-al-muted">Emit 'message' with fully-typed Javascript object</span>
+          <span class="text-al-muted">Emit route handler with fully-typed validated object</span>
         </div>
       </div>
     </div>
 
     <!-- Code Validation Example -->
-    <h2 id="validation-code" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">Validation Code Example</h2>
+    <h2 id="validation-code" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">Validation Code Example (Node.js Zod)</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all">
       Below is an implementation of how schemas are registered and handled inside AfterLink server instances:
     </p>
     <CodeBlock code={validationExample} lang="javascript" filename="validation.js" />
 
+    <!-- Python & Dart Payload Validation -->
+    <h2 id="sdk-validation" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">Python & Dart Payload Validation</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      AfterLink v2 multi-language SDKs provide native payload validation integration using <strong>Pydantic</strong> in Python and typed decoders in Dart:
+    </p>
+
+    <div class="space-y-6 my-4">
+      <div>
+        <p class="text-2xs font-bold font-mono text-al-cyan uppercase tracking-wider mb-2">Python Pydantic Validation:</p>
+        <CodeBlock code={pythonValidationExample} lang="python" filename="validation.py" />
+      </div>
+      <div>
+        <p class="text-2xs font-bold font-mono text-al-cyan uppercase tracking-wider mb-2">Dart Payload Validation:</p>
+        <CodeBlock code={dartValidationExample} lang="dart" filename="validation.dart" />
+      </div>
+    </div>
+
     <!-- Error framing description -->
     <h2 id="error-framing" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">Error Frame (MSG_ERROR) Response</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all">
-      When a schema check fails, the socket connection is not closed immediately. Instead, AfterLink encodes a structured <code>MSG_ERROR</code> (<code>0x05</code>) frame back to the client. The payload of this error frame contains a JSON-serialized details block:
+      When a schema check fails, the socket connection is not closed immediately. Instead, AfterLink encodes a structured <code>MSG_ERROR</code> (<code>0x08</code>) frame back to the client. The payload of this error frame contains a JSON-serialized details block:
     </p>
     <CodeBlock code={`{
   "code": "BAD_PAYLOAD",

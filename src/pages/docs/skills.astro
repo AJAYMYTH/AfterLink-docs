@@ -20,7 +20,7 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
     <div class="border-b border-al-border/50 pb-4">
       <h1 class="text-3xl font-bold tracking-tight text-al-white mb-2">AI Agent Skills</h1>
       <p class="text-sm text-al-muted leading-relaxed">
-        AfterLink ships a fully structured <code class="text-al-cyan">skills.sh</code>-compatible skill configuration package. This teaches AI coding assistants (Claude, Cursor, Copilot) how to scaffold AfterLink engines natively, omitting typical API hallucinations.
+        AfterLink ships a fully structured <code class="text-al-cyan">skills.sh</code>-compatible skill configuration package updated for <code class="text-al-cyan">v2.0.2</code>. This teaches AI coding assistants (Claude, Cursor, Copilot) how to scaffold Protocol v2 framing, multi-worker clustering, and multi-language SDKs natively without API hallucinations.
       </p>
     </div>
 
@@ -28,7 +28,7 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
     <div class="bg-al-card border border-al-border rounded-xl p-6 my-6 select-all shadow-sm">
       <h2 class="font-mono text-xs font-bold text-al-cyan uppercase tracking-wider mb-2">What is a Skill?</h2>
       <p class="text-xs text-al-text leading-relaxed">
-        A skill is a machine-readable technical instruction playbook. By injecting AfterLink's schema, API signatures, and architectural requirements directly into the AI's system prompt context, coding tools can create, audit, and debug AfterLink protocol layers with zero-defect accuracy.
+        A skill is a machine-readable technical instruction playbook. By injecting AfterLink's Protocol v2 16-byte header specification, <code class="text-al-cyan">@ajaymyth/cluster</code> engine rules, Python/Dart SDK contracts, and Zod validation models directly into the AI's system prompt context, coding tools can create, audit, and debug AfterLink protocol layers with zero-defect accuracy.
       </p>
     </div>
 
@@ -64,7 +64,7 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
     <!-- Skill Coverage list -->
     <h2 id="coverage" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none font-mono">What the Skill Book Covers</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all">
-      The skill blueprint instructs AI agents across the complete range of AfterLink's modular capabilities:
+      The skill blueprint instructs AI agents across the complete range of AfterLink v2.0.2 capabilities:
     </p>
 
     <div class="overflow-x-auto my-6 border border-al-border rounded-lg bg-al-dark/20 select-all">
@@ -76,13 +76,18 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
           </tr>
         </thead>
         <tbody class="divide-y divide-al-border select-all">
-          <tr><td class="p-3 font-semibold text-al-cyan">Decision Guide</td><td class="p-3">When to deploy AfterLink vs standard WebSockets, HTTP/2 or gRPC configurations.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">Protocol v2 Framing</td><td class="p-3">16-byte fixed header layout, version negotiation (v1/v2), priority queues (0-7), 0-255 byte custom routing keys, <code>ROUTE_REQUEST</code> & <code>PRIORITY_ACK</code> frame types.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">Node Clustering (@ajaymyth/cluster)</td><td class="p-3">Redis-backed shared pub/sub routing, Redis Cluster slot support (v2.0.1+), worker crash detection, and SIGUSR2 rolling restarts.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">Python SDK (afterlink)</td><td class="p-3">Async server and client implementation, sync wrapper, type hints, and Pydantic schema validation.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">Dart & Flutter SDK (afterlink)</td><td class="p-3">Native TCP & web WebSocket transports via conditional compilation loaders, <code>msgpack_dart</code> serialization.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">Metrics & Observability</td><td class="p-3">Prometheus scrape endpoint configuration, Grafana JSON templates, and OpenTelemetry <code>TracingManager</code> with AsyncLocalStorage context propagation.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">Decision Guide</td><td class="p-3">When to deploy AfterLink binary TCP vs standard WebSockets, HTTP/2 or gRPC configurations.</td></tr>
           <tr><td class="p-3 font-semibold text-al-cyan">Server Scaffolds</td><td class="p-3">How to boot server nodes, assign routes, and declare Zod payload validation models.</td></tr>
           <tr><td class="p-3 font-semibold text-al-cyan">Client Handshakes</td><td class="p-3">Establishing client pipes, auto-reconnecting loops, and request/reply RPC actions.</td></tr>
           <tr><td class="p-3 font-semibold text-al-cyan">Pub/Sub Broadcasting</td><td class="p-3">Channel subscriptions, raw publishes, and multi-peer broadcast loops.</td></tr>
-          <tr><td class="p-3 font-semibold text-al-cyan">Secure TLS & JWT</td><td class="p-3">Creating credentials via <code>generateDevCerts()</code> and securing URIs.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">Secure TLS & JWT</td><td class="p-3">Creating credentials via <code>generateDevCerts()</code> and securing URIs with JWT secrets.</td></tr>
           <tr><td class="p-3 font-semibold text-al-cyan">Browser Bridge</td><td class="p-3">Interfacing with standard web frontend elements using WebSocket fallback wrappers.</td></tr>
-          <tr><td class="p-3 font-semibold text-al-cyan">Diagnostics & CLI</td><td class="p-3">API testing structures, CLI debuggers, and common issue resolutions.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">Diagnostics & CLI</td><td class="p-3">API testing structures, CLI debuggers (<code>afterlink ping/inspect</code>), and common issue resolutions.</td></tr>
         </tbody>
       </table>
     </div>
@@ -95,7 +100,7 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
       </p>
       <div class="flex items-start sm:items-center gap-3 bg-al-bg border border-al-border rounded-lg px-4 py-3.5 font-mono shadow-inner select-all">
         <span class="text-al-cyan italic text-xs flex-1 select-all" id="prompt-text">
-          "According to the local AfterLink skill, scaffold a TCP socket server on port 3000 that registers a Zod schema validation model for creating posts, and hooks up a pub/sub stream for client notifications."
+          "According to the local AfterLink skill, scaffold a multi-worker cluster using @ajaymyth/cluster with Redis-backed pub/sub routing, register a Protocol v2 route with priority level 5, and write a Python AsyncClient script using the afterlink package that sends a Pydantic-validated payload."
         </span>
         <button 
           onclick="copyCodeText(document.getElementById('prompt-text').textContent.trim(), this)"
@@ -113,7 +118,7 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
         </button>
       </div>
       <p class="text-[10px] text-al-muted mt-3 font-mono tracking-tight select-none">
-        The agent will automatically locate the skill guidelines, fetch correct API signatures, and write validated node code.
+        The agent will automatically locate the skill guidelines, fetch correct API signatures, and write validated Node, Python, or Dart code.
       </p>
     </div>
 

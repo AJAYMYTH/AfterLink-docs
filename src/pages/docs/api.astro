@@ -35,12 +35,15 @@ import CodeBlock from '../../components/CodeBlock.astro';
         <a href="#server-publish" class="text-al-muted hover:text-al-white">&bull; server.publish() pub/sub</a>
         <a href="#server-broadcast" class="text-al-muted hover:text-al-white">&bull; server.broadcast() fan-out</a>
         <a href="#server-close" class="text-al-muted hover:text-al-white">&bull; server.close() shutdown</a>
+        <a href="#cluster-api" class="text-al-muted hover:text-al-white">&bull; @ajaymyth/cluster Package</a>
+        <a href="#metrics-api" class="text-al-muted hover:text-al-white">&bull; Metrics & Observability</a>
         <a href="#client-class" class="text-al-muted hover:text-al-white">&bull; Client Constructor Options</a>
         <a href="#client-conn" class="text-al-muted hover:text-al-white">&bull; client.connect() / disconnect()</a>
         <a href="#client-req" class="text-al-muted hover:text-al-white">&bull; client.request() RPC loops</a>
         <a href="#client-sub" class="text-al-muted hover:text-al-white">&bull; client.subscribe() channels</a>
         <a href="#client-pub" class="text-al-muted hover:text-al-white">&bull; client.publish() streams</a>
         <a href="#client-stream" class="text-al-muted hover:text-al-white">&bull; client.stream() chunks</a>
+        <a href="#sdks-api" class="text-al-muted hover:text-al-white">&bull; Python & Dart SDKs</a>
         <a href="#error-table" class="text-al-muted hover:text-al-white">&bull; Protocol Error Codes</a>
         <a href="#ts-types" class="text-al-muted hover:text-al-white">&bull; TypeScript Types Reference</a>
       </div>
@@ -71,6 +74,8 @@ import CodeBlock from '../../components/CodeBlock.astro';
           <tr><td class="p-3 font-semibold text-al-cyan">idleTimeout</td><td class="p-3">number</td><td class="p-3">60000</td><td>Heartbeat delay threshold in milliseconds.</td></tr>
           <tr><td class="p-3 font-semibold text-al-cyan">maxConnections</td><td class="p-3">number</td><td class="p-3">10000</td><td>Peak concurrent active sockets allowance limits.</td></tr>
           <tr><td class="p-3 font-semibold text-al-cyan">tls</td><td class="p-3">object</td><td class="p-3">null</td><td>Pass key, cert buffers to activate secure TLS handshakes.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">metrics</td><td class="p-3">object</td><td class="p-3">null</td><td>Enable Prometheus endpoint and set custom port/path options.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">tracing</td><td class="p-3">TracingManager</td><td class="p-3">null</td><td>OpenTelemetry-compliant context propagation instance.</td></tr>
         </tbody>
       </table>
     </div>
@@ -171,6 +176,93 @@ import CodeBlock from '../../components/CodeBlock.astro';
         <div class="space-y-1.5 select-all">
           <p class="text-[9px] text-al-muted font-mono uppercase tracking-widest font-bold select-none">Signature</p>
           <pre class="bg-al-bg border border-al-border rounded-lg px-4 py-2.5 font-mono text-2xs text-al-cyan overflow-x-auto shadow-inner select-all">server.close(callback?: () => void): Promise&lt;void&gt;</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLUSTER PACKAGE SECTION -->
+    <h2 id="cluster-api" class="text-xl font-bold tracking-tight text-al-white border-b border-al-border/30 pb-2 mt-16 select-none font-mono">@ajaymyth/cluster Package Reference</h2>
+    
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Instantiated via <code>new ClusterManager(options)</code> to manage worker process forks, Redis-backed shared pub/sub routing, worker crash detection/restarts, and SIGUSR2 rolling restarts.
+    </p>
+
+    <!-- Cluster Options grid -->
+    <h3 class="font-mono text-2xs font-bold text-al-muted tracking-wide uppercase mt-4 mb-2 select-none">ClusterManager Options</h3>
+    <div class="overflow-x-auto border border-al-border rounded-lg bg-al-dark/20 select-all mb-6">
+      <table class="w-full text-left font-mono text-xs divide-y divide-al-border select-all">
+        <thead class="bg-al-card text-al-muted select-none">
+          <tr>
+            <th class="p-3">Option</th>
+            <th class="p-3">Type</th>
+            <th class="p-3">Default</th>
+            <th class="p-3">Description</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-al-border tabular-nums select-all">
+          <tr><td class="p-3 font-semibold text-al-cyan">workers</td><td class="p-3">number | 'auto'</td><td class="p-3">'auto'</td><td>Number of worker processes to fork (defaults to CPU core count).</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">redis</td><td class="p-3">string | object</td><td class="p-3">'redis://127.0.0.1:6379'</td><td>Redis connection URL or Redis.Cluster node array for multi-node routing.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">autoRestart</td><td class="p-3">boolean</td><td class="p-3">true</td><td>Automatically fork new worker process on worker crash.</td></tr>
+          <tr><td class="p-3 font-semibold text-al-cyan">rollingRestart</td><td class="p-3">boolean</td><td class="p-3">true</td><td>Enable zero-downtime rolling restarts on SIGUSR2 process signals.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="method-block bg-al-card border border-al-border rounded-xl mb-6 overflow-hidden select-all shadow-sm">
+      <div class="method-header px-6 py-3.5 border-b border-al-border bg-[rgba(0,216,255,0.03)] flex items-center justify-between select-none">
+        <div class="flex items-center gap-3">
+          <span class="text-al-cyan font-mono font-bold text-sm">ClusterManager API</span>
+          <span class="text-[9px] text-al-muted font-mono px-2 py-0.5 border border-al-border rounded select-none font-semibold">class</span>
+        </div>
+        <span class="text-2xs font-mono text-al-muted select-none">Node Clustering</span>
+      </div>
+      <div class="px-6 py-5 space-y-4">
+        <p class="text-xs text-al-muted leading-relaxed select-all">
+          Initializes worker clusters with automatic load distribution across primary TCP sockets and synchronizes pub/sub state across node boundaries via Redis pub/sub.
+        </p>
+        <div class="space-y-1.5 select-all">
+          <p class="text-[9px] text-al-muted font-mono uppercase tracking-widest font-bold select-none">Usage Signature</p>
+          <pre class="bg-al-bg border border-al-border rounded-lg px-4 py-2.5 font-mono text-2xs text-al-cyan overflow-x-auto shadow-inner select-all">import &#123; ClusterManager &#125; from '@ajaymyth/cluster';
+
+const cluster = new ClusterManager(&#123;
+  workers: 'auto',
+  redis: &#123; nodes: ['10.0.0.1:6379', '10.0.0.2:6379'] &#125;
+&#125;);
+
+cluster.start();</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- METRICS & OBSERVABILITY SECTION -->
+    <h2 id="metrics-api" class="text-xl font-bold tracking-tight text-al-white border-b border-al-border/30 pb-2 mt-16 select-none font-mono">Metrics & Observability Reference</h2>
+    
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      AfterLink v2 includes built-in Prometheus metric collection and OpenTelemetry tracing propagation via <code>AsyncLocalStorage</code>.
+    </p>
+
+    <div class="method-block bg-al-card border border-al-border rounded-xl mb-6 overflow-hidden select-all shadow-sm">
+      <div class="method-header px-6 py-3.5 border-b border-al-border bg-[rgba(0,216,255,0.03)] flex items-center justify-between select-none">
+        <div class="flex items-center gap-3">
+          <span class="text-al-cyan font-mono font-bold text-sm">Prometheus & OTel Tracing</span>
+          <span class="text-[9px] text-al-muted font-mono px-2 py-0.5 border border-al-border rounded select-none font-semibold">observability</span>
+        </div>
+        <span class="text-2xs font-mono text-al-muted select-none">Telemetry</span>
+      </div>
+      <div class="px-6 py-5 space-y-4">
+        <p class="text-xs text-al-muted leading-relaxed select-all">
+          Configuring <code>metrics</code> exposes HTTP endpoints for Prometheus scrapers (e.g. <code>/__metrics</code>) and provides Grafana dashboard templates. The <code>TracingManager</code> propagates trace IDs across binary frame headers using <code>AsyncLocalStorage</code> context.
+        </p>
+        <div class="space-y-1.5 select-all">
+          <p class="text-[9px] text-al-muted font-mono uppercase tracking-widest font-bold select-none">Configuration Signature</p>
+          <pre class="bg-al-bg border border-al-border rounded-lg px-4 py-2.5 font-mono text-2xs text-al-cyan overflow-x-auto shadow-inner select-all">import &#123; Server, TracingManager &#125; from '@ajaymyth/server';
+
+const tracing = new TracingManager(&#123; serviceName: 'order-service' &#125;);
+const server = new Server(&#123;
+  port: 8080,
+  metrics: &#123; enabled: true, port: 9090, path: '/metrics' &#125;,
+  tracing
+&#125;);</pre>
         </div>
       </div>
     </div>
@@ -305,6 +397,57 @@ import CodeBlock from '../../components/CodeBlock.astro';
     </div>
 
 
+    <!-- PYTHON & DART SDK SECTION -->
+    <h2 id="sdks-api" class="text-xl font-bold tracking-tight text-al-white border-b border-al-border/30 pb-2 mt-16 select-none font-mono">Python & Dart SDK API Reference</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      AfterLink v2 provides native Python and Dart client & server SDKs matching the 16-byte Protocol v2 header layout.
+    </p>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+      <div class="bg-al-card border border-al-border rounded-xl p-5 space-y-3">
+        <div class="flex items-center justify-between border-b border-al-border/50 pb-2">
+          <span class="font-mono text-sm font-bold text-al-cyan">Python SDK (PyPI: afterlink)</span>
+          <span class="font-mono text-[9px] text-al-muted px-2 py-0.5 border border-al-border rounded">Python 3.8+</span>
+        </div>
+        <p class="text-2xs text-al-muted leading-relaxed">
+          Provides <code>AsyncServer</code>, <code>AsyncClient</code>, and <code>SyncClient</code> wrapper with full type hints and Pydantic validation support.
+        </p>
+        <pre class="bg-al-bg border border-al-border rounded-lg p-3 font-mono text-2xs text-al-text overflow-x-auto">from afterlink import AsyncClient
+
+client = AsyncClient(host="127.0.0.1", port=8080)
+await client.connect()
+
+# RPC with priority queue & routing key
+response = await client.request(
+    "users.get",
+    &#123;"id": 42&#125;,
+    priority=7,
+    routing_key="users"
+)</pre>
+      </div>
+
+      <div class="bg-al-card border border-al-border rounded-xl p-5 space-y-3">
+        <div class="flex items-center justify-between border-b border-al-border/50 pb-2">
+          <span class="font-mono text-sm font-bold text-al-cyan">Dart SDK (pub.dev: afterlink)</span>
+          <span class="font-mono text-[9px] text-al-muted px-2 py-0.5 border border-al-border rounded">Dart 3.0+</span>
+        </div>
+        <p class="text-2xs text-al-muted leading-relaxed">
+          Supports native TCP and web WebSocket transports with conditional compilation loaders and standard MessagePack serialization.
+        </p>
+        <pre class="bg-al-bg border border-al-border rounded-lg p-3 font-mono text-2xs text-al-text overflow-x-auto">import 'package:afterlink/afterlink.dart';
+
+final client = AfterLinkClient(host: '127.0.0.1', port: 8080);
+await client.connect();
+
+// Pub/sub with priority level
+client.publish(
+  'chat.global',
+  &#123;'text': 'Hello Dart!'&#125;,
+  priority: 5,
+);</pre>
+      </div>
+    </div>
+
     <!-- PROTOCOL ERROR CODES -->
     <h2 id="error-table" class="text-xl font-bold tracking-tight text-al-white border-b border-al-border/30 pb-2 mt-16 select-none font-mono">Protocol Error Codes</h2>
     
@@ -331,7 +474,7 @@ import CodeBlock from '../../components/CodeBlock.astro';
           <tr class="hover:bg-al-card/30 transition-colors">
             <td class="p-3 font-semibold">400</td>
             <td class="p-3">ERR_BAD_FRAME</td>
-            <td class="p-3 select-all">Corrupt framing format structure, length offsets mismatch.</td>
+            <td class="p-3 select-all">Corrupt framing format structure, 16-byte header or length offsets mismatch.</td>
           </tr>
           <tr class="hover:bg-al-card/30 transition-colors">
             <td class="p-3 font-semibold">401</td>
@@ -346,7 +489,7 @@ import CodeBlock from '../../components/CodeBlock.astro';
           <tr class="hover:bg-al-card/30 transition-colors">
             <td class="p-3 font-semibold">422</td>
             <td class="p-3">ERR_VALIDATION_FAILED</td>
-            <td class="p-3 select-all">The frame payload model does not conform to the registered Zod validation schema.</td>
+            <td class="p-3 select-all">The frame payload model does not conform to the registered Zod/Pydantic validation schema.</td>
           </tr>
           <tr class="hover:bg-al-card/30 transition-colors">
             <td class="p-3 font-semibold">429</td>
@@ -369,13 +512,17 @@ import CodeBlock from '../../components/CodeBlock.astro';
     </p>
     
     <CodeBlock code={`export interface Frame {
-  magic: number[];      // [0xAF, 0x1C]
-  version: number;      // 0x01
-  type: number;         // Hex Message Type
-  seq: number;          // 0 - 65535
-  length: number;       // Payload size
-  payload: any;         // Parsed payload JS Object
-  rawPayload: Buffer;   // Raw buffer reference
+  magic: number[];        // Fixed magic identifier: [0xAF, 0x1C]
+  version: number;        // Protocol version: 0x02 (v2) or 0x01 (v1)
+  type: number;           // Message type byte (0x01-0x0A, 0xFE, 0xFF)
+  flags: number;          // Bitwise flags (bit 0: compressed)
+  priority: number;       // Priority level queue (0-7)
+  seq: number;            // Sequence ID (0 - 65535)
+  routingKeyLength: number; // Length of routing key (0 - 255 bytes)
+  routingKey?: string;    // Custom string routing key (0 - 255 bytes)
+  length: number;         // Payload size in bytes (uint32)
+  payload: any;           // Parsed payload JS Object
+  rawPayload: Buffer;     // Raw buffer reference
 }
 
 export interface ServerOptions {
@@ -387,6 +534,12 @@ export interface ServerOptions {
     key: Buffer;
     cert: Buffer;
   };
+  metrics?: {
+    enabled?: boolean;
+    port?: number;
+    path?: string;
+  };
+  tracing?: any;
 }
 
 export interface ClientOptions {
@@ -394,6 +547,15 @@ export interface ClientOptions {
   port?: number;
   autoReconnect?: boolean;
   maxRetries?: number;
+  priority?: number;
+  routingKey?: string;
+}
+
+export interface ClusterOptions {
+  workers?: number | 'auto';
+  redis?: string | { nodes: string[] };
+  autoRestart?: boolean;
+  rollingRestart?: boolean;
 }`} lang="typescript" filename="index.d.ts" />
 
     <!-- Prev/Next Navigation -->

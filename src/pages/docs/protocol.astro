@@ -4,32 +4,37 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 import CodeBlock from '../../components/CodeBlock.astro';
 
 const codecExample = `
-import { encodeFrame, decodeFrame } from '@afterlink/core';
+import { encodeFrame, decodeFrame } from '@ajaymyth/core';
 
-// Create a custom publisher frame
+// Create a Protocol v2 frame with priority and custom routing key
 const binaryFrame = encodeFrame({
-  type: 0x03,           // MSG_PUBLISH
-  seq: 7,               // Sequence No
-  payload: Buffer.from('Hello World!')
+  version: 2,                        // Protocol v2
+  type: 0x09,                        // ROUTE_REQUEST
+  priority: 6,                       // High priority queue (0-7)
+  seq: 104,                          // Sequence No
+  routingKey: 'sensors.temperature', // Custom string routing key (0-255 bytes)
+  payload: Buffer.from('Hello AfterLink v2!')
 });
 
 console.log(binaryFrame); 
-// Output: <Buffer af 1c 01 03 00 07 00 00 00 0c 48 65 6c 6c 6f 20 57 6f 72 6c 64 21>
 
 // Decoding on socket receipt
 const decoded = decodeFrame(binaryFrame);
-console.log(decoded.payload.toString()); // Hello World!
+console.log(decoded.version);     // 2
+console.log(decoded.priority);    // 6
+console.log(decoded.routingKey);  // 'sensors.temperature'
+console.log(decoded.payload.toString()); // Hello AfterLink v2!
 `;
 ---
 
 <DocsLayout 
-  title="Binary Protocol Specification" 
-  description="Deep dive into AfterLink's 10-byte binary frame format, frame types, connection lifecycle, and wire-level protocol specification."
+  title="Binary Protocol v2 Specification" 
+  description="Deep dive into AfterLink Protocol v2's 16-byte fixed binary frame format, priority queues (0-7), version negotiation, custom string routing keys, and frame types."
   schema={{
     "@context": "https://schema.org",
     "@type": "TechArticle",
-    "headline": "Binary Protocol Specification",
-    "description": "Deep dive into AfterLink's 10-byte binary frame format, frame types, connection lifecycle, and wire-level protocol specification.",
+    "headline": "Binary Protocol v2 Specification",
+    "description": "Deep dive into AfterLink Protocol v2's 16-byte fixed binary frame format, priority queues (0-7), version negotiation, custom string routing keys, and frame types.",
     "author": { "@type": "Person", "name": "Javali Ajayakumar" },
     "publisher": { "@type": "Organization", "name": "AfterLink" },
     "mainEntityOfPage": "https://afterlink-docs.vercel.app/docs/protocol"
@@ -37,52 +42,79 @@ console.log(decoded.payload.toString()); // Hello World!
 >
   <div class="space-y-6">
     <div class="border-b border-al-border/50 pb-4">
-      <h1 class="text-3xl font-bold tracking-tight text-al-white mb-2">Binary Frame Specification</h1>
+      <h1 class="text-3xl font-bold tracking-tight text-al-white mb-2">Binary Frame Specification (Protocol v2)</h1>
       <p class="text-sm text-al-muted leading-relaxed">
-        AfterLink v1.2.4 operates at the binary transport boundary. Every packet consists of a rigid, color-coded <strong>10-byte fixed header</strong>, followed immediately by an optional variable-length MessagePack-encoded payload.
+        AfterLink v2.0.2 operates on Protocol v2. Every packet consists of a rigid <strong>16-byte fixed header</strong>, followed by an optional variable-length UTF-8 routing key (0–255 bytes) and a MessagePack-encoded payload body.
       </p>
     </div>
 
     <!-- Frame layout visualization grid -->
     <h2 id="byte-layout" class="text-lg font-semibold tracking-tight text-al-white mt-8 mb-3 select-none">Header Byte Layout Mapping</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all mb-4">
-      Below is the logical arrangement of AfterLink's 10-byte header on the TCP network wire:
+      Below is the logical arrangement of AfterLink Protocol v2's 16-byte fixed header and payload layout on the TCP network wire:
     </p>
 
     <!-- Visual header grid -->
     <div class="bg-al-card border border-al-border rounded-xl p-6 mb-10 overflow-x-auto select-all shadow-sm">
       <p class="text-[10px] text-al-muted font-mono uppercase tracking-widest mb-4 select-none">
-        Frame Header Structure
+        Protocol v2 Frame Layout (16-Byte Fixed Header + Optional Routing Key + Payload)
       </p>
-      <div class="font-mono text-xs min-w-[600px] select-all">
+      <div class="font-mono text-xs min-w-[750px] select-all">
         <div class="flex mb-1">
           <!-- Magic Segment -->
-          <div class="w-24 text-center text-al-cyan border border-al-cyan/30 rounded px-2 py-3.5 mx-0.5 bg-al-cyan/5">
-            Magic Identifier<br/>
-            <span class="text-[10px] text-al-muted font-bold font-sans">2 Bytes (0xAF 0x1C)</span>
+          <div class="w-20 text-center text-al-cyan border border-al-cyan/30 rounded px-1.5 py-3 mx-0.5 bg-al-cyan/5">
+            Magic<br/>
+            <span class="text-[10px] text-al-muted font-bold font-sans">2B (0xAF1C)</span>
           </div>
           <!-- Version Segment -->
-          <div class="w-16 text-center text-al-green border border-al-green/30 rounded px-2 py-3.5 mx-0.5 bg-al-green/5">
+          <div class="w-16 text-center text-al-green border border-al-green/30 rounded px-1.5 py-3 mx-0.5 bg-al-green/5">
             Version<br/>
-            <span class="text-[10px] text-al-muted font-bold font-sans">1 Byte (0x01)</span>
+            <span class="text-[10px] text-al-muted font-bold font-sans">1B (0x02)</span>
           </div>
           <!-- Type Segment -->
-          <div class="w-16 text-center text-yellow-500 border border-yellow-500/30 rounded px-2 py-3.5 mx-0.5 bg-yellow-500/5">
+          <div class="w-16 text-center text-yellow-500 border border-yellow-500/30 rounded px-1.5 py-3 mx-0.5 bg-yellow-500/5">
             Type<br/>
-            <span class="text-[10px] text-al-muted font-bold font-sans">1 Byte</span>
+            <span class="text-[10px] text-al-muted font-bold font-sans">1B</span>
+          </div>
+          <!-- Priority Segment -->
+          <div class="w-16 text-center text-red-400 border border-red-400/30 rounded px-1.5 py-3 mx-0.5 bg-red-400/5">
+            Priority<br/>
+            <span class="text-[10px] text-al-muted font-bold font-sans">1B (0-7)</span>
+          </div>
+          <!-- Flags Segment -->
+          <div class="w-14 text-center text-blue-400 border border-blue-400/30 rounded px-1.5 py-3 mx-0.5 bg-blue-400/5">
+            Flags<br/>
+            <span class="text-[10px] text-al-muted font-bold font-sans">1B</span>
           </div>
           <!-- Sequence Number Segment -->
-          <div class="w-24 text-center text-purple-400 border border-purple-400/30 rounded px-2 py-3.5 mx-0.5 bg-purple-400/5">
-            Sequence No.<br/>
-            <span class="text-[10px] text-al-muted font-bold font-sans">2 Bytes (0-65535)</span>
+          <div class="w-20 text-center text-purple-400 border border-purple-400/30 rounded px-1.5 py-3 mx-0.5 bg-purple-400/5">
+            Seq No.<br/>
+            <span class="text-[10px] text-al-muted font-bold font-sans">2B (u16)</span>
+          </div>
+          <!-- Route Len Segment -->
+          <div class="w-16 text-center text-pink-400 border border-pink-400/30 rounded px-1.5 py-3 mx-0.5 bg-pink-400/5">
+            Route Len<br/>
+            <span class="text-[10px] text-al-muted font-bold font-sans">1B (0-255)</span>
+          </div>
+          <!-- Reserved Segment -->
+          <div class="w-16 text-center text-gray-400 border border-gray-400/30 rounded px-1.5 py-3 mx-0.5 bg-gray-400/5">
+            Reserved<br/>
+            <span class="text-[10px] text-al-muted font-bold font-sans">3B</span>
           </div>
           <!-- Payload Length Segment -->
-          <div class="w-28 text-center text-orange-400 border border-orange-400/30 rounded px-2 py-3.5 mx-0.5 bg-orange-400/5">
-            Payload Length<br/>
-            <span class="text-[10px] text-al-muted font-bold font-sans">4 Bytes (uint32)</span>
+          <div class="w-24 text-center text-orange-400 border border-orange-400/30 rounded px-1.5 py-3 mx-0.5 bg-orange-400/5">
+            Payload Len<br/>
+            <span class="text-[10px] text-al-muted font-bold font-sans">4B (u32)</span>
+          </div>
+        </div>
+        <div class="flex mt-1.5">
+          <!-- Routing Key Segment -->
+          <div class="w-1/3 text-center text-pink-300 border border-dashed border-pink-500/40 rounded px-2 py-2.5 mx-0.5 bg-pink-500/5">
+            Routing Key String<br/>
+            <span class="text-[10px] font-sans">0–255 Bytes (UTF-8)</span>
           </div>
           <!-- Variable Payload Segment -->
-          <div class="flex-1 text-center text-al-muted border border-dashed border-al-border rounded px-2 py-3.5 mx-0.5 bg-al-bg/30">
+          <div class="flex-1 text-center text-al-muted border border-dashed border-al-border rounded px-2 py-2.5 mx-0.5 bg-al-bg/30">
             Payload Body Data<br/>
             <span class="text-[10px] font-sans">Variable size (MessagePack bytes)</span>
           </div>
@@ -117,7 +149,7 @@ console.log(decoded.payload.toString()); // Hello World!
             <td class="p-3">1 byte</td>
             <td class="p-3">UInt8</td>
             <td class="p-3">2</td>
-            <td class="p-3 select-all">Protocol version encoder flag. Currently fixed to <code>0x01</code>.</td>
+            <td class="p-3 select-all">Protocol version encoder flag (<code>0x02</code> in v2; supports v1/v2 negotiation).</td>
           </tr>
           <tr class="hover:bg-al-card/30 transition-colors">
             <td class="p-3 font-semibold text-yellow-500">type</td>
@@ -127,24 +159,59 @@ console.log(decoded.payload.toString()); // Hello World!
             <td class="p-3 select-all">Message type byte determining how the frame is routed.</td>
           </tr>
           <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold text-red-400">priority</td>
+            <td class="p-3">1 byte</td>
+            <td class="p-3">UInt8</td>
+            <td class="p-3">4</td>
+            <td class="p-3 select-all">Priority queue level (<code>0</code> = lowest/default, <code>7</code> = highest urgent priority).</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold text-blue-400">flags</td>
+            <td class="p-3">1 byte</td>
+            <td class="p-3">UInt8</td>
+            <td class="p-3">5</td>
+            <td class="p-3 select-all">Control flags byte (compression, encryption, custom frame options).</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
             <td class="p-3 font-semibold text-purple-400">seq</td>
             <td class="p-3">2 bytes</td>
             <td class="p-3">UInt16BE</td>
-            <td class="p-3">4 – 5</td>
+            <td class="p-3">6 – 7</td>
             <td class="p-3 select-all">Sequence index for reliable RPC matching. Wraps at <code>65535</code>.</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold text-pink-400">route_len</td>
+            <td class="p-3">1 byte</td>
+            <td class="p-3">UInt8</td>
+            <td class="p-3">8</td>
+            <td class="p-3 select-all">Length of custom string routing key in bytes (0 to 255).</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold text-gray-400">reserved</td>
+            <td class="p-3">3 bytes</td>
+            <td class="p-3">UInt8[3]</td>
+            <td class="p-3">9 – 11</td>
+            <td class="p-3 select-all">Reserved padding bytes for 16-byte fixed header alignment and future extensions.</td>
           </tr>
           <tr class="hover:bg-al-card/30 transition-colors">
             <td class="p-3 font-semibold text-orange-400">length</td>
             <td class="p-3">4 bytes</td>
             <td class="p-3">UInt32BE</td>
-            <td class="p-3">6 – 9</td>
+            <td class="p-3">12 – 15</td>
             <td class="p-3 select-all">Big-endian size count of payload data in bytes (max ~4.29 GB).</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors">
+            <td class="p-3 font-semibold text-pink-300">routing_key</td>
+            <td class="p-3">0–255 bytes</td>
+            <td class="p-3">String</td>
+            <td class="p-3">16 .. (16 + route_len)</td>
+            <td class="p-3 select-all">Optional UTF-8 custom string routing key for topic matching and RPC endpoints.</td>
           </tr>
           <tr class="hover:bg-al-card/30 transition-colors">
             <td class="p-3 font-semibold text-al-muted">payload</td>
             <td class="p-3">variable</td>
             <td class="p-3">Buffer</td>
-            <td class="p-3">10+</td>
+            <td class="p-3">(16 + route_len)+</td>
             <td class="p-3 select-all">MessagePack-encoded message body containing payload values.</td>
           </tr>
         </tbody>
@@ -216,6 +283,18 @@ console.log(decoded.payload.toString()); // Hello World!
             <td class="p-3 text-al-muted">Both</td>
             <td class="p-3 select-all">Error flag indicating payload parsing or connection errors.</td>
           </tr>
+          <tr class="hover:bg-al-card/30 transition-colors bg-al-card/20">
+            <td class="p-3 font-semibold text-al-cyan">0x09</td>
+            <td class="p-3 text-al-cyan font-bold">ROUTE_REQUEST</td>
+            <td class="p-3 text-al-green">Client &rarr; Server</td>
+            <td class="p-3 select-all">Dynamic topic & string routing key registration/lookup request (Protocol v2).</td>
+          </tr>
+          <tr class="hover:bg-al-card/30 transition-colors bg-al-card/20">
+            <td class="p-3 font-semibold text-al-cyan">0x0A</td>
+            <td class="p-3 text-al-cyan font-bold">PRIORITY_ACK</td>
+            <td class="p-3 text-al-muted">Both</td>
+            <td class="p-3 select-all">Priority-aware sequence acknowledgement frame (Protocol v2).</td>
+          </tr>
           <tr class="hover:bg-al-card/30 transition-colors">
             <td class="p-3 font-semibold">0xFE</td>
             <td class="p-3 text-al-cyan">MSG_ACK</td>
@@ -232,10 +311,31 @@ console.log(decoded.payload.toString()); // Hello World!
       </table>
     </div>
 
+    <!-- Protocol v2 Features -->
+    <h2 id="version-negotiation" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">Version Negotiation (v1 / v2)</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Protocol v2 introduces bidirectional version negotiation during the initial connection handshake. When an AfterLink v2 client connects, it advertises support for version <code>0x02</code>. If the target server is a legacy v1 endpoint, the client seamlessly falls back to the 10-byte header format.
+    </p>
+
+    <h2 id="priority-queues" class="text-lg font-semibold tracking-tight text-al-white mt-10 mb-3 select-none">Priority Queues (Levels 0–7)</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Every Protocol v2 frame includes a 1-byte priority field supporting 8 queue levels (<code>0</code> to <code>7</code>):
+    </p>
+    <ul class="list-disc pl-5 space-y-1.5 text-xs text-al-muted select-all my-3">
+      <li><strong>0–2 (Low / Bulk):</strong> Background sync, bulk streaming, and non-critical metrics.</li>
+      <li><strong>3–5 (Normal):</strong> Default priority level for standard RPC requests and Pub/Sub broadcasts.</li>
+      <li><strong>6–7 (Urgent / Control):</strong> High-priority control frames (such as <code>PRIORITY_ACK</code> and heartbeats) that jump execution queues ahead of lower-priority messages.</li>
+    </ul>
+
+    <h2 id="custom-routing-keys" class="text-lg font-semibold tracking-tight text-al-white mt-10 mb-3 select-none">Custom String Routing Keys (0–255 Bytes)</h2>
+    <p class="text-xs text-al-muted leading-relaxed select-all">
+      Protocol v2 allows embedding an inline UTF-8 string routing key directly in the frame header (controlled by <code>route_len</code>). This enables zero-deserialization routing: servers inspect the header's routing key to route frames instantly without decoding the MessagePack payload.
+    </p>
+
     <!-- Low-Level Codec Code Example -->
     <h2 id="codec-example" class="text-lg font-semibold tracking-tight text-al-white mt-12 mb-3 select-none">Low-Level Codec Code Example</h2>
     <p class="text-xs text-al-muted leading-relaxed select-all">
-      Using the <code>@afterlink/core</code> library, developers can encode and decode raw frames directly on top of raw socket streams:
+      Using the <code>@ajaymyth/core</code> library, developers can encode and decode raw Protocol v2 frames directly on top of socket streams:
     </p>
     <CodeBlock code={codecExample} lang="javascript" filename="codec.js" />
 
